@@ -1,0 +1,23 @@
+# --- Médias et fichiers déposés par les utilisateurs (trop lourds, sauvegardés à part)
+/fichiers/
+
+# --- Configuration et identifiants (jamais dans git)
+/ENVIRdev.txt
+/ENVIRprod.txt
+.env
+
+# --- NetBeans : réglages propres à ton poste
+/nbproject/private/
+
+# --- Composer (sera régénéré par "composer install")
+/vendor/
+
+# --- Exports de base avec données
+*.sql
+!/_infos/schema.sql
+!/_infos/modifs MPD.sql
+
+# --- Divers Windows
+Thumbs.db
+desktop.ini
+/_infos/logon*.txt

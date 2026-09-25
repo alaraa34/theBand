@@ -1,0 +1,27 @@
+EVOLUTIONS
+*Ajouter les Classes
+*mettre un loader sur le téléchargement de fichiers
+*supprimer les concers et répétitions à échéannce de un an
+*si set list standdard n'existe pas la créer ou pouvoir décrire n'importe quelle set list comme standard
+*gérer le caractère obligatoire dans les listes 
+*mettre une fenêtre dans une modale comme par exemple établissement dans concert
+*revoir les fenêtes plyer en une seule avec choix des listes et des types de morveaux
+
+BUGS
+bug saisie de lien maps dans établissement
+traiter les erreur de téléchargement avant de créer le lien
+gérer les id avec 0 dans les modèles de lien
+
+dev : liste generique lien avec paramètres multiples dont des constantes
+dev liste proposition en générique
+dev : reprendre les composants pour mise à jour directe de page
+
+evol : liste de lien mettre les icones standatrds
+
+evol fermet les set list dans la liste des répétitions et des concerts
+evol mettre de la couleur sur les entêtes de liste
+
+evol mettre la page de connexion dans une modale
+evol notes personnelles
+evol, : proposition song..;quand on fait une action sur une liste on revient dessus
+-	Correction saisie établissement et lien maps

@@ -1,0 +1,8 @@
+# Protection des fichiers sensibles (Apache 2.4 - WAMP et LWS)
+# Les fichiers ENVIR contiennent les identifiants de la base : jamais accessibles depuis le web
+<FilesMatch "^(ENVIR.*\.txt|.*\.sql|\.env|\.gitignore|composer\.(json|lock))$">
+    Require all denied
+</FilesMatch>
+
+# Dossier git (si jamais il est envoyé par FTP)
+RedirectMatch 404 /\.git

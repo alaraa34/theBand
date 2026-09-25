@@ -1,0 +1,122 @@
+@charset "iso-8859-1";
+/* Commentaires spécifiques
+    . est une class
+    # s'applique à un id
+    rien c'est un type de tag par exemple p*/
+    /* haut, droit, bas , gauche 
+=================================================================================================*/
+*{box-sizing:border-box}
+body{background-color:var(--paper);background-image:repeating-linear-gradient(0deg,transparent,transparent 27px,rgba(139,126,110,0.08) 27px,rgba(139,126,110,0.08) 28px);font-family:'DM Sans',sans-serif;color:var(--ink);min-height:100vh}
+
+.navbar-custom {
+    background-color: #b76533;
+  }
+
+.imageListe {
+float: left;
+display:inline;
+box-sizing: border-box;
+}
+
+.invisible{
+    display:none;
+}
+
+.enteteColonnes{
+    background-color: aqua;
+    color: Black;
+    text-align: center;
+    font-weight: bolder;
+}
+.planningDispo{
+    border-style:groove; 
+    border-color:#00FF00;
+    background-color:green;
+}
+.commentaires {
+padding-left: 20px;
+}
+.texteCommentaires {
+    color: blue;
+	font-size: small;
+}
+.texteACCORD {
+	 color: blue;
+}
+.texteAUTRE {
+	 color: blue;
+}
+.textePAD {
+	 color: LimeGreen;
+}
+.textePARTITION {
+	 color: MediumAquamarine;
+}
+.texteMP3 {
+	 color: HotPink;
+}
+.texteCHOEUR {
+	 color: DarkMagenta;
+}
+.texteMP3S {
+	 color: Fuchsia;
+}
+.texteMP3D {
+	 color: MediumOrchid;
+}
+.texteSITE {
+	 color: Chocolate;
+}
+
+.titrePrincipal {
+	 background-color: Aqua;
+	 color: Black;
+	 text-align: center;
+	 font-size: 250%;
+	 font-weight: bolder;
+}		
+.barreTitre {
+	 background-color: aquamarine;
+	 color: Black;
+	 text-align: center;
+}
+.barreTitreGauche {
+	 background-color: Aqua;
+	 color: Black;
+	 text-align:left;
+}
+#pageAffichee {
+	width: 1200px; 
+}
+.centrer {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}		
+h1, h3
+{
+    text-align:center;
+}
+h3
+{
+    background-color:black;
+    color:white;
+    font-size:0.9em;
+    margin-bottom:0px;
+}
+.news p
+{
+    background-color:#CCCCCC;
+    margin-top:0px;
+}
+.news
+{
+    width:70%;
+    margin:auto;
+}
+
+a
+{
+    text-decoration: none;
+    color: blue;
+}
