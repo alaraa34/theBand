@@ -66,7 +66,7 @@
         }
         function tpLayoutConnect(): string{
         //affiche le libellé sur le bouton de connexion/déconnexion
-            if(isset($_SESSION['LOGGED_USER{'])){
+            if(User::userConnecte()){
                 return "Se Déconnecter";
             } 
             else {
