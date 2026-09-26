@@ -31,17 +31,20 @@ function ctEnConstruction() {
     $mode = "enConstruction";
     require('accueil.php');
 }
-function ctMigrerMotsDePasse() {
-//MIGRATION UNIQUE (26/09/2026) : convertit en hash les mots de passe encore en clair de tb_user
-//appel ?fct=migrerMotsDePasse&ctr=accueil  - sans effet si déjà fait
-//A SUPPRIMER une fois la production migrée
-    $nombre = User::passwordMigrerEnHash();
-    echo("Terminé : " . $nombre . " mot(s) de passe converti(s)");
+function accesAdministrateur(): bool {
+//true si un administrateur est connecté, sinon affiche un message de refus
+    if (User::estAdministrateur()) {
+        return true;
+    }
+    $content = Tbx::messageColorer(false, messageKO: "Action réservée à un administrateur connecté.");
+    require(TbAdressage::projetGetLayout(__NAMESPACE__));
+    return false;
 }
 
 function ctRAZ() {
 //efface la base de donnée
-//appel ?fct=RAZ&ctr=accueil
+//appel ?fct=RAZ&ctr=accueil  - réservé à un administrateur connecté
+    if (!accesAdministrateur()) {return;}
     require_once(ROOT_PATH . 'shared/php/database/ctUtilitaires.php');
     \shared\php\database\viderTablesAvecPrefixe(exclusions: ['nomenclature','menu','user','requete','parametre','lien_type','lien_type_usage']);
     echo("Terminé");
@@ -50,7 +53,8 @@ function ctRAZ() {
 function ctRenommer() {
 //attention dans index il faut que le prefixe soit à blanc
 //renomme toutes les tables : une fois fait il faut changer le nom du préfixe dans index
-//appel https://kontouma.fr/theBand/index.php?fct=renommer&ctr=accueil
+//appel https://kontouma.fr/theBand/index.php?fct=renommer&ctr=accueil  - réservé à un administrateur connecté
+    if (!accesAdministrateur()) {return;}
     $fichier = ROOT_PATH . 'shared/php/database/ctUtilitaires.php';
     if (file_exists($fichier)) {
         require_once($fichier);
