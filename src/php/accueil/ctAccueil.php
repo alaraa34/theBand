@@ -4,6 +4,7 @@ namespace theBand\src\php\accueil;
 
 
 use shared\php\classes\socle\Login as Login;
+use shared\php\classes\socle\User as User;
 use chords\php\Chords as Chords;
 use shared\php\toolbox\Toolbox_adressage as TbAdressage;
 use shared\php\toolbox\Toolbox as Tbx;
@@ -30,6 +31,14 @@ function ctEnConstruction() {
     $mode = "enConstruction";
     require('accueil.php');
 }
+function ctMigrerMotsDePasse() {
+//MIGRATION UNIQUE (26/09/2026) : convertit en hash les mots de passe encore en clair de tb_user
+//appel ?fct=migrerMotsDePasse&ctr=accueil  - sans effet si déjà fait
+//A SUPPRIMER une fois la production migrée
+    $nombre = User::passwordMigrerEnHash();
+    echo("Terminé : " . $nombre . " mot(s) de passe converti(s)");
+}
+
 function ctRAZ() {
 //efface la base de donnée
 //appel ?fct=RAZ&ctr=accueil
