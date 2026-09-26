@@ -17,3 +17,8 @@ ALTER TABLE `etablissement` CHANGE `ID` `id` INT NOT NULL AUTO_INCREMENT COMMENT
 ALTER TABLE `lien_type` ADD `icone` TEXT NOT NULL COMMENT 'icone à afficher' AFTER `extensions`;
 //nouvelles
 ALTER TABLE `tb_proposition` CHANGE `proposePar` `idUser` INT NULL DEFAULT '0' COMMENT 'proposé par';
+
+-- 2026-09-26 : mots de passe hashés (password_hash, 60 caractères aujourd'hui, 255 recommandé)
+-- À passer AVANT de déployer shared/php/classes/socle/User.php, en local puis sur LWS.
+-- Les mots de passe actuels restent valables : chacun est converti en hash à la prochaine connexion du musicien.
+ALTER TABLE `tb_user` CHANGE `password` `password` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT 'hash password_hash()';
