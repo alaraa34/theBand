@@ -23,9 +23,7 @@ use shared\php\bricks\Brick_table           as BkTable;
 
 function ctProspectListerE(int $id=0):void {
 //contacts En cours avec des prospects $id est renseigné après ajout d'une usivi sur un prospect
-     if(!isset($_SESSION['LOGGED_USER'])) 
-        {require ('src/templates/login.php');}
-     else
+     if (Login::loginControl(__NAMESPACE__))
         {//Actions possibles
         $actions = [
             ['texte'=> 'Modifier le commentaire','logoClass' =>'fa-regular fa-pen-to-square',
@@ -49,9 +47,7 @@ function ctProspectListerE(int $id=0):void {
 
 function ctProspectListerT():void{
 //contacts terminés avec des prospects
-     if(!isset($_SESSION['LOGGED_USER'])) 
-        {require ('src/templates/login.php');}
-     else 
+     if (Login::loginControl(__NAMESPACE__))
         {//Actions possibles
         $actions = [['texte' => 'Supprimer','logoClass' => 'bi bi-trash','sujet'=> Prospect::SUJET_MDL,
                         'modale'=>'supprimer','message'=> 'Supprimer le prospect et ses suivis (plus aucune trace!)?']];
