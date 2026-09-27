@@ -7,9 +7,9 @@ namespace theBand\src\php\player;
  * @author Alara
  *******************************************************************************/
 
-use shared\php\toolbox\Toolbox_liste as TbListe;
-use shared\php\toolbox\Toolbox_adressage as TbAdressage;
-use metronome\php\Metronome as Metronome;
+use shared\php\toolbox\Toolbox_liste        as TbListe;
+use shared\php\toolbox\Toolbox_adressage    as TbAdressage;
+use metronome\php\Metronome                 as Metronome;
 
 
 ob_start(); ?>

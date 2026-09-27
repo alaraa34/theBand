@@ -6,7 +6,7 @@ namespace theBand\src\php\evenement;
  *
  * @author Alara
  *******************************************************************************/
-use shared\php\toolbox\Toolbox_liste as TbListe;
+use shared\php\toolbox\Toolbox_liste    as TbListe;
 
 class Evenement_Repetition extends Evenement
 {

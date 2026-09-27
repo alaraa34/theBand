@@ -7,11 +7,11 @@ namespace theBand\src\php\planning ;
  * @author araib
  */
 
-use theBand\src\php\socle\UserTheBand as User;
-use shared\php\toolbox\Toolbox as Tbx;
-use shared\php\classes\socle\Login as Login;
-use shared\php\toolbox\Toolbox_date as TbDate;
-use shared\php\toolbox\Toolbox_adressage as TbAdressage;
+use theBand\src\php\socle\UserTheBand       as User;
+use shared\php\toolbox\Toolbox              as Tbx;
+use shared\php\classes\socle\Login          as Login;
+use shared\php\toolbox\Toolbox_date         as TbDate;
+use shared\php\toolbox\Toolbox_adressage    as TbAdressage;
 
 function ctEditerPlanningIndividuel(){
     $messageBarreMenu = "Planning individuel";

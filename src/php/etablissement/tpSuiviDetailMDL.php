@@ -6,8 +6,8 @@ namespace theBand\src\php\etablissement;
  *
  * @author Alara
  *******************************************************************************/
-use shared\php\modale\Toolbox_modal as TbModal;
-use shared\php\toolbox\Toolbox_liste as tbListe;
+use shared\php\modale\Toolbox_modal     as TbModal;
+use shared\php\toolbox\Toolbox_liste    as tbListe;
 ?>
 <!--modale spécifique pour l'ajout d'un suivi prospect -->
 <div class="modal fade" id="<?=$action['modale']?>" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true"> 

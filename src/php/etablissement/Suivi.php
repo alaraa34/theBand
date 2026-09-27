@@ -9,13 +9,12 @@ namespace theBand\src\php\etablissement;
  * Un suivi est un évènement (mail appel, rencontre....pour aboutir au concert
  * Pas besoin d'étendre mère car la table a des cles internes qui nécessite classeValeurProprietesAvecCleExterne
  *******************************************************************************/
-use shared\php\database\Model as Model;
-use theBand\src\php\socle\UserTheBand as User;
-use shared\php\classes\personalisation\Nomenclature as Nomenclature;
-use shared\php\toolbox\Toolbox_classe as tbClasse;
-use shared\php\toolbox\Toolbox_date as tbDate;
-use shared\php\classes\socle\Commentaire as Commentaire;
-use shared\php\classes\socle\Mere_instance as MereInstance;
+use shared\php\database\Model                          as Model;
+use theBand\src\php\socle\UserTheBand                  as User;
+use shared\php\classes\personalisation\Nomenclature    as Nomenclature;
+use shared\php\toolbox\Toolbox_date                    as tbDate;
+use shared\php\classes\socle\Commentaire               as Commentaire;
+use shared\php\classes\socle\Mere_instance             as MereInstance;
 
 class Suivi extends MereInstance{
      // Attributs

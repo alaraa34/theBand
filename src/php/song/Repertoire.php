@@ -6,14 +6,14 @@ declare(strict_types=1);
  ****************************************************************************/
 namespace theBand\src\php\song;
 
-use shared\php\database\Model                           as Model;
-use shared\php\database\Model_utils                     as ModelU;
-use shared\php\classes\socle\User                       as User;
-use shared\php\classes\socle\Commentaire                as Commentaire;
-use shared\php\classes\lien\Lienhtml                    as Lienhtml;
-use shared\php\toolbox\Toolbox_classe                   as TbClasse;
-use shared\php\classes\personalisation\Nomenclature     as Nomenclature;
-use theBand\src\php\proposition\Proposition             as Proposition;
+use shared\php\database\Model                          as Model;
+use shared\php\database\Model_utils                    as ModelU;
+use shared\php\classes\socle\User                      as User;
+use shared\php\classes\socle\Commentaire               as Commentaire;
+use shared\php\classes\lien\Lienhtml                   as Lienhtml;
+use shared\php\toolbox\Toolbox_classe                  as TbClasse;
+use shared\php\classes\personalisation\Nomenclature    as Nomenclature;
+use theBand\src\php\proposition\Proposition            as Proposition;
 
 
 class Repertoire extends Song

@@ -6,9 +6,9 @@ declare(strict_types=1);
  ******************************************************************************/
 namespace theBand\src\php\socle;
 
-use shared\php\classes\socle\User       as User;
-use shared\php\toolbox\Toolbox_classe   as TbClasse;
-use shared\php\database\Model           as Model;
+use shared\php\classes\socle\User        as User;
+use shared\php\toolbox\Toolbox_classe    as TbClasse;
+use shared\php\database\Model            as Model;
 
 class UserTheBand extends User{
     public float $coeff=0;

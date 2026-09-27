@@ -7,17 +7,17 @@ namespace theBand\src\php\evenement;
  * @author Alara
  *******************************************************************************/
 
-use shared\php\modale\Toolbox_modal as TbModal;
-use shared\php\bricks\Brick_textbox as BkTextbox;
-use shared\php\classes\lien\TypeLien as TypeLien;
-use shared\php\classes\socle\Login as Login;
-use theBand\src\php\socle\UserTheBand as User;
-use shared\php\toolbox\Toolbox as Tbx;
-use shared\php\toolbox\Toolbox_adressage as TbAdressage;
-use theBand\src\php\etablissement\Etablissement as Etablissement;
-use theBand\src\php\song\Song as Song;
-use theBand\src\php\song\Setlist as Setlist;
-use theBand\src\php\song\Detail as Detail;
+use shared\php\modale\Toolbox_modal                as TbModal;
+use shared\php\bricks\Brick_textbox                as BkTextbox;
+use shared\php\classes\lien\TypeLien               as TypeLien;
+use shared\php\classes\socle\Login                 as Login;
+use theBand\src\php\socle\UserTheBand              as User;
+use shared\php\toolbox\Toolbox                     as Tbx;
+use shared\php\toolbox\Toolbox_adressage           as TbAdressage;
+use theBand\src\php\etablissement\Etablissement    as Etablissement;
+use theBand\src\php\song\Song                      as Song;
+use theBand\src\php\song\Setlist                   as Setlist;
+use theBand\src\php\song\Detail                    as Detail;
 
 
 

@@ -6,14 +6,14 @@ declare(strict_types=1);
  ****************************************************************************/
 namespace theBand\src\php\song;
 
-use shared\php\database\Model                       as Model;
-use shared\php\database\Model_utils                 as ModelU;
-use shared\php\classes\lien\Lien                    as Lien;
-use shared\php\classes\lien\TypeLien                as TypeLien;
-use shared\php\classes\personalisation\Nomenclature as Nomenclature;
-use shared\php\classes\socle\User                   as User;
-use theBand\src\php\evenement\Evenement             as Evenement;
-use shared\php\toolbox\Toolbox_classe               as TbClasse;
+use shared\php\database\Model                          as Model;
+use shared\php\database\Model_utils                    as ModelU;
+use shared\php\classes\lien\Lien                       as Lien;
+use shared\php\classes\lien\TypeLien                   as TypeLien;
+use shared\php\classes\personalisation\Nomenclature    as Nomenclature;
+use shared\php\classes\socle\User                      as User;
+use theBand\src\php\evenement\Evenement                as Evenement;
+use shared\php\toolbox\Toolbox_classe                  as TbClasse;
 
 
 class Song

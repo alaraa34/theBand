@@ -7,7 +7,6 @@ namespace theBand\src\php\evenement;
  * @author Alara
  *******************************************************************************/
 
-use shared\php\toolbox\Toolbox as Tbx;
 
 ob_start(); ?>
 <br><br<br>

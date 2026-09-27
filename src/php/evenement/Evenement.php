@@ -7,14 +7,14 @@ namespace theBand\src\php\evenement;
  * @author Alara
  *******************************************************************************/
 
-use shared\php\database\Model as Model;
-use shared\php\toolbox\Toolbox_classe as TbClasse;
-use shared\php\classes\socle\Mere as Mere;
-use shared\php\classes\socle\Commentaire as Commentaire;
-use shared\php\classes\socle\Coordonnee as Coordonnee;
-use theBand\src\php\etablissement\Etablissement as Etablissement;
-use theBand\src\php\song\Setlist as Setlist;
-use theBand\src\php\socle\UserTheBand as User;
+use shared\php\database\Model                      as Model;
+use shared\php\toolbox\Toolbox_classe              as TbClasse;
+use shared\php\classes\socle\Mere                  as Mere;
+use shared\php\classes\socle\Commentaire           as Commentaire;
+use shared\php\classes\socle\Coordonnee            as Coordonnee;
+use theBand\src\php\etablissement\Etablissement    as Etablissement;
+use theBand\src\php\song\Setlist                   as Setlist;
+use theBand\src\php\socle\UserTheBand              as User;
 
 abstract class Evenement extends Mere
 {

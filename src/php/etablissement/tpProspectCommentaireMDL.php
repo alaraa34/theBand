@@ -1,6 +1,6 @@
 <?php 
 namespace theBand\src\php\etablissement;
-use shared\php\modale\Toolbox_modal as TbModal;
+use shared\php\modale\Toolbox_modal    as TbModal;
 ?>
 <!--Modale standard -->
 <div class="modal fade" id="<?=$action['modale']?>" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true"> 

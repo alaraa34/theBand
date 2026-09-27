@@ -3,10 +3,10 @@ namespace theBand\src\php\song;
 /*******************************************************************************
  * 
  ******************************************************************************/
-use shared\php\bricks\Brick_table as BkTable;
-use theBand\src\php\socle\UserTheBand as User;
-use shared\php\toolbox\Toolbox_date as TbDate;
-use shared\php\toolbox\Toolbox_adressage as TbAdressage;
+use shared\php\bricks\Brick_table           as BkTable;
+use theBand\src\php\socle\UserTheBand       as User;
+use shared\php\toolbox\Toolbox_date         as TbDate;
+use shared\php\toolbox\Toolbox_adressage    as TbAdressage;
 
 ob_start(); 
 echo('<form method="post" action="' . TbAdressage::getURLstatic("song","repertoireMajVotes") . '">');

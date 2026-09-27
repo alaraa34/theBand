@@ -6,10 +6,10 @@ namespace theBand\src\php\planning ;
  *
  * @author araib
  */
-use shared\php\database\Model as Model;
-use theBand\src\php\socle\UserTheBand as User;
-use shared\php\toolbox\Toolbox as Tbx;
-use shared\php\toolbox\Toolbox_date as TbDate;
+use shared\php\database\Model            as Model;
+use theBand\src\php\socle\UserTheBand    as User;
+use shared\php\toolbox\Toolbox           as Tbx;
+use shared\php\toolbox\Toolbox_date      as TbDate;
 
 class Planning {
 

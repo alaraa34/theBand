@@ -6,10 +6,9 @@ namespace theBand\src\php\song;
  *
  * @author Alara
  *******************************************************************************/
-use shared\php\toolbox\Toolbox as Tbx;
-use shared\php\toolbox\Toolbox_liste as TbListe;
-use shared\php\toolbox\Toolbox_adressage as TbAdressage;
-use theBand\src\php\song\Song as Song;
+use shared\php\toolbox\Toolbox_liste        as TbListe;
+use shared\php\toolbox\Toolbox_adressage    as TbAdressage;
+use theBand\src\php\song\Song               as Song;
 
 ob_start();
 

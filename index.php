@@ -1,6 +1,6 @@
 <?php   
 
-    use shared\php\toolbox\Toolbox_index as tbIndex;
+    use shared\php\toolbox\Toolbox_index    as tbIndex;
     
     session_start();
     //ROOT est la racine du projet

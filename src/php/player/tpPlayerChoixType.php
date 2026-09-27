@@ -8,7 +8,7 @@ namespace theBand\src\php\player;
  *******************************************************************************/
 
 
-use shared\php\toolbox\Toolbox_adressage as TbAdressage;
+use shared\php\toolbox\Toolbox_adressage    as TbAdressage;
 
 
 ob_start(); ?> 

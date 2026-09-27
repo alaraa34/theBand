@@ -7,11 +7,11 @@ namespace theBand\src\php\etablissement;
  * @author Alara
  *******************************************************************************/
 
-use shared\php\database\Model as Model;
-use theBand\src\php\socle\UserTheBand as User;
-use shared\php\toolbox\Toolbox_classe as tbClasse;
-use shared\php\classes\socle\Commentaire as Commentaire;
-use shared\php\classes\socle\Mere as Mere;
+use shared\php\database\Model               as Model;
+use theBand\src\php\socle\UserTheBand       as User;
+use shared\php\toolbox\Toolbox_classe       as tbClasse;
+use shared\php\classes\socle\Commentaire    as Commentaire;
+use shared\php\classes\socle\Mere           as Mere;
 
 
 class Prospect extends Mere

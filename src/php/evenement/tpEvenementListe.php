@@ -6,13 +6,13 @@ namespace theBand\src\php\evenement;
  * @author Alara
  *******************************************************************************/
 
-use shared\php\toolbox\Toolbox_adressage as TbAdressage;
+use shared\php\toolbox\Toolbox_adressage    as TbAdressage;
 
 ob_start(); ?>
 
     <?php
-    use shared\php\bricks\Brick_accordion as BkAccordion;
-    use shared\php\modale\Toolbox_modal as TbModal;
+    use shared\php\bricks\Brick_accordion       as BkAccordion;
+    use shared\php\modale\Toolbox_modal         as TbModal;
     
     $numero = 0 ;
     echo (BkAccordion::accordion1Debut());

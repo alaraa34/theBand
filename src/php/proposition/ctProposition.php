@@ -4,18 +4,17 @@ namespace theBand\src\php\proposition;
 /*******************************************************************************
  * 
  ******************************************************************************/
-use shared\php\classes\lien\TypeLien                as TypeLien;
-use shared\php\classes\socle\Login                  as Login;
-use shared\php\classes\personalisation\Nomenclature as Nomenclature;
-use shared\php\classes\personalisation\Parametre    as Parametre;
-use shared\php\toolbox\Toolbox                      as Tbx;
-use shared\php\classes\lien\Lien                    as Lien;
-use shared\php\toolbox\Toolbox_classe               as TbClasse;
-use shared\php\modale\Toolbox_modal                 as TbModal;
-use shared\php\database\Model                       as Model;
-use shared\php\toolbox\Toolbox_adressage            as TbAdressage;
-use theBand\src\php\socle\UserTheBand               as UserTB;
-use shared\php\classes\socle\User                   as User;
+use shared\php\classes\lien\TypeLien                   as TypeLien;
+use shared\php\classes\socle\Login                     as Login;
+use shared\php\classes\personalisation\Nomenclature    as Nomenclature;
+use shared\php\classes\personalisation\Parametre       as Parametre;
+use shared\php\toolbox\Toolbox                         as Tbx;
+use shared\php\classes\lien\Lien                       as Lien;
+use shared\php\modale\Toolbox_modal                    as TbModal;
+use shared\php\database\Model                          as Model;
+use shared\php\toolbox\Toolbox_adressage               as TbAdressage;
+use theBand\src\php\socle\UserTheBand                  as UserTB;
+use shared\php\classes\socle\User                      as User;
 
 
 function ctPropositionListerAB():void{

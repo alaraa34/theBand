@@ -6,10 +6,10 @@ namespace theBand\src\php\evenement;
  *
  * @author Alara
  *******************************************************************************/
-use shared\php\toolbox\Toolbox_liste as TbListe;
-use shared\php\toolbox\Toolbox as Tbx;
-use theBand\src\php\song\Detail as Detail;
-use shared\php\classes\lien\TypeLien as TypeLien;
+use shared\php\toolbox\Toolbox_liste    as TbListe;
+use shared\php\toolbox\Toolbox          as Tbx;
+use theBand\src\php\song\Detail         as Detail;
+use shared\php\classes\lien\TypeLien    as TypeLien;
 
 class Evenement_Concert extends Evenement
 {

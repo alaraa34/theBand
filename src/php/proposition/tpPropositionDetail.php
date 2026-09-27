@@ -4,8 +4,8 @@ namespace theBand\src\php\proposition;
 /*******************************************************************************
  * Template de saisie de proposition
  ******************************************************************************/
-use shared\php\classes\lien\TypeLien as TypeLien;
-use shared\php\toolbox\Toolbox_adressage as TbAdressage;
+use shared\php\classes\lien\TypeLien        as TypeLien;
+use shared\php\toolbox\Toolbox_adressage    as TbAdressage;
 ob_start(); 
 
 ?>

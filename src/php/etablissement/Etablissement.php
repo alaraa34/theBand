@@ -6,17 +6,17 @@ namespace theBand\src\php\etablissement;
  *
  * @author Alara
  *******************************************************************************/
-use shared\php\database\Model as Model;
-use shared\php\toolbox\Toolbox_classe as TbClasse;
-use shared\php\classes\personalisation\Nomenclature as Nomenclature;
-use shared\php\classes\lien\Lien as Lien;
-use shared\php\classes\lien\Lienhtml as Lienhtml;
-use theBand\src\php\socle\UserTheBand as User;
-use shared\php\classes\socle\Commentaire as Commentaire;
-use shared\php\classes\socle\Coordonnee as Coordonnee;
-use shared\php\classes\socle\Mere as Mere;
-use theBand\src\php\evenement\Evenement_Concert as Evenement_Concert;
-use theBand\src\php\evenement\Evenement_Repetition as Evenement_Repetition;
+use shared\php\database\Model                          as Model;
+use shared\php\toolbox\Toolbox_classe                  as TbClasse;
+use shared\php\classes\personalisation\Nomenclature    as Nomenclature;
+use shared\php\classes\lien\Lien                       as Lien;
+use shared\php\classes\lien\Lienhtml                   as Lienhtml;
+use theBand\src\php\socle\UserTheBand                  as User;
+use shared\php\classes\socle\Commentaire               as Commentaire;
+use shared\php\classes\socle\Coordonnee                as Coordonnee;
+use shared\php\classes\socle\Mere                      as Mere;
+use theBand\src\php\evenement\Evenement_Concert        as Evenement_Concert;
+use theBand\src\php\evenement\Evenement_Repetition     as Evenement_Repetition;
 
 class Etablissement extends Mere
 {

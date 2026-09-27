@@ -6,14 +6,10 @@ declare(strict_types=1);
  *******************************************************************************/
 namespace theBand\src\php\etablissement;
 
-use shared\php\database\Model as Model;
-use shared\php\toolbox\Toolbox_classe as TbClasse;
-use shared\php\classes\lien\Lien as Lien;
-use shared\php\classes\personalisation\Nomenclature as Nomenclature;
-use shared\php\classes\lien\Lienhtml as Lienhtml;
-use shared\php\classes\socle\Coordonnee as Coordonnee;
-use shared\php\classes\socle\Mere as Mere;
-use shared\php\classes\socle\Commentaire as Commentaire;
+use shared\php\toolbox\Toolbox_classe       as TbClasse;
+use shared\php\classes\socle\Coordonnee     as Coordonnee;
+use shared\php\classes\socle\Mere           as Mere;
+use shared\php\classes\socle\Commentaire    as Commentaire;
 
 class Contact extends mere
 /**

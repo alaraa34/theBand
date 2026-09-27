@@ -3,12 +3,12 @@ declare(strict_types=1);
 namespace theBand\src\php\accueil;
 
 
-use shared\php\classes\socle\Login as Login;
-use shared\php\classes\socle\User as User;
-use chords\php\Chords as Chords;
-use shared\php\toolbox\Toolbox_adressage as TbAdressage;
-use shared\php\toolbox\Toolbox as Tbx;
-use shared\php\classes\personalisation\Parametre as Parametre;
+use shared\php\classes\socle\Login                  as Login;
+use shared\php\classes\socle\User                   as User;
+use chords\php\Chords                               as Chords;
+use shared\php\toolbox\Toolbox_adressage            as TbAdressage;
+use shared\php\toolbox\Toolbox                      as Tbx;
+use shared\php\classes\personalisation\Parametre    as Parametre;
 
 function ctAccueil() {
     $mode = "accueil";

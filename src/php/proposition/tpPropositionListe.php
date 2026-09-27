@@ -5,10 +5,10 @@
      * 
      ******************************************************************************/
     
-    use shared\php\bricks\Brick_table as BkTable;
-    use shared\php\toolbox\Toolbox as Tbx;
-    use shared\php\modale\Toolbox_modal as TbModal;
-    use shared\php\toolbox\Toolbox_adressage as TbAdressage;
+    use shared\php\bricks\Brick_table           as BkTable;
+    use shared\php\toolbox\Toolbox              as Tbx;
+    use shared\php\modale\Toolbox_modal         as TbModal;
+    use shared\php\toolbox\Toolbox_adressage    as TbAdressage;
     
     ob_start(); 
      

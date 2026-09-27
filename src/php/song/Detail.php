@@ -7,7 +7,7 @@ declare(strict_types=1);
 namespace theBand\src\php\song;
 
 
-use shared\php\classes\socle\Mere_instance as Mere_instance;
+use shared\php\classes\socle\Mere_instance    as Mere_instance;
 
 class Detail extends Mere_instance
 {

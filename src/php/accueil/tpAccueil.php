@@ -1,8 +1,8 @@
 <?php 
 namespace theBand\src\php\accueil;
 //lien vers namaspace
-use shared\php\classes\personalisation\Parametre as Parametre;
-use shared\php\toolbox\Toolbox_adressage as TbAdressage;
+use shared\php\classes\personalisation\Parametre    as Parametre;
+use shared\php\toolbox\Toolbox_adressage            as TbAdressage;
 
 if (isset($mode) && $mode == "enConstruction"){
     $content = "<div id=\"pageAffichee\" class = \"d-block mx-auto img-fluid\">

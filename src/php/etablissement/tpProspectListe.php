@@ -8,10 +8,10 @@ namespace theBand\src\php\etablissement;
  *******************************************************************************/
 
 
-use shared\php\bricks\Brick_accordion as BkAccordion;
-use shared\php\classes\personalisation\Nomenclature as Nomenclature;
-use shared\php\modale\Toolbox_modal as TbModal;
-use shared\php\toolbox\Toolbox_adressage as TbAdressage;
+use shared\php\bricks\Brick_accordion                  as BkAccordion;
+use shared\php\classes\personalisation\Nomenclature    as Nomenclature;
+use shared\php\modale\Toolbox_modal                    as TbModal;
+use shared\php\toolbox\Toolbox_adressage               as TbAdressage;
 
 ob_start();
 ?>

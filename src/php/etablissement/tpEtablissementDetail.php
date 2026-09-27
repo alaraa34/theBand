@@ -6,11 +6,11 @@ namespace theBand\src\php\etablissement;
  *
  * @author Alara
  *******************************************************************************/
-use shared\php\toolbox\Toolbox_liste as TbListe;
-use shared\php\classes\lien\Lien as Lien;
-use shared\php\classes\lien\Lienhtml as Lienhtml;
-use shared\php\toolbox\Toolbox_adressage as TbAdressage;
-use shared\php\toolbox\Toolbox_html as TbHtml;
+use shared\php\toolbox\Toolbox_liste        as TbListe;
+use shared\php\classes\lien\Lien            as Lien;
+use shared\php\classes\lien\Lienhtml        as Lienhtml;
+use shared\php\toolbox\Toolbox_adressage    as TbAdressage;
+use shared\php\toolbox\Toolbox_html         as TbHtml;
 ob_start(); 
 
 ?>

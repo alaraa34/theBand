@@ -6,10 +6,8 @@ namespace theBand\src\php\etablissement;
  *
  * @author Alara
  *******************************************************************************/
-use shared\php\database\Model               as Model;
 use shared\php\modale\Toolbox_modal         as TbModal;
 use shared\php\classes\lien\TypeLien        as TypeLien;
-use shared\php\classes\socle\User           as User;
 use shared\php\toolbox\Toolbox              as Tbx;
 use shared\php\toolbox\Toolbox_liste        as TbListe;
 use shared\php\toolbox\Toolbox_adressage    as TbAdressage;

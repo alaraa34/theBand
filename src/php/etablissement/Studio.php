@@ -6,11 +6,11 @@ namespace theBand\src\php\etablissement;
  *
  * @author Alara
  *******************************************************************************/
-use shared\php\database\Model as Model;
-use theBand\src\php\socle\UserTheBand as User;
-use shared\php\classes\personalisation\Nomenclature as Nomenclature;
-use shared\php\classes\socle\Coordonnee as Coordonnee;
-use shared\php\classes\socle\Commentaire as Commentaire;
+use shared\php\database\Model                          as Model;
+use theBand\src\php\socle\UserTheBand                  as User;
+use shared\php\classes\personalisation\Nomenclature    as Nomenclature;
+use shared\php\classes\socle\Coordonnee                as Coordonnee;
+use shared\php\classes\socle\Commentaire               as Commentaire;
 
 class Studio extends Etablissement
 {

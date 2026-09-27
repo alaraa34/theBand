@@ -7,10 +7,10 @@ declare(strict_types=1);
  */
 namespace theBand\src\php\song;
 
-use shared\php\classes\lien\Lien                        as Lien;
-use shared\php\toolbox\Toolbox_classe                   as TbClasse;
-use shared\php\database\Model                           as Model;
-use shared\php\database\Model_utils                     as ModelU;
+use shared\php\classes\lien\Lien         as Lien;
+use shared\php\toolbox\Toolbox_classe    as TbClasse;
+use shared\php\database\Model            as Model;
+use shared\php\database\Model_utils      as ModelU;
 
 class SongLien_ass {
     // Attributs

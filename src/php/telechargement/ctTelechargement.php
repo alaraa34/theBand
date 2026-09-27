@@ -6,12 +6,12 @@ declare(strict_types=1);
  ****************************************************************************/
 namespace theBand\src\php\telechargement;
 
-use shared\php\toolbox\Toolbox_adressage as TbAdressage;
-use shared\php\toolbox\Toolbox_upload as TbUpload;
-use shared\php\toolbox\Toolbox as Tbx;
-use shared\php\classes\personalisation\Nomenclature as Nomenclature;
-use shared\php\classes\telechargement\Telechargement as Telechargement;
-use shared\php\modale\Toolbox_modal as TbModal;
+use shared\php\toolbox\Toolbox_adressage                as TbAdressage;
+use shared\php\toolbox\Toolbox_upload                   as TbUpload;
+use shared\php\toolbox\Toolbox                          as Tbx;
+use shared\php\classes\personalisation\Nomenclature     as Nomenclature;
+use shared\php\classes\telechargement\Telechargement    as Telechargement;
+use shared\php\modale\Toolbox_modal                     as TbModal;
 
 
 

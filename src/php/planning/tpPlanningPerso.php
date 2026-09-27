@@ -6,8 +6,8 @@ namespace theBand\src\php\planning ;
  *
  * @author araib
  */
-use shared\php\toolbox\Toolbox_date as TbDate;
-use shared\php\toolbox\Toolbox_adressage as TbAdressage;
+use shared\php\toolbox\Toolbox_date         as TbDate;
+use shared\php\toolbox\Toolbox_adressage    as TbAdressage;
 ob_start(); 
 ?>
 

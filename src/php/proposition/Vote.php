@@ -7,9 +7,9 @@ namespace theBand\src\php\proposition;
  * @author Alara
  */
 
-use theBand\src\php\socle\UserTheBand       as UserTb;
-use shared\php\database\Model               as Model;
-use shared\php\classes\socle\Mere_instance  as MereInstance;
+use theBand\src\php\socle\UserTheBand         as UserTb;
+use shared\php\database\Model                 as Model;
+use shared\php\classes\socle\Mere_instance    as MereInstance;
 
 class Vote extends MereInstance{
     //put your code here

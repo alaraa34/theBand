@@ -7,18 +7,18 @@ namespace theBand\src\php\player;
  * @author Alara
  *******************************************************************************/
 
-use metronome\php\metronome as Metronome;
-use shared\php\toolbox\Toolbox_liste as TbListeGenerique;
-use shared\php\classes\socle\Login as Login;
-use shared\php\bricks\Brick_table as BkTable;
-use shared\php\classes\lien\TypeLien as TypeLien;
-use shared\php\toolbox\Toolbox as Tbx;
-use shared\php\toolbox\Toolbox_adressage as TbAdressage;
-use theBand\src\php\evenement\Evenement_Concert as Evenement_Concert;
-use theBand\src\php\evenement\Evenement_Repetition as Evenement_Repetition;
-use theBand\src\php\song\Setlist as Setlist;
-use theBand\src\php\song\Song as Song;
-use theBand\src\php\socle\UserTheBand as User;
+use metronome\php\metronome                           as Metronome;
+use shared\php\toolbox\Toolbox_liste                  as TbListeGenerique;
+use shared\php\classes\socle\Login                    as Login;
+use shared\php\bricks\Brick_table                     as BkTable;
+use shared\php\classes\lien\TypeLien                  as TypeLien;
+use shared\php\toolbox\Toolbox                        as Tbx;
+use shared\php\toolbox\Toolbox_adressage              as TbAdressage;
+use theBand\src\php\evenement\Evenement_Concert       as Evenement_Concert;
+use theBand\src\php\evenement\Evenement_Repetition    as Evenement_Repetition;
+use theBand\src\php\song\Setlist                      as Setlist;
+use theBand\src\php\song\Song                         as Song;
+use theBand\src\php\socle\UserTheBand                 as User;
 
 
 define("CONTEXTE",["Concert","Répétition","Test","Concert et Test","Setlist"]);

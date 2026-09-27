@@ -6,10 +6,10 @@ namespace theBand\src\php\planning ;
  *
  * @author araib
  */
-use shared\php\classes\lien\Lien as Lien;
-use shared\php\toolbox\Toolbox as Tbx;
-use shared\php\toolbox\Toolbox_date as TbDate;
-use shared\php\toolbox\Toolbox_adressage as TbAdressage;
+use shared\php\classes\lien\Lien            as Lien;
+use shared\php\toolbox\Toolbox              as Tbx;
+use shared\php\toolbox\Toolbox_date         as TbDate;
+use shared\php\toolbox\Toolbox_adressage    as TbAdressage;
 ob_start(); ?>
 <br><br<br>
 <form method="post" enctype="multipart/form-data"  action="<?= TbAdressage::getURLstatic('planning','planningPeriodeMAJ'); ?>">

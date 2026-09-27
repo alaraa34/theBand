@@ -6,9 +6,9 @@ namespace theBand\src\php\etablissement;
  *
  * @author Alara
  *******************************************************************************/
-use shared\php\toolbox\Toolbox_liste as TbListe;
-use shared\php\toolbox\Toolbox_adressage as TbAdressage;
-use shared\php\modale\Toolbox_modal as TbModal;
+use shared\php\toolbox\Toolbox_liste        as TbListe;
+use shared\php\toolbox\Toolbox_adressage    as TbAdressage;
+use shared\php\modale\Toolbox_modal         as TbModal;
 
 ?>
 <!--Affichage des DIV établissement modale -->

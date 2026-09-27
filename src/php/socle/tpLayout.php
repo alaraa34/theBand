@@ -57,10 +57,10 @@
         include_once (ROOT_PATH .'shared/includes/bootstrap_scripts.php');
         if (isset($script)){echo $script;}
     
-        use shared\php\classes\personalisation\Parametre as Parametre;
-        use shared\php\classes\socle\Menu               as Menu;
-        use shared\php\toolbox\Toolbox_adressage        as TbAdressage;
-        use shared\php\classes\socle\User               as User;
+        use shared\php\classes\personalisation\Parametre    as Parametre;
+        use shared\php\classes\socle\Menu                   as Menu;
+        use shared\php\toolbox\Toolbox_adressage            as TbAdressage;
+        use shared\php\classes\socle\User                   as User;
         
         function tpLayoutGetNomGroupe(){
             //recherche paramètre qui sera stocké dans le menu

@@ -3,19 +3,19 @@ namespace theBand\src\php\song;
 /*******************************************************************************
  * 
  ******************************************************************************/
-use shared\php\classes\lien\Lien                    as Lien;
-use shared\php\classes\lien\TypeLien                as TypeLien;
-use shared\php\classes\personalisation\Nomenclature as Nomenclature;
-use theBand\src\php\socle\UserTheBand               as UserTB;
-use shared\php\classes\socle\User                   as User;
-use shared\php\toolbox\Toolbox                      as Tbx;
-use shared\php\classes\socle\Login                  as Login;
-use shared\php\toolbox\Toolbox_upload               as TbUpload;
-use shared\php\modale\Toolbox_modal                 as TbModal;
-use shared\php\toolbox\Toolbox_date                 as TbDate;
-use shared\php\toolbox\Toolbox_liste                as TbListe;
-use shared\php\bricks\Brick_table                   as BkTable;
-use shared\php\toolbox\Toolbox_adressage            as TbAdressage;
+use shared\php\classes\lien\Lien                       as Lien;
+use shared\php\classes\lien\TypeLien                   as TypeLien;
+use shared\php\classes\personalisation\Nomenclature    as Nomenclature;
+use theBand\src\php\socle\UserTheBand                  as UserTB;
+use shared\php\classes\socle\User                      as User;
+use shared\php\toolbox\Toolbox                         as Tbx;
+use shared\php\classes\socle\Login                     as Login;
+use shared\php\toolbox\Toolbox_upload                  as TbUpload;
+use shared\php\modale\Toolbox_modal                    as TbModal;
+use shared\php\toolbox\Toolbox_date                    as TbDate;
+use shared\php\toolbox\Toolbox_liste                   as TbListe;
+use shared\php\bricks\Brick_table                      as BkTable;
+use shared\php\toolbox\Toolbox_adressage               as TbAdressage;
 
 function ctSongAdd():void {
     ctSongEditer();

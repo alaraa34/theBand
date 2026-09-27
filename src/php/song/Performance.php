@@ -6,15 +6,15 @@ declare(strict_types=1);
  ****************************************************************************/
 namespace theBand\src\php\song;
 
-use shared\php\database\Model                       as Model;
-use shared\php\classes\socle\User                   as User;
-use theBand\src\php\socle\UserTheBand               as UserTB;
-use shared\php\classes\socle\Mere                   as Mere;
-use shared\php\toolbox\Toolbox_date                 as TbDate;
-use shared\php\toolbox\Toolbox_classe               as TbClasse;
-use theBand\src\php\song\Song                       as Song;
-use theBand\src\php\proposition\Vote                as Vote;
-use shared\php\classes\personalisation\Nomenclature as Nomenclature;
+use shared\php\database\Model                          as Model;
+use shared\php\classes\socle\User                      as User;
+use theBand\src\php\socle\UserTheBand                  as UserTB;
+use shared\php\classes\socle\Mere                      as Mere;
+use shared\php\toolbox\Toolbox_date                    as TbDate;
+use shared\php\toolbox\Toolbox_classe                  as TbClasse;
+use theBand\src\php\song\Song                          as Song;
+use theBand\src\php\proposition\Vote                   as Vote;
+use shared\php\classes\personalisation\Nomenclature    as Nomenclature;
 
 class Performance extends Mere{
     //put your code here

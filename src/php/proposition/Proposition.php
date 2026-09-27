@@ -4,16 +4,15 @@ namespace theBand\src\php\proposition;
 /*******************************************************************************
  * 
  ******************************************************************************/
-use shared\php\classes\personalisation\Nomenclature     as Nomenclature;
-use shared\php\classes\personalisation\Parametre        as Parametre;
-use shared\php\toolbox\Toolbox                          as Tbx;
-use shared\php\toolbox\Toolbox_classe                   as TbClasse;
-use shared\php\database\Model                           as Model;
-use shared\php\classes\socle\Commentaire                as Commentaire;
-use theBand\src\php\song\Song                           as Song;
-use theBand\src\php\song\Repertoire                     as Repertoire;
-use shared\php\classes\socle\User                       as User;
-use theBand\src\php\socle\UserTheBand                   as UserTB;
+use shared\php\classes\personalisation\Parametre    as Parametre;
+use shared\php\toolbox\Toolbox                      as Tbx;
+use shared\php\toolbox\Toolbox_classe               as TbClasse;
+use shared\php\database\Model                       as Model;
+use shared\php\classes\socle\Commentaire            as Commentaire;
+use theBand\src\php\song\Song                       as Song;
+use theBand\src\php\song\Repertoire                 as Repertoire;
+use shared\php\classes\socle\User                   as User;
+use theBand\src\php\socle\UserTheBand               as UserTB;
 
 
 class Proposition extends Song
