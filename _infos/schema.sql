@@ -305,7 +305,7 @@ INSERT INTO `tb_menu` (`indentation`, `domaine`, `controleur`, `typeLigne`, `lib
 (202000, 'proposition', '', 'action', 'Voter pour toutes les propositions', 'propositionVoterTous', 1),
 (204000, 'proposition', '', 'action', 'En cours par vote', 'propositionListerParVote', 1),
 (207000, 'proposition', '', 'action', 'Validées', 'PropositionListerValidees', 1),
-(606000, 'etablissement', '', 'action', 'Clôturés', 'prospectListerT\r\n', 1),
+(606000, 'etablissement', '', 'action', 'Clôturés', 'prospectListerT', 1),
 (605000, 'etablissement', '', 'action', 'En cours', 'prospectListerE', 1),
 (603000, 'etablissement', '', 'action', 'Studios répétition', 'etablissementStudioLister', 1),
 (903000, 'telechargement', '', 'action', 'Concerts et Répet', 'concertLister', 1),

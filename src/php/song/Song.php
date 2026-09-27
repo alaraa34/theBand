@@ -50,7 +50,7 @@ class Song
             $tableau[]=["identifiant"=>Repertoire::TYPE_RESERVE, "zone"=> "En Réserve"];
         }
         if ($prop){
-            $tableau[]= ["identifiant"=>proposition::TYPE, "zone"=> "Proposition"];
+            $tableau[]= ["identifiant"=>self::TYPE_PROPOSITION, "zone"=> "Proposition"];
         }
         return $tableau;
     }
@@ -282,7 +282,7 @@ class Song
                 WHERE lie.idTypeLien=? AND son.idTypeSong ". Model::mdClauseIn([self::TYPE_CONCERT,self::TYPE_TEST]) .
                 " ORDER BY son.Titre;";
 
-        return Model::mdRequeteLister($requete,[28]);
+        return Model::mdRequeteLister($requete,[TypeLien::PAD]);
     }
 }
 

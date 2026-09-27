@@ -303,7 +303,7 @@ function ctPlayerPadProchainConcert(){
     else{
         //affichage playlist à joueer
         $evt= new Evenement_Concert($idevt);
-        $songs = song::mdSongGetListePlayerFromSetList($evt->setlist->id,28); 
+        $songs = song::mdSongGetListePlayerFromSetList($evt->setlist->id,TypeLien::PAD); 
         ctListePads($songs,"Pads du prochain concert");
     }
     
