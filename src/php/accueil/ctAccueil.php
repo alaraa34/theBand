@@ -8,7 +8,8 @@ use shared\php\classes\socle\User as User;
 use chords\php\Chords as Chords;
 use shared\php\toolbox\Toolbox_adressage as TbAdressage;
 use shared\php\toolbox\Toolbox as Tbx;
- 
+use shared\php\classes\personalisation\Parametre as Parametre;
+
 function ctAccueil() {
     $mode = "accueil";
     require('tpAccueil.php');
@@ -62,6 +63,33 @@ function ctRenommer() {
         echo("Terminé");
     }
     else{die("fichier ". $fichier . "introuvable");}
+}
+
+function ctManifest() {
+//manifeste PWA (application installable sur smartphone)
+//appel index.php?ctr=accueil&fct=manifest depuis tpLayout - le nom du groupe vient de GENERAL/NOMGROUPE
+    $nomGroupe = (string)Parametre::mdParametreGetDetail("GENERAL", "NOMGROUPE", "valeurA");
+
+    $manifeste = [
+        'name'             => $nomGroupe !== '' ? "theBand – " . $nomGroupe : "theBand",
+        'short_name'       => $nomGroupe !== '' ? $nomGroupe : "theBand",
+        'description'      => "Organisation du groupe : répertoire, setlists, concerts, planning.",
+        'lang'             => "fr",
+        'start_url'        => "./",
+        'scope'            => "./",
+        'display'          => "standalone",
+        'orientation'      => "portrait",
+        'background_color' => "#b76533",
+        'theme_color'      => "#b76533",
+        'icons' => [
+            ['src' => "icons/icon-192.png",          'sizes' => "192x192", 'type' => "image/png"],
+            ['src' => "icons/icon-512.png",          'sizes' => "512x512", 'type' => "image/png"],
+            ['src' => "icons/icon-512-maskable.png", 'sizes' => "512x512", 'type' => "image/png", 'purpose' => "maskable"],
+        ],
+    ];
+    header('Content-Type: application/manifest+json; charset=utf-8');
+    echo json_encode($manifeste, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+    exit; //pas de layout
 }
 
 function ctAccordDetecter(){

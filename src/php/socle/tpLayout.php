@@ -3,7 +3,16 @@
 <head>  
 <title><?= tpLayoutGetNomGroupe()?></title>  
 <meta charset="utf-8">  
-<meta name="viewport" content="width=device-width, initial-scale=1"> 
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- application installable (PWA) : actif uniquement en https (production) -->
+<link rel="manifest" href="index.php?ctr=accueil&amp;fct=manifest">
+<meta name="theme-color" content="#b76533">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<script>
+    if ('serviceWorker' in navigator && location.protocol === 'https:') {
+        navigator.serviceWorker.register('sw.js');
+    }
+</script>
 <!-- chargement des feuilles de style -->
 <link rel="stylesheet" href="src/css/theBand.css" type="text/css" media="screen" />
 <link rel="stylesheet" href="src/css/style.css" type="text/css" media="screen" />
