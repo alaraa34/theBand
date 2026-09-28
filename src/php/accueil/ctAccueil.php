@@ -140,7 +140,6 @@ function afficherListeUtilisateurs(string $message = "", bool $succes = true): v
         ['texte' => "Supprimer l'utilisateur", 'logoClass' => 'bi bi-trash', 'modale' => 'accueil;supprimer;utilisateur',
             'message' => "Supprimer définitivement cet utilisateur ? Pour lui retirer seulement l'accès, décochez plutôt « Actif »."]
     ];
-    $infosColonnes[] = ['zone' => 'actions'];
     $infosColonnes[] = ['zone' => BkTable::COLONNE_NUMERO];
     $infosColonnes[] = ['zone' => 'nom', 'fonction' => TbListe::FONCTION_VASN];
     $infosColonnes[] = ['zone' => 'prenom', 'titre' => 'Prénom', 'fonction' => TbListe::FONCTION_VASN];
@@ -273,14 +272,12 @@ function afficherListeMusiciens(string $message = "", bool $succes = true): void
         $infos[$index]['actifTexte'] = $info['actif'] ? "Oui" : "Non";
     }
     $actions = [['texte' => 'Modifier les données groupe', 'logoClass' => 'fa-regular fa-pen-to-square', 'href' => 'accueil;editer;musicien']];
-    $infosColonnes[] = ['zone' => 'actions'];
     $infosColonnes[] = ['zone' => BkTable::COLONNE_NUMERO];
     $infosColonnes[] = ['zone' => 'nom', 'fonction' => TbListe::FONCTION_VASN];
     $infosColonnes[] = ['zone' => 'prenom', 'titre' => 'Prénom', 'fonction' => TbListe::FONCTION_VASN];
     $infosColonnes[] = ['zone' => 'abrev', 'titre' => 'Abrév.', 'fonction' => TbListe::FONCTION_VASN, 'align' => 'MC'];
     $infosColonnes[] = ['zone' => 'roleTexte', 'titre' => 'Rôle'];
     $infosColonnes[] = ['zone' => 'coeff', 'titre' => 'Coeff.<br>maîtrise', 'fonction' => TbListe::FONCTION_VASN, 'align' => 'MC'];
-    $infosColonnes[] = ['zone' => 'idSetlist', 'titre' => 'Playlist<br>perso', 'fonction' => TbListe::FONCTION_VASN, 'align' => 'MC'];
     $infosColonnes[] = ['zone' => 'actifTexte', 'titre' => 'Actif', 'align' => 'MC'];
     $content = (strlen($message) > 0 ? Tbx::messageColorer($succes, $message, $message) : "")
              . TbListe::constituerListe($infos, $infosColonnes, $actions);

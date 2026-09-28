@@ -66,13 +66,13 @@ class UserTheBand extends User{
     //METIER
     //************************************************************************************************    
     public function majDonneesGroupe():bool{
-    //met à jour (ou crée) uniquement la ligne de tb_user_theband de l'utilisateur
-        $requete = "INSERT INTO " . self::TABLE . " (id, role, coeff, idSetlist) VALUES (:id, :role, :coeff, :idSetlist)
-                    ON DUPLICATE KEY UPDATE role = VALUES(role), coeff = VALUES(coeff), idSetlist = VALUES(idSetlist)";
+    //met à jour (ou crée) uniquement le rôle et le coefficient dans tb_user_theband
+    //idSetlist (playlist perso) est géré par un autre traitement : il n'est jamais modifié ici
+        $requete = "INSERT INTO " . self::TABLE . " (id, role, coeff, idSetlist) VALUES (:id, :role, :coeff, 0)
+                    ON DUPLICATE KEY UPDATE role = VALUES(role), coeff = VALUES(coeff)";
         return Model::mdRequeteExecuter($requete, ['id'        => $this->id,
                                                    'role'      => $this->role,
-                                                   'coeff'     => $this->coeff,
-                                                   'idSetlist' => $this->idSetlist]);
+                                                   'coeff'     => $this->coeff]);
     }
 
     public static function supprimerDonneesGroupe(int $idUser):bool{
@@ -99,7 +99,7 @@ class UserTheBand extends User{
     public static function listePourAdministration():array{
     //tous les utilisateurs avec leurs données groupe (vides si pas encore renseignées)
         $requete = "SELECT us.id, us.nom, us.prenom, us.abrev, us.actif,
-                           ustb.role, ustb.coeff, ustb.idSetlist
+                           ustb.role, ustb.coeff
                     FROM " . User::TABLE . " as us LEFT JOIN " . self::TABLE . " as ustb ON us.id=ustb.id
                     ORDER BY us.nom, us.prenom;";
         return Model::mdRequeteLister($requete);

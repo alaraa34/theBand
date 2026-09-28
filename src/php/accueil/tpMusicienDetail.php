@@ -40,14 +40,6 @@ ob_start(); ?>
                                min="0" max="10" step="0.1" required value="<?= $e($musicien->coeff) ?>"/>
                     </div>
                 </div>
-                <div class="col-md-3">
-                    <div class="input-group mb-3">
-                        <span class="input-group-text">Playlist perso</span>
-                        <input type="text" class="form-control" style="text-align:center;" readonly
-                               value="<?= $musicien->idSetlist > 0 ? $e($musicien->idSetlist) : "aucune" ?>"
-                               title="Créée par le musicien depuis « Ma playlist »"/>
-                    </div>
-                </div>
             </div>
             <!-- Soumission formulaire -->
             <?= TbHtml::htmlBoutonValidation()?>
