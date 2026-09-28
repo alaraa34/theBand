@@ -1,16 +1,17 @@
 <?php 
 namespace theBand\src\php\etablissement;
-use shared\php\modale\Toolbox_modal    as TbModal;
+use shared\php\modale\Toolbox_modal         as TbModal;
+use shared\php\toolbox\Toolbox_adressage    as TbAdressage;
 ?>
 <!--Modale standard -->
-<div class="modal fade" id="<?=$action['modale']?>" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true"> 
+<div class="modal fade" id="<?= TbModal::modalGetNomDiv($action['modale'])?>" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true"> 
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <h1 class="modal-title fs-5" id="staticBackdropLabel"><?=$action['texte'];?></h1>
             </div>
             <!-- formulaire modal -->
-            <form method="POST" action="index.php?action=<?=$action['sujet'] . "MDL" . $action['modale']?>"> 
+            <form method="POST" action="<?= TbAdressage::getURLControleurFromCFPAdress($action['modale'])?>"> 
                 <div class="modal-body">
                     <span class="input-group-text" id="basic-addon1">Commentaire *</span>
                         <input type="text" name="commentaire" required class="form-control" 

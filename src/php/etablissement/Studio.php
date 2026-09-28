@@ -34,8 +34,8 @@ class Studio extends Etablissement
     public static function composerListeActions(){
         if (User::userConnecte()){
             return [
-                ['texte'=> 'Modifier','logoClass' =>'fa-regular fa-pen-to-square','href'=>'etablissement;etabEditer'],
-                ['texte' => 'Supprimer','logoClass' => 'bi bi-trash','modale'=>'supprimer','message'=> 'Supprimer cet établissement ?']
+                ['texte'=> 'Modifier','logoClass' =>'fa-regular fa-pen-to-square','href'=>'etablissement;editer'],
+                ['texte' => 'Supprimer','logoClass' => 'bi bi-trash','modale'=>'etablissement;supprimer','message'=> 'Supprimer cet établissement ?']
                 ];
         }
         else{

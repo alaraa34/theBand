@@ -202,7 +202,7 @@ function actionsEVTRepetition(){
                         'modale'=>'evenement;confirmer;repetition','message' => 'La réservation a été validée par le studio'];
     if(User::userConnecte()){
     $actions[] = ['texte'=> 'Modifier','logoClass' =>'fa-regular fa-pen-to-square','href'=>'evenement;Editer;repetition'];
-    $actions[] = ['texte'=> 'Copier','logoClass' =>'bi bi-copy','href'=>'repetition;Copier'];
+    $actions[] = ['texte'=> 'Copier','logoClass' =>'bi bi-copy','href'=>'evenement;copier;repetition'];
     $actions[] = ['texte' => 'Supprimer','logoClass' => 'bi bi-trash','modale'=>'evenement;supprimer;repetition',
                         'message'=> 'Supprimer la répétition ?'];
     }
@@ -230,8 +230,8 @@ function actionsEVTConcert(){
     $actions[] = ['texte'=> 'Imprimer playlist','logoClass' =>'bi bi-printer','href'=>'evenement;PrintSetList;concert'];
     
     if(User::connectUserGetInfo("id",0) > 0){
-        $actions[] =['texte'=> 'Modifier','logoClass' =>'fa-regular fa-pen-to-square','href'=>'evenement;concertEditer'];
-        $actions[] =['texte'=> 'Modifier playlist','logoClass' =>'bi bi-music-note-list','href'=>'song;setlistEditer'];
+        $actions[] =['texte'=> 'Modifier','logoClass' =>'fa-regular fa-pen-to-square','href'=>'evenement;editer;concert'];
+        $actions[] =['texte'=> 'Modifier playlist','logoClass' =>'bi bi-music-note-list','href'=>'evenement;editer;setlist'];
         $actions[] =['texte' => 'Supprimer','logoClass' => 'bi bi-trash','modale'=>'evenement;supprimer;concert',
                         'message'=> 'Supprimer le concert ?'];
     }
@@ -323,7 +323,7 @@ function ctConcertEditer(int $id=0, $idEtablissement=0) {
         //Action et paramètres pour modale établissement
         $actions =  [['texte' => 'Nouvel établissement',
                     'modale'=>'etablissement;ajouter',
-                    'template'=> 'theBand\src\php\etablissement\tpEtablissementDetailMDL.php',
+                    'template'=> 'theBand/src/php/etablissement/tpEtablissementDetailMDL.php',
                     'typesEtab'=>Etablissement::listeDesTypes()]];
                       
         //affichage saisie ou login

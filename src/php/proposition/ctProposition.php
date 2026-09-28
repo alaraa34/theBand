@@ -172,7 +172,7 @@ function ctPropositionSupprimer(){
     }
 }
 
-function ctPropositionMDLReproposer(){
+function ctPropositionReproposer(){
 //validation de la modale propositionMDLreproposer
 //soumet à nouveau une proposition aux votes
     //changement du statut à Validé
@@ -183,7 +183,7 @@ function ctPropositionMDLReproposer(){
     header('Location: ' . (string)filter_input(INPUT_SERVER,'HTTP_REFERER'));
 }
 
-function ctPropositionMDLValider(){
+function ctPropositionValider(){
 //Passe une proposition en test
     $proposition = new Proposition();
     $proposition->id = TbModal::modalGetIdFromModal();
@@ -194,7 +194,7 @@ function ctPropositionMDLValider(){
     //résultat
     header('Location: ' .(string)filter_input(INPUT_SERVER,'HTTP_REFERER'));
 }
-function ctPropositionMDLAbandonner(){
+function ctPropositionAbandonner(){
 //abandon d'une proposition
     $proposition = new Proposition();
     $proposition->id = TbModal::modalGetIdFromModal();

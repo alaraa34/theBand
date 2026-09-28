@@ -25,9 +25,9 @@ function ctProspectListerE(int $id=0):void {
         {//Actions possibles
         $actions = [
             ['texte'=> 'Modifier le commentaire','logoClass' =>'fa-regular fa-pen-to-square',
-                        'modale'=>'etablissement;modifier;prospect','fichier'=> __NAMESPACE__ . '\tpProspectCommentaireMDL'],
+                        'modale'=>'etablissement;modifier;prospect','template'=> 'theBand/src/php/etablissement/tpProspectCommentaireMDL.php'],
             ['texte'=> 'Nouveau suivi','logoClass' =>'bi bi-telephone-outbound',
-                        'modale'=>'etablissement;ajouter;prospect','fichier'=> __NAMESPACE__ . '\tpSuiviDetailMDL'],
+                        'modale'=>'etablissement;ajouter;suivi','template'=> 'theBand/src/php/etablissement/tpSuiviDetailMDL.php'],
             ['texte'=> 'Cloturer le prospect','logoClass' =>'bi bi-door-closed',
                         'modale'=>'etablissement;cloturer;prospect','message' => 'Cloturer le prospect ?'],
             ['texte' => 'Supprimer','logoClass' => 'bi bi-trash',
@@ -47,8 +47,8 @@ function ctProspectListerT():void{
 //contacts terminés avec des prospects
      if (Login::loginControl(__NAMESPACE__))
         {//Actions possibles
-        $actions = [['texte' => 'Supprimer','logoClass' => 'bi bi-trash','sujet'=> Prospect::SUJET_MDL,
-                        'modale'=>'supprimer','message'=> 'Supprimer le prospect et ses suivis (plus aucune trace!)?']];
+        $actions = [['texte' => 'Supprimer','logoClass' => 'bi bi-trash',
+                        'modale'=>'etablissement;supprimer;prospect','message'=> 'Supprimer le prospect et ses suivis (plus aucune trace!)?']];
          ctProspectLister(Prospect::listeFermes(),$actions);}
 }
 
@@ -74,16 +74,16 @@ function ctProspectLister(array $prospects, array $actions):void {
 
 // *************************  fonctions modales ************************
 
-function ctSuiviMDLajouter(){
+function ctSuiviAjouter(){
 //ajoute un suivi en retour de la modale d'ajout de suivi
     $suivi = new Suivi();
     $suivi->commentaire->texte = TbAdressage::getPost("S","commentaire");
     $suivi->idAction = TbAdressage::getPost("I","idAction");
-    $retour = $suivi->update(TbModal::TbModal::modalGetIdFromModal());
+    $retour = $suivi->update(TbModal::modalGetIdFromModal());
     if ($retour){
        ctProspectListerE(TbModal::modalGetIdFromModal());
     }
-    else{die ("Erreur ctSuiviMDLajouter sur ajout de suivi");}
+    else{die ("Erreur ctSuiviAjouter sur ajout de suivi");}
 }
 function ctProspectModifier(){
 //Modifie le commentaire du prospect
@@ -93,7 +93,7 @@ function ctProspectModifier(){
     if ($retour){
        ctProspectListerE($prospect->id);
     }
-    else{die ("Erreur ctSuiviMDLmodifier sur ajout de suivi");}
+    else{die ("Erreur ctProspectModifier sur modification du commentaire");}
 }
    
 function ctProspectSupprimer(){
