@@ -9,6 +9,10 @@ use chords\php\Chords                               as Chords;
 use shared\php\toolbox\Toolbox_adressage            as TbAdressage;
 use shared\php\toolbox\Toolbox                      as Tbx;
 use shared\php\classes\personalisation\Parametre    as Parametre;
+use shared\php\modale\Toolbox_modal                 as TbModal;
+use shared\php\toolbox\Toolbox_liste                as TbListe;
+use shared\php\bricks\Brick_table                   as BkTable;
+use theBand\src\php\socle\UserTheBand               as UserTB;
 
 function ctAccueil() {
     $mode = "accueil";
@@ -113,5 +117,196 @@ function ctGammesEtModes(){
     require(TbAdressage::projetGetLayout(__NAMESPACE__));
 }
 
+/*******************************************************************************
+ * ADMINISTRATION DES UTILISATEURS (réservé aux administrateurs)
+ ******************************************************************************/
+function ctUtilisateurLister(): void {
+//liste de tous les utilisateurs avec modification et suppression
+    if (!accesAdministrateur()) {return;}
+    afficherListeUtilisateurs();
+}
 
+function afficherListeUtilisateurs(string $message = "", bool $succes = true): void {
+//affichage de la liste des utilisateurs, précédée éventuellement d'un message de résultat
+    $messageBarreMenu = "Utilisateurs";
+    $script = Tbx::includeJS('utils');  //traitement des actions de la liste
+    $infos = User::listeTous();
+    foreach ($infos as $index => $info) {
+        $infos[$index]['actifTexte'] = $info['actif'] ? "Oui" : "Non";
+        $infos[$index]['adminTexte'] = $info['administrateur'] ? "Oui" : "Non";
+    }
+    $actions = [
+        ['texte' => "Modifier l'utilisateur", 'logoClass' => 'fa-regular fa-pen-to-square', 'href' => 'accueil;editer;utilisateur'],
+        ['texte' => "Supprimer l'utilisateur", 'logoClass' => 'bi bi-trash', 'modale' => 'accueil;supprimer;utilisateur',
+            'message' => "Supprimer définitivement cet utilisateur ? Pour lui retirer seulement l'accès, décochez plutôt « Actif »."]
+    ];
+    $infosColonnes[] = ['zone' => 'actions'];
+    $infosColonnes[] = ['zone' => BkTable::COLONNE_NUMERO];
+    $infosColonnes[] = ['zone' => 'nom', 'fonction' => TbListe::FONCTION_VASN];
+    $infosColonnes[] = ['zone' => 'prenom', 'titre' => 'Prénom', 'fonction' => TbListe::FONCTION_VASN];
+    $infosColonnes[] = ['zone' => 'abrev', 'titre' => 'Abrév.', 'fonction' => TbListe::FONCTION_VASN, 'align' => 'MC'];
+    $infosColonnes[] = ['zone' => 'pseudo', 'titre' => 'Identifiant', 'fonction' => TbListe::FONCTION_VASN];
+    $infosColonnes[] = ['zone' => 'mail', 'titre' => 'Mail', 'fonction' => TbListe::FONCTION_VASN];
+    $infosColonnes[] = ['zone' => 'actifTexte', 'titre' => 'Actif', 'align' => 'MC'];
+    $infosColonnes[] = ['zone' => 'adminTexte', 'titre' => 'Admin', 'align' => 'MC'];
+    $content = (strlen($message) > 0 ? Tbx::messageColorer($succes, $message, $message) : "")
+             . TbListe::constituerListe($infos, $infosColonnes, $actions);
+    require(TbAdressage::projetGetLayout(__NAMESPACE__));
+}
 
+function ctUtilisateurEditer(int $idUtilisateur = 0): void {
+//création (id = 0) ou modification d'un utilisateur, avec changement éventuel du mot de passe
+    if (!accesAdministrateur()) {return;}
+    $utilisateur = new User($idUtilisateur);
+    if ($idUtilisateur > 0 && $utilisateur->pseudo === "") {
+        afficherListeUtilisateurs("Utilisateur introuvable.", false);
+        return;
+    }
+    afficherFormulaireUtilisateur($utilisateur);
+}
+
+function afficherFormulaireUtilisateur(User $utilisateur, string $messageErreur = ""): void {
+//affichage du formulaire utilisateur (aussi réaffiché avec la saisie en cas d'erreur)
+    $messageBarreMenu = $utilisateur->id === 0 ? "Nouvel utilisateur" : "Modification de l'utilisateur " . htmlspecialchars($utilisateur->prenom);
+    $avatars = listeAvatars();
+    $motDePasseSuggere = User::genererMotDePasse();
+    require('tpUtilisateurDetail.php');
+}
+
+function listeAvatars(): array {
+//images disponibles dans theBand/images pour l'avatar
+    $avatars = [];
+    foreach (glob(ROOT_PATH . PROJET . '/images/*.{jpg,jpeg,png,gif,webp}', GLOB_BRACE) ?: [] as $fichier) {
+        $avatars[] = basename($fichier);
+    }
+    sort($avatars, SORT_NATURAL | SORT_FLAG_CASE);
+    return $avatars;
+}
+
+function ctUtilisateurMAJ(): void {
+//enregistrement du formulaire utilisateur
+    if (!accesAdministrateur()) {return;}
+    $utilisateur = new User(TbAdressage::getPost("I", "idUtilisateur"));
+    $utilisateur->nom            = trim(TbAdressage::getPost("S", "nom"));
+    $utilisateur->prenom         = trim(TbAdressage::getPost("S", "prenom"));
+    $utilisateur->abrev          = strtoupper(trim(TbAdressage::getPost("S", "abrev")));
+    $utilisateur->pseudo         = trim(TbAdressage::getPost("S", "pseudo"));
+    $utilisateur->mail           = trim(TbAdressage::getPost("S", "mail"));
+    $utilisateur->avatar         = TbAdressage::getPost("S", "avatar");
+    $utilisateur->actif          = TbAdressage::getPost("C", "actif") ? 1 : 0;
+    $utilisateur->administrateur = TbAdressage::getPost("C", "administrateur") ? 1 : 0;
+    $motDePasse = TbAdressage::getPost("S", "motDePasse");
+    $creation = $utilisateur->id === 0;
+
+    //l'administrateur connecté ne peut pas se retirer ses propres droits (risque de ne plus pouvoir se connecter)
+    if ($utilisateur->id === (int)User::connectUserGetInfo("id")) {
+        $utilisateur->actif = 1;
+        $utilisateur->administrateur = 1;
+    }
+    //contrôles
+    $erreur = "";
+    if ($utilisateur->nom === "" || $utilisateur->prenom === "" || $utilisateur->abrev === "" || $utilisateur->pseudo === "") {
+        $erreur = "Le nom, le prénom, l'abréviation et l'identifiant sont obligatoires.";
+    }
+    elseif (strlen($utilisateur->abrev) > 2) {
+        $erreur = "L'abréviation fait 2 caractères au maximum.";
+    }
+    elseif ($creation && $motDePasse === "") {
+        $erreur = "Un mot de passe est obligatoire pour un nouvel utilisateur.";
+    }
+    elseif ($motDePasse !== "" && strlen($motDePasse) < 6) {
+        $erreur = "Le mot de passe doit faire au moins 6 caractères.";
+    }
+    else {
+        $erreur = $utilisateur->controlerUnicite();
+    }
+    if ($erreur !== "") {
+        afficherFormulaireUtilisateur($utilisateur, $erreur);
+        return;
+    }
+    //enregistrement
+    $retour = $utilisateur->enregistrer();
+    if ($retour && $motDePasse !== "") {$retour = User::passwordEnregistrer($utilisateur->id, $motDePasse);}
+    if ($retour && $creation) {
+        //création de ses données groupe (rôle à renseigner ensuite dans la liste des musiciens)
+        $musicien = new UserTB($utilisateur->id);
+        $retour = $musicien->majDonneesGroupe();
+    }
+    //résultat : le mot de passe saisi est affiché une seule fois pour pouvoir le communiquer
+    $nom = htmlspecialchars($utilisateur->prenom . " " . $utilisateur->nom);
+    $message = $creation ? "Utilisateur " . $nom . " créé." : "Modifications de " . $nom . " enregistrées.";
+    if ($retour && $motDePasse !== "") {
+        $message .= "<br>Mot de passe à lui communiquer : <strong>" . htmlspecialchars($motDePasse) . "</strong> (il ne sera plus affiché)";
+    }
+    afficherListeUtilisateurs($retour ? $message : "Erreur lors de l'enregistrement de l'utilisateur.", $retour);
+}
+
+function ctUtilisateurSupprimer(): void {
+//suppression d'un utilisateur, en retour de la modale de confirmation
+    if (!accesAdministrateur()) {return;}
+    $idUtilisateur = TbModal::modalGetIdFromModal();
+    if ($idUtilisateur === (int)User::connectUserGetInfo("id")) {
+        afficherListeUtilisateurs("Vous ne pouvez pas supprimer votre propre compte.", false);
+        return;
+    }
+    $utilisateur = new User($idUtilisateur);
+    $nom = htmlspecialchars($utilisateur->prenom . " " . $utilisateur->nom);
+    $retour = UserTB::supprimerDonneesGroupe($idUtilisateur) && $utilisateur->delete();
+    afficherListeUtilisateurs($retour ? "Utilisateur " . $nom . " supprimé." : "Erreur lors de la suppression de " . $nom . ".", $retour);
+}
+
+/*******************************************************************************
+ * DONNEES GROUPE DES MUSICIENS (table tb_user_theband, réservé aux administrateurs)
+ ******************************************************************************/
+function ctMusicienLister(): void {
+//liste des utilisateurs avec leurs données groupe, modification seulement
+    if (!accesAdministrateur()) {return;}
+    afficherListeMusiciens();
+}
+
+function afficherListeMusiciens(string $message = "", bool $succes = true): void {
+    $messageBarreMenu = "Musiciens : données du groupe";
+    $script = Tbx::includeJS('utils');  //traitement des actions de la liste
+    $infos = UserTB::listePourAdministration();
+    foreach ($infos as $index => $info) {
+        $infos[$index]['roleTexte']  = UserTB::libelleRole((int)$info['role']);
+        $infos[$index]['actifTexte'] = $info['actif'] ? "Oui" : "Non";
+    }
+    $actions = [['texte' => 'Modifier les données groupe', 'logoClass' => 'fa-regular fa-pen-to-square', 'href' => 'accueil;editer;musicien']];
+    $infosColonnes[] = ['zone' => 'actions'];
+    $infosColonnes[] = ['zone' => BkTable::COLONNE_NUMERO];
+    $infosColonnes[] = ['zone' => 'nom', 'fonction' => TbListe::FONCTION_VASN];
+    $infosColonnes[] = ['zone' => 'prenom', 'titre' => 'Prénom', 'fonction' => TbListe::FONCTION_VASN];
+    $infosColonnes[] = ['zone' => 'abrev', 'titre' => 'Abrév.', 'fonction' => TbListe::FONCTION_VASN, 'align' => 'MC'];
+    $infosColonnes[] = ['zone' => 'roleTexte', 'titre' => 'Rôle'];
+    $infosColonnes[] = ['zone' => 'coeff', 'titre' => 'Coeff.<br>maîtrise', 'fonction' => TbListe::FONCTION_VASN, 'align' => 'MC'];
+    $infosColonnes[] = ['zone' => 'idSetlist', 'titre' => 'Playlist<br>perso', 'fonction' => TbListe::FONCTION_VASN, 'align' => 'MC'];
+    $infosColonnes[] = ['zone' => 'actifTexte', 'titre' => 'Actif', 'align' => 'MC'];
+    $content = (strlen($message) > 0 ? Tbx::messageColorer($succes, $message, $message) : "")
+             . TbListe::constituerListe($infos, $infosColonnes, $actions);
+    require(TbAdressage::projetGetLayout(__NAMESPACE__));
+}
+
+function ctMusicienEditer(int $idUtilisateur = 0): void {
+//modification des données groupe d'un utilisateur existant
+    if (!accesAdministrateur()) {return;}
+    $musicien = new UserTB($idUtilisateur);
+    if ($musicien->id === 0 || $musicien->nom === "") {
+        afficherListeMusiciens("Utilisateur introuvable.", false);
+        return;
+    }
+    $messageBarreMenu = "Données groupe de " . htmlspecialchars($musicien->prenom . " " . $musicien->nom);
+    $roles = UserTB::listeRoles();
+    require('tpMusicienDetail.php');
+}
+
+function ctMusicienMAJ(): void {
+//enregistrement des données groupe : seule la table tb_user_theband est mise à jour
+    if (!accesAdministrateur()) {return;}
+    $musicien = new UserTB(TbAdressage::getPost("I", "idUtilisateur"));
+    $musicien->role  = TbAdressage::getPost("I", "role");
+    $musicien->coeff = TbAdressage::getPost("F", "coeff");
+    $retour = $musicien->id > 0 && $musicien->majDonneesGroupe();
+    afficherListeMusiciens($retour ? "Données groupe de " . htmlspecialchars($musicien->prenom . " " . $musicien->nom) . " enregistrées."
+                                   : "Erreur lors de l'enregistrement des données groupe.", $retour);
+}
