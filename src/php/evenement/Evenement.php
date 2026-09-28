@@ -213,7 +213,7 @@ abstract class Evenement extends Mere
     //restition d'un évènement
         $requete = "SELECT eve.ID as id, dateHeure,dateHeureFin,confirme,idEtablissement,
                         idSetlist, stl.nomListe as nomSetlist,
-                        com.id as idCommentaire, texte as texteCommentaire,
+                        com.id as idCommentaire, com.texte as texteCommentaire
             FROM ". self::TABLE ." as eve INNER JOIN ". Setlist::TABLE ." as stl ON eve.idSetlist = stl.ID
                            LEFT JOIN ". Commentaire::TABLE ." as com ON eve.idCommentaire = com.ID
             WHERE eve.ID=?;";
