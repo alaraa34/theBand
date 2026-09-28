@@ -18,6 +18,10 @@ use theBand\src\php\etablissement\Etablissement    as Etablissement;
 use theBand\src\php\song\Song                      as Song;
 use theBand\src\php\song\Setlist                   as Setlist;
 use theBand\src\php\song\Detail                    as Detail;
+use theBand\src\php\song\Performance               as Performance;
+use theBand\src\php\song\Repertoire                as Repertoire;
+use shared\php\classes\socle\Commentaire           as Commentaire;
+use shared\php\toolbox\Toolbox_liste               as TbListe;
 
 
 
@@ -59,14 +63,14 @@ function ctRepetitionConfirmer(){
 }
 
 function ctRepetitionProchaine():void{
-    ctListeRepetition(evenement::PROCHAIN);
+    ctListeRepetition(Evenement::PROCHAIN);
 }
 
 function ctRepetitionListe():void{
     //suppression des anciennes répétitions (de plus d'un mois)
     Evenement_Repetition::supprimerEvtsAnciens();
     //liste répétitions
-    ctListeRepetition(evenement::TOUS);
+    ctListeRepetition(Evenement::TOUS);
 }
 function ctRepetitionSupprimer(){
     $idEvt = TbModal::modalGetIdFromModal(); // issue de la modale
@@ -102,7 +106,7 @@ function ctRepetitionCopier(int $id){
     $repetition->id = 0;
     $repetition->dateHeure = "";
     $repetition->setlist->id = 0;
-    $repetition->commentaire = new commentaire();
+    $repetition->commentaire = new Commentaire();
     ctRepetitionEditer1 ($repetition);
 }
 
@@ -114,9 +118,9 @@ function ctRepetitionEditer(int $id=0) {
 function ctRepetitionEditer1(Evenement_Repetition $repetition) {
 //Saisie et mise à jour d'une répétition
     //liste des songs éligibles (concert ou test )
-    $songs = song::getListeChoix(array(Song::TYPE_CONCERT,Song::TYPE_TEST));
+    $songs = Song::getListeChoix(array(Song::TYPE_CONCERT,Song::TYPE_TEST));
     //liste des studios de répétition
-    $studios = etablissement::ListeSelection(Evenement_Repetition::NATURE);
+    $studios = Etablissement::ListeSelection(Evenement_Repetition::NATURE);
     $script = Tbx::includeJS('ajax'). Tbx::includeJS('song','theBand/src');
     if ($repetition->id==0){
         //Ajout d'une nouvelle répet
@@ -146,16 +150,16 @@ function ctRepetitionSelectSongAuto(){
     }
     //Recherche des titres en test
     if(TbAdressage::getpost("C","titresTest")){//tites en test
-        $ids = Song::mdSongListeIDFromType(song::TYPE_TEST);
+        $ids = Song::mdSongListeIDFromType(Song::TYPE_TEST);
         $idSongs = array_merge_recursive($idSongs,$ids);
     }
     //suppression des doublons
     $idSongs =  array_unique($idSongs);
     
     //Recherche de la liste des titres possibles (test + concert)
-    $songs = Song::getListeChoix(array(repertoire::TYPE_CONCERT,repertoire::TYPE_TEST));
+    $songs = Song::getListeChoix(array(Repertoire::TYPE_CONCERT,Repertoire::TYPE_TEST));
     //pose de selected sur les titres concernés et constitution liste avec déclenchement de click
-    $myhtml = "click££ID££" . shared\php\toolbox\Toolbox_liste::valeursChoixListe($songs,
+    $myhtml = "click££ID££" . TbListe::valeursChoixListe($songs,
                                             zone:"titre",
                                             selected:$idSongs);
     echo ($myhtml);
@@ -250,14 +254,14 @@ function ctConcertConfirmer(){
 }
 
 function ctConcertProchain():void{
-    ctListeConcert(evenement::PROCHAIN);
+    ctListeConcert(Evenement::PROCHAIN);
 }
 
 function ctConcertListe():void{
     //suppression des anciennes répétitions (de plus d'un mois)
     Evenement_Concert::supprimerEvtsAnciens();
     //liste répétitions
-    ctListeConcert(evenement::TOUS);
+    ctListeConcert(Evenement::TOUS);
 }
 
 function ctListeConcert(int $prochain) :void{
@@ -385,7 +389,7 @@ function ctSetlistMAJ(){
 //mise à jour MPD d'une set list, evenement majSetlist
 //suite à modification drang drop
     //set list pas initialisée car pas besoin d'elle, juste de la collection
-    $setlist = new setlist();
+    $setlist = new Setlist();
     $setlist->id = TbAdressage::getPost("I","idSetlist");
     //balayage des 3 parties (0 c'est les non utilisés)
     for ($i=1;$i<4;$i++){

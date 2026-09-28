@@ -27,7 +27,7 @@ class Detail extends Mere_instance
     
     // Méthodes
     public function __construct(int $idDetail=0) {
-        $this->song = new repertoire();
+        $this->song = new Repertoire();
          if ($idDetail>0) {
             $this->id=$idDetail;
             $this->loadFromId();

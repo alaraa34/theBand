@@ -39,7 +39,7 @@ function ctSongEditer(int $identifiant = 0) {
     }
     else{
     //Modification d'un titre existant
-        $typesSong = song::listeTypeSong(true);
+        $typesSong = Song::listeTypeSong(true);
         $messageBarreMenu = "Modification d'un titre existant";
         //affichage
         require('tpSongDetail.php');
@@ -323,7 +323,7 @@ function ctPlaylistMAJ(){
 //suite à modification drang drop
     //set list pas initialisée car pas besoin d'elle, juste de la collection
     $setlist = new Setlist(TbAdressage::getPost("I","idSetlist"),true); //pas de chargement des détails
-    if ($setlist->id ===0){$setlist->nomListe = "Playlist personnelle de " . user::connectUserGetInfo("prenom");}
+    if ($setlist->id ===0){$setlist->nomListe = "Playlist personnelle de " . User::connectUserGetInfo("prenom");}
     //Tout est mis en partie 1 de la setlist
     $numero = 0;
     foreach (explode("-", TbAdressage::getPost("S","idSongsSelected")) as $idsong){

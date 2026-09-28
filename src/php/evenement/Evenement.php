@@ -143,7 +143,7 @@ abstract class Evenement extends Mere
     }
     public static function supprimerEvtsAnciens(){
     //supprime les evts anciens si il y a un user con,necté
-        if (user::userConnecte()){
+        if (User::userConnecte()){
             $evts = static::mdEvenementGetListeID(static::A_SUPPRIMER);
             foreach ($evts as $evt){
                 //nom de la classe actuelle

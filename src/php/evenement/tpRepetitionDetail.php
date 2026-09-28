@@ -43,7 +43,7 @@ ob_start();
                         <div class="input-group">
                             <label class="input-group-text" for="inputGroupSelect02">Lieu * </label>
                             <select name="lieuRep" class="form-select" id="inputGroupSelect02" required>
-                                 <?= Tbliste::valeursChoixListe($studios,true,"idEtablissement","nom",selected:$repetition->etablissement->id); ?>
+                                 <?= TbListe::valeursChoixListe($studios,true,"idEtablissement","nom",selected:$repetition->etablissement->id); ?>
                             </select>
                         </div>
                     </div>

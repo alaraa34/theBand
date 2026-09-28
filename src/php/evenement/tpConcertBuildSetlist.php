@@ -7,6 +7,8 @@ namespace theBand\src\php\evenement;
  * @author Alara
  *******************************************************************************/
 
+use theBand\src\php\song\Detail             as Detail;
+use shared\php\toolbox\Toolbox_adressage    as TbAdressage;
 
 ob_start(); ?>
 <br><br<br>

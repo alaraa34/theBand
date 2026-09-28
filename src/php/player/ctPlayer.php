@@ -7,7 +7,7 @@ namespace theBand\src\php\player;
  * @author Alara
  *******************************************************************************/
 
-use metronome\php\metronome                           as Metronome;
+use metronome\php\Metronome                           as Metronome;
 use shared\php\toolbox\Toolbox_liste                  as TbListeGenerique;
 use shared\php\classes\socle\Login                    as Login;
 use shared\php\bricks\Brick_table                     as BkTable;
@@ -87,14 +87,14 @@ function ctPlayerListeSansBox($infos){
     //fonction à appliquer
     $infosColonnes[] = ['zone'=> BkTable::COLONNE_NUMERO,'align'=>'MC'];
     $infosColonnes[] = ['zone'=>'titre','align'=>'M'];
-    $infosColonnes[] = ['zone'=> 'tonaOrigine','titre'=>'Tona<br>origine','fonction'=> tbListeGenerique::FONCTION_VASN,'align'=>'MC'];
-    $infosColonnes[] = ['zone'=> 'tonaScene','titre'=>'Tona<br>Scène<br>(1/2 Ton)','fonction'=> tbListeGenerique::FONCTION_VASN,'align'=>'MC'];
-    $infosColonnes[] = ['zone'=> 'tempo','fonction'=> tbListeGenerique::FONCTION_VASN,'parametres'=>['$valeur',0,false,true],'align'=>'MC'];
-    $infosColonnes[] = ['zone'=> 'leadChant','titre'=>'Lead<br>chant','fonction'=>tbListeGenerique::FONCTION_VASN,'align'=>'MC'];
+    $infosColonnes[] = ['zone'=> 'tonaOrigine','titre'=>'Tona<br>origine','fonction'=> TbListeGenerique::FONCTION_VASN,'align'=>'MC'];
+    $infosColonnes[] = ['zone'=> 'tonaScene','titre'=>'Tona<br>Scène<br>(1/2 Ton)','fonction'=> TbListeGenerique::FONCTION_VASN,'align'=>'MC'];
+    $infosColonnes[] = ['zone'=> 'tempo','fonction'=> TbListeGenerique::FONCTION_VASN,'parametres'=>['$valeur',0,false,true],'align'=>'MC'];
+    $infosColonnes[] = ['zone'=> 'leadChant','titre'=>'Lead<br>chant','fonction'=>TbListeGenerique::FONCTION_VASN,'align'=>'MC'];
     $infosColonnes[] = ['zone'=> 'tempo','titre'=>'Clic<br>batterie','fonction'=> 'metronome\php\Metronome::render','parametres'=>array('$info[\'tempo\']','$info[\'numero\']'),'align'=>'MC'];
     $infosColonnes[] = ['zone'=> 'lienMP3','titre'=>'player','fonction'=>'shared\php\toolbox\Toolbox_html::htmlAfficherLecteurAudio','parametres'=>array('$info[\'lienMP3\']'),'align'=>'MC'];
     
-    return tbListeGenerique::constituerListe($infos, $infosColonnes);
+    return TbListeGenerique::constituerListe($infos, $infosColonnes);
 }
 
 function ctPlayerSongAffichageInitial(int $idContexte):void{
@@ -289,7 +289,7 @@ function ctPlayerDocAffichage(int $idSetList=0){
 //***********************************************************************************
 function ctPlayerPadTestConcert(){
 //Affiche un player avec les pads des tests et concert
-    $infos = song::mdSongGetListePlayerPad();
+    $infos = Song::mdSongGetListePlayerPad();
     ctListePads($infos,"Pads des titres  Test et Concert");
 }
 
@@ -303,7 +303,7 @@ function ctPlayerPadProchainConcert(){
     else{
         //affichage playlist à joueer
         $evt= new Evenement_Concert($idevt);
-        $songs = song::mdSongGetListePlayerFromSetList($evt->setlist->id,TypeLien::PAD); 
+        $songs = Song::mdSongGetListePlayerFromSetList($evt->setlist->id,TypeLien::PAD); 
         ctListePads($songs,"Pads du prochain concert");
     }
     

@@ -26,8 +26,8 @@
         $matable->addCell(htmlspecialchars($proposition->interprete));
         $matable->addCell($proposition->mettreEnFormeLiens());
         //<!--Affichage des votes APP et APT-->
-        $matable->addCell(listerVotesProposition($numero,vote::PREFERENCE,$proposition));
-        $matable->addCell(listerVotesProposition($numero,vote::MAITRISE,$proposition));
+        $matable->addCell(listerVotesProposition($numero,Vote::PREFERENCE,$proposition));
+        $matable->addCell(listerVotesProposition($numero,Vote::MAITRISE,$proposition));
     }
     $matable->addCell(voteligneBouton(2), "barreTitre", colspan:20,nouveau:true);
   
@@ -41,7 +41,7 @@ function listerVotesProposition(int $numero, int $objet ,proposition $propositio
     //Affiche la liste des votes de chaque utilisateur
     //objet = préférence 1 ou maitrise 2
     //affichage saisie unique ou tous votes
-    $vote = $proposition->getVoteUserObject($objet,user::connectUserGetInfo('abrev'));
+    $vote = $proposition->getVoteUserObject($objet,User::connectUserGetInfo('abrev'));
     //si abrev correspond au connecté alors saisie possible
     $texte =  "<input style=\"text-align:center;\" type=\"number\"  name=\"cvote_" . $proposition->id . "_". $objet .  "\"
       oninput=\"jsVoteModif('vote" . $numero . "')\")\" width=\"15\"  min=\"0\" max=\"". votePlafond($objet) . "\" value=\"". $vote . "\"".
@@ -53,10 +53,10 @@ function listerVotesProposition(int $numero, int $objet ,proposition $propositio
 function voteLibelle(int $objet) :string {
 //Retourne le liellé du tag en fonction de l'objet
     switch ($objet){
-        case vote::PREFERENCE :
-            return vote::LIBELLE_PREFERENCE ;
-        case vote::MAITRISE :
-            return vote::LIBELLE_MAITRISE ;
+        case Vote::PREFERENCE :
+            return Vote::LIBELLE_PREFERENCE ;
+        case Vote::MAITRISE :
+            return Vote::LIBELLE_MAITRISE ;
         default :
             return "Erreur code objet vote";
     }
@@ -64,9 +64,9 @@ function voteLibelle(int $objet) :string {
 function votePlafond(int $objet) :string {
 //Retourne le libellé du tag en fonction de l'objet
     switch ($objet){
-        case vote::PREFERENCE :
+        case Vote::PREFERENCE :
             return '5' ;
-        case vote::MAITRISE :
+        case Vote::MAITRISE :
             return '5' ;
         default :
             return "Erreur code objet vote";

@@ -11,7 +11,7 @@ use shared\php\classes\socle\Coordonnee     as Coordonnee;
 use shared\php\classes\socle\Mere           as Mere;
 use shared\php\classes\socle\Commentaire    as Commentaire;
 
-class Contact extends mere
+class Contact extends Mere
 /**
  * cette classe n'est utilisable que sous forme de collection dans un établissement
  * pas la mise à jour car c'est contactEtablissement qui le fait appelé au niveau d'établissement

@@ -15,6 +15,7 @@ use shared\php\database\Model                          as Model;
 use shared\php\toolbox\Toolbox_adressage               as TbAdressage;
 use theBand\src\php\socle\UserTheBand                  as UserTB;
 use shared\php\classes\socle\User                      as User;
+use theBand\src\php\song\Repertoire                    as Repertoire;
 
 
 function ctPropositionListerAB():void{
@@ -188,7 +189,7 @@ function ctPropositionValider(){
     $proposition = new Proposition();
     $proposition->id = TbModal::modalGetIdFromModal();
     $proposition->mdPropositionMajStatut(Proposition::VALIDE); //repasse statut en cours
-    $proposition->mdSongMajType(repertoire::TYPE_TEST);
+    $proposition->mdSongMajType(Repertoire::TYPE_TEST);
     unset($proposition);
  
     //résultat
@@ -222,8 +223,8 @@ function ctPropositionMajVotes() {
         $vote->user->id = $idUser;
         $vote->rechercheID($idProposition); //recherche de l'ID du vote pour ne pas dupliquer
         //cvotes sous la forme cvote_" . $proposition->id . "_". $objet . 
-        $vote->maitrise = TbAdressage::getPost("I","cvote_" . $idProposition . "_". vote::MAITRISE);
-        $vote->preference = TbAdressage::getPost("I","cvote_" . $idProposition . "_". vote::PREFERENCE);
+        $vote->maitrise = TbAdressage::getPost("I","cvote_" . $idProposition . "_". Vote::MAITRISE);
+        $vote->preference = TbAdressage::getPost("I","cvote_" . $idProposition . "_". Vote::PREFERENCE);
         
         //Mise à jour avec identifiant externe
         $vote->update($idProposition);

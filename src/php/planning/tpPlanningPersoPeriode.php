@@ -45,7 +45,7 @@ ob_start(); ?>
                         </thead>
                         <tbody id="periodes">
                             <!-- Ligne modèle --> 
-                            <?= genererLignePeriode(lien::MODELE_LIGNE); ?>
+                            <?= genererLignePeriode(Lien::MODELE_LIGNE); ?>
                             <?= genererLignePeriode(1); ?>
                         </tbody>
                     </table>
@@ -87,8 +87,8 @@ function genererLignePeriode(int $indice): string{
     //En cas de modification du type de periode ou du contenu du periode, le js periodeModification(ligne) est appelé 
     // en cas de suppression (clic sur poubelle) le periode periodeSuppression  est appelé
     $myhtml = "<tr id=\"periode" . $indice ."\"" ;
-    if ($indice==lien::MODELE_LIGNE){$myhtml.= " hidden ";}
-    $required = $indice==lien::MODELE_LIGNE ? "" : " required ";
+    if ($indice==Lien::MODELE_LIGNE){$myhtml.= " hidden ";}
+    $required = $indice==Lien::MODELE_LIGNE ? "" : " required ";
     $myhtml .= ">";
     // colonne caché action toujours en création
     $myhtml .=  '<td hidden>' .

@@ -39,7 +39,7 @@ class Suivi extends MereInstance{
         $this->date = tbDate::dateDuJour();
         $this->idAction = self::ACTION_CREATION;
         $this->commentaire = new Commentaire();
-        $this->auteur = new user($_SESSION['LOGGED_USER']['id']);
+        $this->auteur = new User($_SESSION['LOGGED_USER']['id']);
         if ($idSuivi > 0){$this->loadFromId();}
     }
     //------------------------------------------------------------------------------------------------
@@ -80,7 +80,7 @@ class Suivi extends MereInstance{
         $idEtat = (int) mdNomenclatureGetDetailFromID($this->idAction,"valeurN");
         
         if($idEtat==0){$retour = true;}
-        else{$retour = prospect::majEtat($idProspect, $idEtat);}
+        else{$retour = Prospect::majEtat($idProspect, $idEtat);}
 
         return $retour;
     }

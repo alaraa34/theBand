@@ -10,6 +10,7 @@ use shared\php\database\Model                      as Model;
 use shared\php\toolbox\Toolbox_classe              as TbClasse;
 use shared\php\classes\socle\Mere                  as Mere;
 use theBand\src\php\evenement\Evenement_Concert    as Evenement_Concert;
+use theBand\src\php\evenement\Evenement            as Evenement;
 
 class Setlist extends Mere
 {

@@ -203,7 +203,7 @@ class Proposition extends Song
     //METIER
     //-----------------------------------------------------------------------------------------------
     public function total(int $preferenceMaitrise){
-        if($preferenceMaitrise==vote::MAITRISE){
+        if($preferenceMaitrise==Vote::MAITRISE){
             return $this->totalMaitrise(1);
         }
         else{
@@ -254,10 +254,10 @@ class Proposition extends Song
     foreach ($this->votes as $vote) {
         if ($vote->user->abrev == $abrev){
             switch ($objet){
-                case vote::PREFERENCE :
+                case Vote::PREFERENCE :
                     $retour = $vote->preference;
                     break;
-                case vote::MAITRISE :
+                case Vote::MAITRISE :
                     $retour = $vote->maitrise;
             }
             break;

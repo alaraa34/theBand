@@ -113,7 +113,7 @@ ob_start();
 function genererLigneContactEntete(int $indice, int $idContact, int $idCommentaireContact = 0, int $idCoordonneeContact=0 ): string{
 
     $myhtml = "<tr id=\"contact" . $indice ."\"" ;
-    if ($indice==lien::MODELE_LIGNE){$myhtml.= " hidden ";}
+    if ($indice==Lien::MODELE_LIGNE){$myhtml.= " hidden ";}
     $myhtml .= ">";
     // colonne caché avec Id du contact et action faite dessus apportée
     $myhtml .= "<td hidden>" .

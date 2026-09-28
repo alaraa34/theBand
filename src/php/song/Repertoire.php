@@ -106,7 +106,7 @@ class Repertoire extends Song
     public function loadFromArray(array $infos):void{
     //Charge l'instance via un tableau de données
         //Identifiant
-        tbClasse::classeLoadFromArray($this,$infos);
+        TbClasse::classeLoadFromArray($this,$infos);
     }
     
     public function chargerLiensParMouvements(array $mvtsLiens):void{

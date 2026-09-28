@@ -68,7 +68,7 @@ class Etablissement extends Mere
             //Suppression des prospects
             $tableau = Prospect::listeProspectEtablissement($this->id);
             foreach ($tableau as $id){
-                $prospect = new prospect((int)$id);
+                $prospect = new Prospect((int)$id);
                 $retour = $prospect->delete();
                 unset ($prospect);
             }
@@ -178,7 +178,7 @@ class Etablissement extends Mere
                     WHERE et.idTypeEtab<>?
                     ORDER BY et.nom;";
 
-        return Model::mdRequeteLister($requete,[prospect::ETAT_OUVERT,Studio::NOM_STUDIO]);
+        return Model::mdRequeteLister($requete,[Prospect::ETAT_OUVERT,Studio::NOM_STUDIO]);
     }
 }
 

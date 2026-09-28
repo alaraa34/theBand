@@ -44,7 +44,7 @@ class Prospect extends Mere
         $this->idEtat = self::ETAT_OUVERT;
         $this->commentaire = new Commentaire();
         $this->etablissement = new Etablissement();
-        $this->suiveur = new user($_SESSION['LOGGED_USER']['id']);
+        $this->suiveur = new User($_SESSION['LOGGED_USER']['id']);
         //pas d'instanciations de liens
         if ($idProspect > 0){tbClasse::classeLoadFromId($this,["liens","contacts"]);}
     }

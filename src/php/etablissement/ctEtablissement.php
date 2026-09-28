@@ -14,6 +14,7 @@ use shared\php\toolbox\Toolbox_adressage    as TbAdressage;
 use shared\php\classes\socle\Login          as Login;
 use shared\php\classes\socle\Commentaire    as Commentaire;
 use shared\php\bricks\Brick_table           as BkTable;
+use shared\php\classes\lien\Lien            as Lien;
 
 //------------------------------------------------------------------------------
 //PROSPECTS
@@ -130,7 +131,7 @@ function ctEtablissementEditer(int $id=0) {
 
 function ctEtablissementSupprimer() {
 //Appelé par modale de suppression d'un établissement
-    $etablissement = new etablissement(TbModal::modalGetIdFromModal()); // issue de la modale
+    $etablissement = new Etablissement(TbModal::modalGetIdFromModal()); // issue de la modale
     $retour = $etablissement->delete();
     if($retour){
         //réaffichagede la liste
@@ -154,7 +155,7 @@ function ctEtablissementAjouter(){
 
 function ctEtablissementProspecter(){
 //Ajout d'un prospect pour l'établissement a partir de la liste etablissement via la modale
-    $prospect = new prospect();
+    $prospect = new Prospect();
     //test existant
     $prospect->etablissement->id = TbModal::TbModal::modalGetIdFromModal();
     //test doublon
@@ -173,7 +174,7 @@ function ctEtablissementProspecter(){
 }
 
 function ctEtablissementCharger (bool $minimal ) : Etablissement{
-    $etab = new etablissement();
+    $etab = new Etablissement();
     $etab->id = TbAdressage::getPost("I","idEtab");
     $etab->nom = ucfirst(trim(TbAdressage::getPost("S","nomEtab")));
     $etab->idTypeEtab = TbAdressage::getPost("I","typeEtab");
@@ -189,9 +190,9 @@ function ctEtablissementCharger (bool $minimal ) : Etablissement{
 
     //Zones associatives 
     if (!$minimal){
-        $etab->chargerLiensParMouvements(TbAdressage::getValeurPostTableau(lien::ZONES_MOUVEMENTS));
+        $etab->chargerLiensParMouvements(TbAdressage::getValeurPostTableau(Lien::ZONES_MOUVEMENTS));
 
-        $etab->chargerContactsParMouvements(TbAdressage::getValeurPostTableau(contact::ZONES_MOUVEMENTS));
+        $etab->chargerContactsParMouvements(TbAdressage::getValeurPostTableau(Contact::ZONES_MOUVEMENTS));
     }
     return $etab;
 }
@@ -217,12 +218,12 @@ function ctEtablissementMAJ() {
 function ctEtablissementStudioLister():void{
 //liste des studios de répétition
     $messageBarreMenu = "Liste des studios de repetition";
-    ctEtablissementlister(Studio::liste(true),studio::composerListeActions(),$messageBarreMenu);
+    ctEtablissementlister(Studio::liste(true),Studio::composerListeActions(),$messageBarreMenu);
 }
 function ctEtablissementConcertLister():void{
 //Liste des établissements pour concert
     $messageBarreMenu = "Liste des établissements pour concert";
-    ctEtablissementLister(Etablissement::liste(true),etablissement::composerListeActions(),$messageBarreMenu);
+    ctEtablissementLister(Etablissement::liste(true),Etablissement::composerListeActions(),$messageBarreMenu);
 }
 
 function ctEtablissementLister(array $infos, array $actions, string $messageBarreMenu) :void{

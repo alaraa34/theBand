@@ -41,7 +41,7 @@ class Performance extends Mere{
     public static function listePourVotePerformance() {
     // porte sur les titres Test et Concert
         //recherche des ID
-        $infos = self::mdSongGetListeVotePerformance(array(song::TYPE_CONCERT,song::TYPE_TEST));
+        $infos = self::mdSongGetListeVotePerformance(array(Song::TYPE_CONCERT,Song::TYPE_TEST));
         $liste = [];
         foreach ($infos as $info){
             $performance = new Performance();
@@ -53,10 +53,10 @@ class Performance extends Mere{
         return $liste;
     }
     public static function tableauMoyennePerformanceGroupe(){
-        return self::mdSongGetListeTousVotesPerformance(array(song::TYPE_CONCERT,song::TYPE_TEST));
+        return self::mdSongGetListeTousVotesPerformance(array(Song::TYPE_CONCERT,Song::TYPE_TEST));
     }
     public static function tableauMoyennePerformancePerso(){
-        return self::mdSongGetListeVotePerformancePerso(array(song::TYPE_CONCERT,song::TYPE_TEST));
+        return self::mdSongGetListeVotePerformancePerso(array(Song::TYPE_CONCERT,Song::TYPE_TEST));
     }
     //------------------------------------------------------------------------------------------------
     //CRUD

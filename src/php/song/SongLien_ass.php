@@ -29,7 +29,7 @@ class SongLien_ass {
         $this->lien = is_null($lien) ? new Lien(): $lien ;
  
         //'Recherche si çà existe'
-        if(!is_null($song)){$this->id = tbClasse::classeGetIdAssociation($this);}
+        if(!is_null($song)){$this->id = TbClasse::classeGetIdAssociation($this);}
     }
     //------------------------------------------------------------------------------------------------
     //STATIC

@@ -239,7 +239,7 @@ class Song
         $requete = "SELECT titre,
                         (select lie.url  FROM ". Lien::TABLE ." as lie INNER JOIN ". SongLien_ass::TABLE ." as sla ON lie.ID = sla.idLien
                         WHERE sla.idSong = son.id and  lie.idTypeLien=?
-                        and " . lien::wherePrive(). ") as lienPDF
+                        and " . Lien::wherePrive(). ") as lienPDF
                 FROM ". self::TABLE ." as son INNER JOIN ". Detail::TABLE ." as det ON son.ID = det.idSong
                 WHERE det.idSetlist = ?
                 ORDER BY det.ordre;";
@@ -247,7 +247,7 @@ class Song
         return Model::mdRequeteLister($requete,[$idTypeLien,$idSetList]);
     }
     public static function mdSongListeIDFromSetList(int $idSetList) {
-        $requete = "select idSong FROM " . detail::TABLE . " WHERE idSetList=?";
+        $requete = "select idSong FROM " . Detail::TABLE . " WHERE idSetList=?";
         return Model::mdRequeteListerZoneUnique($requete,"idSong",[$idSetList]);
     }
   

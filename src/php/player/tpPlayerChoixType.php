@@ -9,6 +9,7 @@ namespace theBand\src\php\player;
 
 
 use shared\php\toolbox\Toolbox_adressage    as TbAdressage;
+use shared\php\toolbox\Toolbox_liste        as TbListe;
 
 
 ob_start(); ?> 
@@ -26,7 +27,7 @@ ob_start(); ?>
              
                     
                     <select required class="form-select" id="typePDF" name="typePDF">
-                        <?= shared\php\toolbox\Toolbox_liste::valeursChoixListe($extensions,true); ?>
+                        <?= TbListe::valeursChoixListe($extensions,true); ?>
                     </select>
                     <br>
                     <input type="submit" class="btn btn-primary" value="Valider"  />
