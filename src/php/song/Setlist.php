@@ -42,6 +42,7 @@ class Setlist extends Mere
     //CRUD
     //-----------------------------------------------------------------------------------------------
    
+    #[\Override]
     public function update() : bool {
     //met à jour  une set list
         if($this->deleteDetails()){
@@ -61,6 +62,15 @@ class Setlist extends Mere
         return $retour;
     }
    
+    public function updateCollectionDetail() : bool{
+    //mise à jour dde la collection
+        //suppression des détails du MPD seulement si une liste existante pour la remplecer
+        $retour=true;
+        if (count($this->details) >0){$retour = $this->deleteDetails();}
+        //creation des details de la classe
+        if($retour){$retour= TbClasse::classeUpdateCollection($this);}
+        return $retour;
+    }
     //------------------------------------------------------------------------------------------------
     //CHARGEMENT
     //-----------------------------------------------------------------------------------------------
@@ -75,22 +85,22 @@ class Setlist extends Mere
     }
     
     private function loadDetailCollection(array $infos):void{
+    //charge les instances de detail pour 
         foreach ($infos as $info){
-            $this->details[]=new Detail($info['id']);
+            $detail = new Detail();
+            $detail->loadFromArray($info);
+            TbClasse::classeLoadFromArray($detail->song, $info, "Song");
+            $this->details[]=$detail;
+            unset($detail);
         }
     }
     
     public function loadPartie0(){
     //Charge la partie non affectée de la set list
-        $this->loadDetailCollection($this->Model::mdSongGetRepertoireSetlistPart0());
+        $this->loadDetailCollection($this->mdSongGetRepertoireSetlistPart0());
     }
     
-    public function loadFromArray(array $infos):void{
-    //Charge l'instance via un tableau de données
-        //Identifiant
-        TbClasse::classeLoadFromArray($this,$infos);
-    }
-    
+     
     //------------------------------------------------------------------------------------------------
     //METIER
     //-----------------------------------------------------------------------------------------------
@@ -118,6 +128,7 @@ class Setlist extends Mere
                     ORDER BY dateheure DESC;";
         return Model::mdRequeteLister($requete,[Evenement_Concert::NATURE,$id]);
     }
+    
     private function mdSongGetRepertoireSetlistPart0() {
     // Retourne la liste des songs du répertoire concert.non utilisés dans la set list
             $requete = "SELECT so.ID as idSong, titre as titreSong, interprete as interpreteSong , 0 as partie,1 as ordre, false as enchainement 

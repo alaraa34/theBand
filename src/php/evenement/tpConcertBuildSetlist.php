@@ -9,6 +9,7 @@ namespace theBand\src\php\evenement;
 
 use theBand\src\php\song\Detail             as Detail;
 use shared\php\toolbox\Toolbox_adressage    as TbAdressage;
+use theBand\src\php\song\Setlist            as Setlist;
 
 ob_start(); ?>
 <br><br<br>
@@ -61,7 +62,7 @@ ob_start(); ?>
     </div>
 </div>
 <div class="scrumboard row ">
-    <form enctype="multipart/form-data"  method="post" action="index.php?action=setlistMAJ">
+    <form enctype="multipart/form-data"  method="post" action="<?= TbAdressage::getURLstatic('evenement','setlistMAJ')?>">
         <input type="hidden"  name="idSetlist" value="<?= $evt->setlist->id?>" />
         <input type="hidden"  name="listePartie1" id="listePartie1" value="" />
         <input type="hidden"  name="listePartie2" id="listePartie2" value="" />

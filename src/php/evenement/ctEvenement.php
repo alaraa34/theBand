@@ -300,7 +300,7 @@ function ctConcertPrintSetList(int $idEvt) {
 function ctConcertEditSetListProchain(){
     $idevt = Evenement_Concert::getIdProchain();
     if ($idevt === 0){
-         $content = Tbx::messageColorer(false,"","Aucun concert à venir");
+        $content = Tbx::messageColorer(false,"","Aucun concert à venir");
         require(TbAdressage::projetGetLayout(__NAMESPACE__));
     }
     else{
@@ -380,24 +380,24 @@ function ctSetlistEditer($idEvt){
     $evt = new Evenement_Concert($idEvt);
     $messageBarreMenu = "Modification de Playlist";
     $evt->setlist->loadPartie0();
-    $script = Tbx::includeJS(['jquery_ui']) . Tbx::includeJS(['concert'],'theBand/src');
+    $script = Tbx::includeJS(['concert'],'theBand/src');
     $css = Tbx::includeCSS(['concert'],'theBand/src');
     //affichage sans actions
-    if(Login::loginControl(__NAMESPACE__)){require('concertBuildSetlist');}
+    if(Login::loginControl(__NAMESPACE__)){require('tpConcertBuildSetlist.php');}
 }
 
 function ctSetlistMAJ(){
 //mise à jour MPD d'une set list, evenement majSetlist
-//suite à modification drang drop
+//suite à modification drag drop
     //set list pas initialisée car pas besoin d'elle, juste de la collection
     $setlist = new Setlist();
     $setlist->id = TbAdressage::getPost("I","idSetlist");
     //balayage des 3 parties (0 c'est les non utilisés)
-    for ($i=1;$i<4;$i++){
+    for ($i=1;$i<=3;$i++){
         $zone = TbAdressage::getPost("S","listePartie" .$i);
-        if (strlen($zone)>0) {
+        if (\strlen($zone)>0) {
             foreach(explode("-",$zone) as $song){
-                $setlist->details[]=ctSetlistMajDetail($i,$song,count($setlist->details));
+                $setlist->details[]=setlistMajDetail($i,$song,count($setlist->details));
             }
         }
     }
@@ -407,7 +407,7 @@ function ctSetlistMAJ(){
      //Affichage
      require(TbAdressage::projetGetLayout(__NAMESPACE__));
 }
-function ctSetlistMajDetail(int $partie , string $song, int $lastOrdre) {
+function setlistMajDetail(int $partie , string $song, int $lastOrdre) {
 // Mets à jour une partie de set list
 // le tableau d'Idsong contient soit idsong(ex 33) soit idsont + E si enchainement(ex33E)
     //la Suppression de la liste existante a été faite avant cet appel dans ctMajSetlist

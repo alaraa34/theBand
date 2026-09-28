@@ -16,11 +16,13 @@
 <!-- chargement des feuilles de style -->
 <link rel="stylesheet" href="src/css/theBand.css" type="text/css" media="screen" />
 <link rel="stylesheet" href="src/css/style.css" type="text/css" media="screen" />
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
-<link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css"/>
-<?php if (isset($css)){echo $css;}?>
+<!-- chargement des feuilles de style -->
+<?php 
+    include_once (ROOT_PATH . '/shared/includes/bootstrap_jquery_css.php');
+    if (isset($css)){echo $css;}
+?>
+
+
 </head>  
 <body>  
 
@@ -55,6 +57,7 @@
     <!-- chargement des scripts -->	
     <?php
         include_once (ROOT_PATH .'shared/includes/bootstrap_scripts.php');
+        include_once (ROOT_PATH .'shared/includes/jquery_ui.php');
         if (isset($script)){echo $script;}
     
         use shared\php\classes\personalisation\Parametre    as Parametre;
