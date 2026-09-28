@@ -37,7 +37,7 @@ function ctPropositionListerElimines() :void{
 function ctPropositionLister(int $statut,int $vote1titre2Elim3 = 1) {
 //Liste des propositions
 //Statuts 17 en cours, 18 validée,19 abandonnée ; pas d'action pour les validées 
-    
+    $script = Tbx::includeJS('utils');  //traitement des actions de la liste
     $messageBarreMenu = "Liste de propositions <strong>" . Nomenclature::mdNomenclatureGetDetailfromID($statut,"valeurA") . "s</strong>";
     // liste des users
     $listeUsers = UserTB::listeMusiciens();

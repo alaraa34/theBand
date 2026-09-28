@@ -56,6 +56,7 @@ function ctProspectListerT():void{
 function ctProspectLister(array $prospects, array $actions):void {
 // liste de tous les prospect
     //Pas de controle login car déjà fait
+    $script = Tbx::includeJS('utils');  //traitement des actions de la liste
     switch (count($prospects)){ 
         case 0:
             $content = Tbx::messageColorer(false, "","Il n'y a pas de prospects pour l'état demandé");

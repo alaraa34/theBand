@@ -315,7 +315,7 @@ function ctConcertEditer(int $id=0, $idEtablissement=0) {
     $etablissements = Etablissement::ListeSelection(Evenement_Concert::NATURE);
     $modelesSL = Setlist::listerSetlistConcert($concert->setlist->id);
      //JS et CSS
-    $script = Tbx::includeJS(array('ajax','textbox'));
+    $script = Tbx::includeJS(array('ajax','textbox','utils'));
     $css = Tbx::includeCSS('textbox');
     $textbox = new BkTextbox();
     $textbox->setTexte($concert->commentaire->texte);

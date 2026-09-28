@@ -295,6 +295,7 @@ function ctRepertoireAfficherPerformance(array $infos,string $zone) {
         $infosColonnes[] = ['zone'=>'interprete','titre'=>'Interprète'];
         $infosColonnes[] = ['zone'=>'typeSong','titre'=>'Concert<br>Test','fonction'=>TbListe::FONCTION_VASN,'align'=>'C'];
         $infosColonnes[] = ['zone'=> $zone,'titre'=>'Moyenne <br>groupe','align'=>'C',TbListe::FONCTION_VASN];
+        $script = Tbx::includeJS('utils');  //traitement des actions de la liste
         $content = TbListe::constituerListe( $infos, $infosColonnes, $actions);
         require(TbAdressage::projetGetLayout(__NAMESPACE__));
     }

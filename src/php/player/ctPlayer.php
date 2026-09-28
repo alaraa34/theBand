@@ -76,7 +76,7 @@ function ctPlayerAfficherPlayerAvecBox(array $infos, int $idTypeSong, int $idCon
   
     $url = TbAdressage::getURLstatic("player", "playerAfficherChoix");
     //scripts à rajouter
-    $script = Tbx::includeJS(array('ajax','player')) . Metronome::includeJS();
+    $script = Tbx::includeJS(array('ajax','player','utils')) . Metronome::includeJS();
     
     require('tpPlayer.php'); 
 }
@@ -311,7 +311,7 @@ function ctPlayerPadProchainConcert(){
 
 function ctListePads(array $infos, string $messageBarreMenu){
 //affiche juste laliste des titres sans les deux combo box de chhois
-    $script =Tbx::includeJS('player');
+    $script = Tbx::includeJS(array('player','utils'));
     //zone = nom de la zone dans infos,
     //titre = titre à mettre , si rien c'est le nom de la zone 
     //fonction à appliquer
