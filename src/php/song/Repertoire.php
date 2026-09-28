@@ -142,7 +142,7 @@ class Repertoire extends Song
     function mdSongDetail() {
     //Retourne les infos sur une song
         $requete= "SELECT titre,interprete,tonaOrigine,tonaScene,tempo,idTypeSong,idLeadChant as idUser, 
-                    idCommentaire, commentaire.texte as texteCommentaire 
+                    idCommentaire, co.texte as texteCommentaire 
                 FROM ". Song::TABLE . " as so LEFT JOIN ". Commentaire::TABLE . " as co ON so.idCommentaire = co.ID WHERE so.ID= ?";
         return Model::mdRequeteListerUnique($requete,[$this->id]);
     }
