@@ -30,6 +30,7 @@ class Etablissement extends Mere
     // Constantes
     public const TABLE  =  PREFIXE_BDD . "etablissement";
     public const SUJET =73;
+    public const array RESTREINT = ["coordonnee","liens","contacts"];
     
     //------------------------------------------------------------------------------------------------
     //CONSTRUCTEUR

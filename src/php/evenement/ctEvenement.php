@@ -22,6 +22,7 @@ use theBand\src\php\song\Performance               as Performance;
 use theBand\src\php\song\Repertoire                as Repertoire;
 use shared\php\classes\socle\Commentaire           as Commentaire;
 use shared\php\toolbox\Toolbox_liste               as TbListe;
+use shared\php\toolbox\Toolbox_classe              as TbClasse;
 
 
 
@@ -348,7 +349,7 @@ function ctConcertMAJ(){
     
     $concert->etablissement->id = TbAdressage::getPost("I","lieuConcert");
     //Chargement du nom pour intitulé setlist
-    $concert->etablissement->loadFromIdRestreint();
+    TbClasse::classeLoadFromId($concert->etablissement);
     $concert->id = TbAdressage::getPost("I","idConcert");
     $concert->dateHeure = TbAdressage::getPost("S","dateConcert") . " " . TbAdressage::getPost("S","heureConcert"). ":00";
     $concert->dateHeureFin = TbAdressage::getPost("S","dateRep") . " " .  "00:00:00";
