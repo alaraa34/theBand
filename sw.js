@@ -21,7 +21,7 @@ self.addEventListener('install', event => {
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys()
-      .then(cles => Promise.all(cles.filter(c => c !== VERSION).map(c => caches.delete(c))))
+      .then(cles => Promise.all(cles.filter(c => c.startsWith('theband-') && c !== VERSION).map(c => caches.delete(c))))
       .then(() => self.clients.claim())
   );
 });
