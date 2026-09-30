@@ -64,26 +64,26 @@ ob_start();
           
                     <div class="col">
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" name="titresTest" type="radio" value="" id="flexCheckDefault">
-                            <label class="form-check-label" for="flexCheckDefault">Titres en test</label>
+                            <input class="form-check-input" type="radio" name="selectionAuto" value="titresTest" id="titresTest">
+                            <label class="form-check-label" for="titresTest">Titres en test</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="titresProchainConcert" value="" id="flexCheckDefault3">
-                            <label class="form-check-label" for="flexCheckDefault3">Setlist du prochain concert</label>
+                            <input class="form-check-input" type="radio" name="selectionAuto" value="titresProchainConcert" id="titresProchainConcert">
+                            <label class="form-check-label" for="titresProchainConcert">Setlist du prochain concert</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="titresRepetPrecedente" value="" id="flexCheckDefault4">
-                            <label class="form-check-label" for="flexCheckDefault4">Titres d la dernière répétition</label>
+                            <input class="form-check-input" type="radio" name="selectionAuto" value="titresRepetPrecedente" id="titresRepetPrecedente">
+                            <label class="form-check-label" for="titresRepetPrecedente">Titres de la dernière répétition</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="titresPerformance" value="" id="flexCheckDefault1">
-                            <label class="form-check-label" for="flexCheckDefault1">
+                            <input class="form-check-input" type="radio" name="selectionAuto" value="titresPerformance" id="titresPerformance">
+                            <label class="form-check-label" for="titresPerformance">
                                 <input style="text-align:center;" name="titresNbPerf" width="12"  min="1" max="12" type="number" value="8" />
                                 Performances les moins notées
                             </label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <button type="button" onclick="Get_Form_formulaire('<?= TbAdressage::urlControleur("repetitionSelectSongAuto","repetition");?>','repetitionPostForm','choixSong')" class="btn btn-success btn-sm">Sélectionner</button>
+                            <button type="button" onclick="jsRepetSelectionAuto('<?= TbAdressage::urlControleur("evenement","repetitionSelectSongAuto");?>')" class="btn btn-success btn-sm">Sélectionner</button>
                         </div>
                     </div>
                 </div>
@@ -93,8 +93,9 @@ ob_start();
                 <!--songs à répéter -->
                 <div class="row">
                     <div class="col-6">
-                        <span class="h5">Sélectionner en cliquant (Touche Ctrl pour choix multiple)</span>
-                        <select id="choixSong" onclick="jsListerChoixRepet()"  name="choixSong" class="form-select" size="15" multiple required>
+                        <span class="h5">Titres disponibles</span> <small class="text-muted">(Ctrl + clic pour choix multiple)</small>
+                        <!-- contenu fixe = tous les titres test + concert ; seule la sélection change -->
+                        <select id="choixSong" onchange="jsRepetSynchroniser()" name="choixSong" class="form-select" size="15" multiple required>
                            <?= TbListe::valeursChoixListe($songs,identifiant:"ID", selected:repetitionIdSongSelectionnes($repetition)); ?>
                          </select>
                     </div>
@@ -102,8 +103,7 @@ ob_start();
                     <div class="col-5">
                         <!-- Zone contenant les song sélectionnées -->
                         <span class="h4">Sélection actuelle</span>
-                        <span id="nbChoisis" class="badge rounded-pill bg-info text-dark"><?= count($repetition->setlist->details);?></span>
-                        <ul id="morceauxChoisis" class="list-group">
+                        <span id="nbChoisis" class="badge rounded-pill bg-info text-dark"><?= count($repetition->setlist->details);?></span>                        <ul id="morceauxChoisis" class="list-group">
                              <?= repetitionSongSelectionnes($repetition); ?>
                         </ul>
                     </div>
@@ -122,6 +122,10 @@ ob_start();
         <?= TbHtml::htmlBoutonValidation()?>
     </div>
 </form>
+<script>
+    //song.js est chargé en fin de page : initialisation une fois le document prêt
+    document.addEventListener('DOMContentLoaded', jsRepetInit);
+</script>
 
 <?php 
     $content = ob_get_clean(); 
@@ -150,7 +154,9 @@ function repetitionSongSelectionnes($repetition){
 //extraite le tableau des songs concernés et récupère leur titre formatté dans $songs
     $liste = "";
     foreach($repetition->setlist->details as $detail){
-        $liste .= "<li>" . $detail->song->titre . " " .  $detail->song->interprete . "</li>";
+        //même libellé que la liste de gauche (titre-interprete) ; data-id lu par song.js
+        $liste .= '<li class="list-group-item" data-id="' . $detail->song->id . '">'
+                . htmlspecialchars(trim((string)$detail->song->titre) . "-" . trim((string)$detail->song->interprete)) . "</li>";
     }
     return $liste;
 }

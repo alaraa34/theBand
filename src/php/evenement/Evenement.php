@@ -34,7 +34,8 @@ abstract class Evenement extends Mere
     public CONST TOUS = 1;
     public CONST PROCHAIN = 2;
     public CONST A_SUPPRIMER = 3;
-      
+    public CONST PRECEDENT = 4;
+
     // Méthodes
     public function __construct(int $id=0) {
 
@@ -62,17 +63,27 @@ abstract class Evenement extends Mere
         return self::mdEvenementEtablissementGetListeID($idEtablissement);
     }
     
+    public static function getIdPrecedent():int{
+    //dernier évènement de la nature appelante antérieur à la date du jour
+        $ids =  static::mdEvenementGetListeID(self::PRECEDENT);
+        return count($ids)===0 ? 0 : (int)$ids[0];
+    }
+
     public static function getIdSetListProchainEvt() :int{
-        $idevt = self::getIdProchain();
-        //affichage 
+        return static::getIdSetListEvt(static::getIdProchain());
+    }
+
+    public static function getIdSetListPrecedentEvt() :int{
+        return static::getIdSetListEvt(static::getIdPrecedent());
+    }
+
+    protected static function getIdSetListEvt(int $idevt) :int{
+    //setlist d'un évènement de la nature appelante, 0 si pas d'évènement
         if ($idevt==0){
             return 0;
         }
-        else{
-            //recherche set list de ce concert
-            $evt = new Evenement_Concert($idevt);
-            return $evt->getIdSetList();
-        }
+        $evt = new static($idevt);
+        return (int)$evt->getIdSetList();
     }
     public static function getListe(int $type){
     //retourne une liste d'instance évènements
@@ -157,8 +168,8 @@ abstract class Evenement extends Mere
     public function getIdSetList(){
     //retourne la setlist d'un evt.Si pa chargée dék) on va ma chercher
         if ($this->setlist->id===0){
-            $evt = mdEvenementDetailSimple();
-            return $evt['idSetList'];
+            $evt = $this->mdEvenementDetailSimple();
+            return (int)($evt['idSetlist'] ?? 0);
         }
         else{
             return $this->setlist->id;
@@ -183,6 +194,11 @@ abstract class Evenement extends Mere
             case self::A_SUPPRIMER :
                 //occurences de plus d'une certaine période pour suppression auto
                 $requete .= " AND dateHeure < DATE_ADD(CURRENT_DATE(), INTERVAL -" . static::DELAI_SUPPRESSION_MOIS  ." MONTH)";
+                break;
+            case self::PRECEDENT :
+                //dernière occurence antérieure à la date du jour
+                $requete .= " AND dateHeure < CURRENT_DATE() ORDER BY dateHeure DESC limit 1";
+                break;
         }
              
         //retour résultat

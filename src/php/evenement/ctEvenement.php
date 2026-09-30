@@ -138,32 +138,31 @@ function ctRepetitionEditer1(Evenement_Repetition $repetition) {
 
 function ctRepetitionSelectSongAuto(){
 //retour du clic pour alimenter automatiquement la liste de répétition
-    $idSongs = [];
-    //recherche des nb titres ayant la plus petite performance
-    if(TbAdressage::getpost("C","titresPerformance")){
-        $ids = Performance::mdSongGetListeID(getpost("I","titresNbPerf"));
-        $idSongs = array_merge_recursive($idSongs,$ids);
+    //un seul critère possible : radios exclusifs de name "selectionAuto"
+    switch (TbAdressage::getPost("S","selectionAuto")){
+        case "titresPerformance":
+            //les nb titres ayant la plus petite performance
+            $idSongs = Performance::mdSongGetListeID(TbAdressage::getPost("I","titresNbPerf"));
+            break;
+        case "titresProchainConcert":
+            //titres de la setlist du prochain concert
+            $idSongs = Song::mdSongListeIDFromSetList(Evenement_Concert::getIdSetListProchainEvt());
+            break;
+        case "titresRepetPrecedente":
+            //titres de la dernière répétition antérieure à la date du jour
+            $idSongs = Song::mdSongListeIDFromSetList(Evenement_Repetition::getIdSetListPrecedentEvt());
+            break;
+        case "titresTest":
+            //titres en test
+            $idSongs = Song::mdSongListeIDFromType(Song::TYPE_TEST);
+            break;
+        default:
+            //aucun critère coché
+            $idSongs = [];
     }
-    //Recherche des titres du prochain concert
-    if(TbAdressage::getpost("C","titresProchainConcert")){
-        $ids = Song::mdSongListeIDFromSetList(Evenement_Concert::getIdSetListProchainConcert());
-        $idSongs = array_merge_recursive($idSongs,$ids);
-    }
-    //Recherche des titres en test
-    if(TbAdressage::getpost("C","titresTest")){//tites en test
-        $ids = Song::mdSongListeIDFromType(Song::TYPE_TEST);
-        $idSongs = array_merge_recursive($idSongs,$ids);
-    }
-    //suppression des doublons
-    $idSongs =  array_unique($idSongs);
-    
-    //Recherche de la liste des titres possibles (test + concert)
-    $songs = Song::getListeChoix(array(Repertoire::TYPE_CONCERT,Repertoire::TYPE_TEST));
-    //pose de selected sur les titres concernés et constitution liste avec déclenchement de click
-    $myhtml = "click££ID££" . TbListe::valeursChoixListe($songs,
-                                            zone:"titre",
-                                            selected:$idSongs);
-    echo ($myhtml);
+    //retour des ids sans doublon "12-15-18" : song.js (jsRepetSelectionAuto) remplace la sélection
+    //et recalcule la liste des titres disponibles
+    echo implode("-", array_unique(array_map('intval', $idSongs)));
 }
 
 function ctRepetitionMAJ() {
@@ -184,6 +183,7 @@ function ctRepetitionMAJ() {
     //lien song, retourne un champ contenant les identifiants
     $numero = 0;
     foreach (explode("-", TbAdressage::getPost("S","idSongsSelected")) as $idSong){
+        if ((int)$idSong === 0){continue;} //aucun titre choisi : explode renvoie [""]
         $numero +=1;
         $detail = new Detail();
         $detail->song->id = (int)$idSong;
