@@ -26,7 +26,8 @@ class Proposition extends Song
     // Constantes
     
     public const TABLE  =  PREFIXE_BDD . "proposition";
-    public const SUJET = 75;
+    //types de lien admis : table <prefixe>lien_type_usage, colonne sujet
+    public const string SUJET_LIEN = "PROPOSITION";
     
     public const array INCLUDE_CRUD =["commentaire"];    //Classes à inclure lors d'une mise à jour ajout/suppression/modif
     public const array RESTREINT =[];                                 //Classes à ne pas charger lors d'un load by id

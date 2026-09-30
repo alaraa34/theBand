@@ -29,7 +29,8 @@ class Etablissement extends Mere
     public array $contacts=[];      //collection s=d'instances de contact
     // Constantes
     public const TABLE  =  PREFIXE_BDD . "etablissement";
-    public const SUJET =73;
+    //types de lien admis : table <prefixe>lien_type_usage, colonne sujet
+    public const string SUJET_LIEN = "ETABLISSEMENT";
     public const array RESTREINT = ["coordonnee","liens","contacts"];
     
     //------------------------------------------------------------------------------------------------

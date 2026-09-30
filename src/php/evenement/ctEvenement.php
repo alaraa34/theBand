@@ -85,7 +85,7 @@ function ctRepetitionSupprimer(){
 
 function ctListeRepetition(int $prochain) :void{
     $lienMisEnForme = true;
-    $typesLien= TypeLien::listePourUnSujet(Evenement_Repetition::SUJET);
+    $typesLien= TypeLien::listePourUnSujet(Evenement_Repetition::SUJET_LIEN);
     if ($prochain){$texte = "Prochaine ";}
     else{$texte = "Liste ";}
     $evenements = Evenement_Repetition::getListe($prochain);
@@ -267,7 +267,7 @@ function ctConcertListe():void{
 
 function ctListeConcert(int $prochain) :void{
     $lienMisEnForme = false;
-    $typesLien=  TypeLien::listePourUnSujet(Evenement_Concert::SUJET);
+    $typesLien=  TypeLien::listePourUnSujet(Evenement_Concert::SUJET_LIEN);
     if ($prochain){$texte = "Prochain ";}
     else{$texte = "Liste ";}
     $evenements = Evenement_Concert::getListe($prochain);

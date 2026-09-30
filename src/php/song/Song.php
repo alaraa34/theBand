@@ -27,6 +27,8 @@ class Song
     
     // Constantes
     public const TABLE =  PREFIXE_BDD . "song";
+    //types de lien admis pour les players MP3 (le sujet SONG est porté par Repertoire, PROPOSITION par Proposition)
+    public const string SUJET_LIEN_PLAYER = "PLAYER";
 
      //Type
     public CONST TYPE_PROPOSITION = 7;
@@ -115,7 +117,7 @@ class Song
     //-----------------------------------------------------------------------------------------------
     public function loadLiens(){
     //Charge tous les liens de l'instance
-        $liens = SongLien_ass::getListe($this->id,TypeLien::listePourUnSujet(static::SUJET,true));
+        $liens = SongLien_ass::getListe($this->id,TypeLien::listePourUnSujet(static::SUJET_LIEN,true));
         $this->loadLiensChargement ($liens);
     }
     public function loadLiensParticulier(array $typesLien):void{

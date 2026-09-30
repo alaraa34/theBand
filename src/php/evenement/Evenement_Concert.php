@@ -14,7 +14,8 @@ use shared\php\classes\lien\TypeLien    as TypeLien;
 class Evenement_Concert extends Evenement
 {
     // Attributs
-    public const SUJET = 74;
+    //types de lien admis : table <prefixe>lien_type_usage, colonne sujet
+    public const string SUJET_LIEN = "CONCERT";
     public const NATURE = 1; //evt concert
     public const DELAI_SUPPRESSION_MOIS = 24; //tout ce qui est antérieur à 24 mois est supprimé   
     public const LIBELLE_COMMENTAIRE = "FEUILLE DE ROUTE";

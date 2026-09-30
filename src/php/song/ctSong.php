@@ -24,7 +24,7 @@ function ctSongAdd():void {
 function ctSongEditer(int $identifiant = 0) {
 //actions addSong et editSong
      
-    $typesLien = TypeLien::listePourUnSujet(Repertoire::SUJET);
+    $typesLien = TypeLien::listePourUnSujet(Repertoire::SUJET_LIEN);
     $correctionsTona = Nomenclature::mdNomenclatureGetListe("ECART_TONA","Nom","DESC","valeurN","Nom");
     $users = UserTB::listeMusiciens();
     //defaut on crée une instance concert (çà ne change rien)

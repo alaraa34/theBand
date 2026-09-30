@@ -3,16 +3,24 @@ declare(strict_types=1);
 namespace theBand\src\php\accueil;
 
 
-use shared\php\classes\socle\Login                  as Login;
-use shared\php\classes\socle\User                   as User;
-use chords\php\Chords                               as Chords;
-use shared\php\toolbox\Toolbox_adressage            as TbAdressage;
-use shared\php\toolbox\Toolbox                      as Tbx;
-use shared\php\classes\personalisation\Parametre    as Parametre;
-use shared\php\modale\Toolbox_modal                 as TbModal;
-use shared\php\toolbox\Toolbox_liste                as TbListe;
-use shared\php\bricks\Brick_table                   as BkTable;
-use theBand\src\php\socle\UserTheBand               as UserTB;
+use shared\php\classes\socle\Login                      as Login;
+use shared\php\classes\socle\User                       as User;
+use chords\php\Chords                                   as Chords;
+use shared\php\toolbox\Toolbox_adressage                as TbAdressage;
+use shared\php\toolbox\Toolbox                          as Tbx;
+use shared\php\classes\personalisation\Parametre        as Parametre;
+use shared\php\modale\Toolbox_modal                     as TbModal;
+use shared\php\toolbox\Toolbox_liste                    as TbListe;
+use shared\php\bricks\Brick_table                       as BkTable;
+use theBand\src\php\socle\UserTheBand                   as UserTB;
+use shared\php\classes\lien\TypeLienUsage_ass           as TypeLienUsage;
+use shared\php\classes\telechargement\Telechargement    as Telechargement;
+use theBand\src\php\song\Song                           as Song;
+use theBand\src\php\song\Repertoire                     as Repertoire;
+use theBand\src\php\proposition\Proposition             as Proposition;
+use theBand\src\php\evenement\Evenement_Concert         as Evenement_Concert;
+use theBand\src\php\evenement\Evenement_Repetition      as Evenement_Repetition;
+use theBand\src\php\etablissement\Etablissement         as Etablissement;
 
 function ctAccueil() {
     $mode = "accueil";
@@ -306,4 +314,42 @@ function ctMusicienMAJ(): void {
     $retour = $musicien->id > 0 && $musicien->majDonneesGroupe();
     afficherListeMusiciens($retour ? "Données groupe de " . htmlspecialchars($musicien->prenom . " " . $musicien->nom) . " enregistrées."
                                    : "Erreur lors de l'enregistrement des données groupe.", $retour);
+}
+
+/*******************************************************************************
+ * TYPES DE LIEN ADMIS PAR SUJET (table tb_lien_type_usage, réservé aux administrateurs)
+ * Les types de lien sont communs à toutes les applications (sh_lien_type)
+ ******************************************************************************/
+function sujetsLien(): array {
+//sujets de theBand qui utilisent des liens : constante SUJET_LIEN de la classe => libellé affiché
+    return [
+        Repertoire::SUJET_LIEN           => "Titres",
+        Song::SUJET_LIEN_PLAYER          => "Players",
+        Proposition::SUJET_LIEN          => "Propositions",
+        Evenement_Repetition::SUJET_LIEN => "Répétitions",
+        Evenement_Concert::SUJET_LIEN    => "Concerts",
+        Etablissement::SUJET_LIEN        => "Etablissements",
+        Telechargement::SUJET_LIEN       => "Téléchargements",
+    ];
+}
+
+function ctLienUsageEditer(): void {
+//grille des types de lien admis par sujet
+    if (!accesAdministrateur()) {return;}
+    afficherGrilleLienUsage();
+}
+
+function afficherGrilleLienUsage(string $message = "", bool $succes = true): void {
+    $messageBarreMenu = "Types de lien par sujet";
+    $content = (strlen($message) > 0 ? Tbx::messageColorer($succes, $message, $message) : "")
+             . TypeLienUsage::renderGrille(sujetsLien(), "accueil", "lienUsageMAJ");
+    require(TbAdressage::projetGetLayout(__NAMESPACE__));
+}
+
+function ctLienUsageMAJ(): void {
+//enregistrement de la grille
+    if (!accesAdministrateur()) {return;}
+    $retour = TypeLienUsage::enregistrer(sujetsLien());
+    afficherGrilleLienUsage($retour ? "Types de lien par sujet enregistrés."
+                                    : "Erreur lors de l'enregistrement : aucune modification n'a été faite.", $retour);
 }

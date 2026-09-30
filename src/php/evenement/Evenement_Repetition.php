@@ -13,7 +13,8 @@ class Evenement_Repetition extends Evenement
     // Attributs
       
 
-    public const SUJET = 76;
+    //types de lien admis : table <prefixe>lien_type_usage, colonne sujet
+    public const string SUJET_LIEN = "REPETITION";
     public const NATURE = 2; //evt répétition
     public const DELAI_SUPPRESSION_MOIS = 2; //tout ce qui est antérieur à un mois est supprimé
     public const LIBELLE_COMMENTAIRE = "Commentaire";

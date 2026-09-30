@@ -26,7 +26,8 @@ class Repertoire extends Song
     public Commentaire $commentaire;
  
     // Constantes
-     public const SUJET = 71; //song
+    //types de lien admis : table <prefixe>lien_type_usage, colonne sujet
+    public const string SUJET_LIEN = "SONG";
    
      
     // Méthodes

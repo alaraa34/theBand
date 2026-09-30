@@ -16,6 +16,7 @@ use shared\php\toolbox\Toolbox                        as Tbx;
 use shared\php\toolbox\Toolbox_adressage              as TbAdressage;
 use theBand\src\php\evenement\Evenement_Concert       as Evenement_Concert;
 use theBand\src\php\evenement\Evenement_Repetition    as Evenement_Repetition;
+use theBand\src\php\song\Repertoire                   as Repertoire;
 use theBand\src\php\song\Setlist                      as Setlist;
 use theBand\src\php\song\Song                         as Song;
 use theBand\src\php\socle\UserTheBand                 as User;
@@ -72,7 +73,7 @@ function ctPlayerAfficherPlayerAvecBox(array $infos, int $idTypeSong, int $idCon
         $players = ctPlayerListeSansBox($infos);
     }
     
-    $typesSong = TypeLien::listePourUnSujet(72, zoneSelect: " CONCAT( '(', nomAffiche,') ', nomlong ) as nomCompose "); //Liste des MP3 autorisés pour les players
+    $typesSong = TypeLien::listePourUnSujet(Song::SUJET_LIEN_PLAYER, zoneSelect: " CONCAT( '(', nomAffiche,') ', nomlong ) as nomCompose "); //Liste des MP3 autorisés pour les players
   
     $url = TbAdressage::getURLstatic("player", "playerAfficherChoix");
     //scripts à rajouter
@@ -265,7 +266,7 @@ function ctPlayerDocAffichage(int $idSetList=0){
     if ($idTypeLien==0){
         //pour faire le choix du type de docuùments
         //$idsetlist est rajouté dans laa fenêtre
-        $extensions = TypeLien::mdTypesLiensListePDF(mdNomenclatureGetDetail("SUJET", Song::SUJET_MDL,"ID"));//liste des doucments PDF pour le sujet SONG
+        $extensions = TypeLien::mdTypesLiensListePDF(Repertoire::SUJET_LIEN);//liste des documents PDF pour le sujet SONG
         require('src/templates/Song/playerChoixType.php');
     }
     else{

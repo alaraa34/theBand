@@ -124,7 +124,7 @@ function ctProspectCloturer(){
 function ctEtablissementEditer(int $id=0) {
 //action editEtab, édition établissement
     $typesEtab = Etablissement::listeDesTypes();
-    $typesLien = TypeLien::listePourUnSujet(Etablissement::SUJET); //73 = établissement
+    $typesLien = TypeLien::listePourUnSujet(Etablissement::SUJET_LIEN);
     $etab = new Etablissement($id);
     $messageBarreMenu = "Détail établissement";
     if (Login::loginControl(__NAMESPACE__)){require('tpEtablissementDetail.php');}
