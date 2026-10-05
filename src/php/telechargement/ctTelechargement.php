@@ -24,25 +24,25 @@ Function ctVideoConcertLister():void{
 
 function ctTutoLister(){
 // appelé pour le code 'documentsListe'
-    $idDomaine = Nomenclature::mdNomenclatureGetDetail("DOMAINE", "APPLI","ID"); 
+    $idDomaine = Nomenclature::mdNomenclatureGetDetail("DOMAINE", "APPLI","id"); 
     ctTeleLister($idDomaine);
 }
 
 function ctDocumentationLister(){
 // appelé pour le code 'documentsListe'
-    $idDomaine = Nomenclature::mdNomenclatureGetDetail("DOMAINE", "DOCUMENTATIO","ID"); 
+    $idDomaine = Nomenclature::mdNomenclatureGetDetail("DOMAINE", "DOCUMENTATIO","id"); 
     ctTeleLister($idDomaine);
 }
 
 function ctConcertLister(){
 // appelé pour le code 'documentsListe'
-    $idDomaine = Nomenclature::mdNomenclatureGetDetail("DOMAINE", "CONCERT","ID"); 
+    $idDomaine = Nomenclature::mdNomenclatureGetDetail("DOMAINE", "CONCERT","id"); 
     ctTeleLister($idDomaine);
 }
 
 function ctPromotionLister(){
 // appelé pour le code 'documentsListe'
-    $idDomaine = Nomenclature::mdNomenclatureGetDetail("DOMAINE", "PROMOTION","ID"); 
+    $idDomaine = Nomenclature::mdNomenclatureGetDetail("DOMAINE", "PROMOTION","id"); 
     ctTeleLister($idDomaine);
 }
 

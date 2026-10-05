@@ -79,7 +79,7 @@ function jsEnchainer(id){
     $("#arrow" + id).toggle();   
 }
 function jsEnleverTagEnchainement(objet){
-    //objet est la div contenant <span id=\"arrow14". $titre['ID']
+    //objet est la div contenant <span id=\"arrow14". $titre['id']
     id=objet.prop("id").substring(4); //ex song14 comme id
     $("#arrow"+id).hide();   
 }

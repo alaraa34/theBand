@@ -28,7 +28,7 @@ ob_start(); ?>
                 <div class="input-group mb-3">
                     <label class="input-group-text" for="typeMP3">(Code)Libellé du MP3 *</label>
                     <select required class="form-select" id="typeMP3" onchange="jsAffichagePlayer()">
-                        <?= TbListe::valeursChoixListe($typesSong,false,"ID","nomCompose",selected: $idTypeSong); ?>
+                        <?= TbListe::valeursChoixListe($typesSong,false,"id","nomCompose",selected: $idTypeSong); ?>
                     </select>
                 </div>
             </div>

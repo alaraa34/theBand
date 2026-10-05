@@ -151,9 +151,9 @@ class Etablissement extends Mere
     //-----------------------------------------------------------------------------------------------
     private static function mdEtabListeSelection(int $natureEvenement) {
     //Liste de etab pour concert ou répétition
-        $requete = "SELECT pr.ID as idEtablissement,pr.nom, pa.valeurA as typeEtab
+        $requete = "SELECT pr.id as idEtablissement,pr.nom, pa.valeurA as typeEtab
             FROM ". self::TABLE ." as pr
-            INNER JOIN ". Nomenclature::TABLE ." as pa on pr.idTypeEtab = pa.ID
+            INNER JOIN ". Nomenclature::TABLE ." as pa on pr.idTypeEtab = pa.id
             WHERE pa.Nom ";
         if ($natureEvenement==Evenement_Concert::NATURE){
             $requete .= " <> 'STUDIO'";
@@ -168,15 +168,15 @@ class Etablissement extends Mere
     private static function mdEtabListeGenerique() {
     //Liste de etab pour utilisation liste generique
     // selection studio true ou false
-        $requete = "SELECT et.ID as id, et.nom,
+        $requete = "SELECT et.id as id, et.nom,
                     pa.valeurA as type_etablissemt,
                     co.adresse,co.ville,
                     cm.texte as commentaire,
                     (select count(pr.id) FROM ". Prospect::TABLE ." as pr WHERE pr.idEtablissement=et.id and pr.idEtat=?) as nbProspects
                     FROM ". self::TABLE ." as et
-                    INNER JOIN ". Nomenclature::TABLE ." as pa on et.idTypeEtab = pa.ID
-                    LEFT JOIN ". Coordonnee::TABLE ." as co on et.idCoordonnee = co.ID
-                    LEFT JOIN ". Commentaire::TABLE ." as cm on et.idCommentaire = cm.ID
+                    INNER JOIN ". Nomenclature::TABLE ." as pa on et.idTypeEtab = pa.id
+                    LEFT JOIN ". Coordonnee::TABLE ." as co on et.idCoordonnee = co.id
+                    LEFT JOIN ". Commentaire::TABLE ." as cm on et.idCommentaire = cm.id
                     WHERE et.idTypeEtab<>?
                     ORDER BY et.nom;";
 

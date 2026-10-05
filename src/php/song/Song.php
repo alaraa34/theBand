@@ -58,7 +58,7 @@ class Song
     }
     public static function getListeChoix(array $types) :array{
      // Retourne la liste des songs pour choisir (test & concert)
-        $requete = 'SELECT son.ID, concat(trim(titre),"-", trim(interprete)) as zone
+        $requete = 'SELECT son.id, concat(trim(titre),"-", trim(interprete)) as zone
             FROM '. self::TABLE .' as son
             WHERE son.idTypeSong ' . Model::mdClauseIn($types) .
             ' ORDER BY son.Titre;';
@@ -105,7 +105,7 @@ class Song
         if ($this->id > 0) {
             $retour = TbClasse::deleteCollectionBDD($this->liens,$this);
             //suppression de la song
-            if ($retour){$retour= Model::mdDelete(self::TABLE, ['ID' => $this->id]);}
+            if ($retour){$retour= Model::mdDelete(self::TABLE, ['id' => $this->id]);}
         }
         return $retour;
     }
@@ -172,13 +172,13 @@ class Song
     }
     public function mdSongMajType(int $nouveauType){
         // met à jour le typt d'une song au statut de la classe
-        $retour = Model::mdUpdate(self::TABLE,["idTypeSong" => $nouveauType],"ID=" . $this->id);
+        $retour = Model::mdUpdate(self::TABLE,["idTypeSong" => $nouveauType],"id=" . $this->id);
         return $retour ;
     }
     public function mdSetlistRemoveSong(){
     //supprime une song des setlists qui la contiennent et qui sont postérieures à la date du jour
         $requete = "DELETE FROM ". Detail::TABLE ." WHERE idSong=? AND idSetlist IN
-                (SELECT stl.ID FROM ". Setlist::TABLE ." as stl INNER JOIN ". Evenement::TABLE ." as eve on eve.idSetlist = stl.ID WHERE eve.dateHeure > CURDATE())";
+                (SELECT stl.id FROM ". Setlist::TABLE ." as stl INNER JOIN ". Evenement::TABLE ." as eve on eve.idSetlist = stl.id WHERE eve.dateHeure > CURDATE())";
         return Model::mdRequeteExecuter($requete, array($this->id));
     }
     
@@ -192,18 +192,18 @@ class Song
         return mdGetInfoLiensIdentifiantsSeuls("song",$this->id,$liste);
     }
     private function mdSongSimple() {
-        $requete = "SELECT ID as id, Titre as titre, Interprete as interprete, idTypeSong
+        $requete = "SELECT id, Titre as titre, Interprete as interprete, idTypeSong
                     FROM ". self::TABLE ." as son
-                    WHERE son.ID=? ;";
+                    WHERE son.id=? ;";
         return Model::mdRequeteListerUnique($requete,array($this->id));
     }
     
     public static function mdSongGetListePlayer(array $typesSong, int $idTypeLien ) {
     // Retourne la requete
-    $requete = "SELECT son.ID, nom.valeurA AS typeSong, titre, interprete,tonaOrigine,tonaScene,tempo,abrev as leadChant, lie.url as lienMP3
-            FROM ". self::TABLE ." as son INNER JOIN ". Nomenclature::TABLE ." as nom ON son.idTypeSong = nom.ID
-            LEFT JOIN ". User::TABLE ." as usr ON son.idLeadChant = usr.ID
-            LEFT JOIN (". SongLien_ass::TABLE ." as sla  JOIN ". Lien::TABLE ." as lie ON sla.idLien=lie.ID) ON son.ID = sla.idSong
+    $requete = "SELECT son.id, nom.valeurA AS typeSong, titre, interprete,tonaOrigine,tonaScene,tempo,abrev as leadChant, lie.url as lienMP3
+            FROM ". self::TABLE ." as son INNER JOIN ". Nomenclature::TABLE ." as nom ON son.idTypeSong = nom.id
+            LEFT JOIN ". User::TABLE ." as usr ON son.idLeadChant = usr.id
+            LEFT JOIN (". SongLien_ass::TABLE ." as sla  JOIN ". Lien::TABLE ." as lie ON sla.idLien=lie.id) ON son.id = sla.idSong
             WHERE  lie.idTypeLien= ?  AND son.idTypeSong ". Model::mdClauseIn($typesSong) .
             " ORDER BY son.idTypeSong,son.Titre;";
     return Model::mdRequeteLister($requete,[$idTypeLien]);
@@ -212,10 +212,10 @@ class Song
     public static function mdSongGetListePlayerFromSetList(int $idSetList, int $idTypeLien) {
     // Retourne la liste des songs d'une set list dans l'ordre de la set list
     //Paramètre la set list et le type de mp3 à jouer
-        $requete = "SELECT son.ID, titre,tonaOrigine,tonaScene,tempo,abrev as leadChant, lie.url as lienMP3
-                FROM ". self::TABLE ." as son INNER JOIN ". Detail::TABLE ." as det ON son.ID = det.idSong
-                LEFT JOIN ". User::TABLE ." as usr ON son.idLeadChant = usr.ID
-                JOIN (". SongLien_ass::TABLE ." as sla  JOIN ". Lien::TABLE ." as lie ON sla.idLien=lie.ID) ON son.ID = sla.idSong
+        $requete = "SELECT son.id, titre,tonaOrigine,tonaScene,tempo,abrev as leadChant, lie.url as lienMP3
+                FROM ". self::TABLE ." as son INNER JOIN ". Detail::TABLE ." as det ON son.id = det.idSong
+                LEFT JOIN ". User::TABLE ." as usr ON son.idLeadChant = usr.id
+                JOIN (". SongLien_ass::TABLE ." as sla  JOIN ". Lien::TABLE ." as lie ON sla.idLien=lie.id) ON son.id = sla.idSong
                 WHERE lie.idTypeLien= ? and det.idSetlist = ?
                 ORDER BY det.ordre;";
 
@@ -226,7 +226,7 @@ class Song
     // Retourne la liste des songs test et concert.
     //Tous les morceaux sont retournés avec ou sans document lié
         $requete = "SELECT titre,
-                        (select lie.url  FROM ". Lien::TABLE ." as lie INNER JOIN ". SongLien_ass::TABLE ." as sla ON lie.ID = sla.idLien
+                        (select lie.url  FROM ". Lien::TABLE ." as lie INNER JOIN ". SongLien_ass::TABLE ." as sla ON lie.id = sla.idLien
                         WHERE sla.idSong = son.id and  lie.idTypeLien=?
                         and " . Lien::wherePrive(). ") as lienPDF
                 FROM ". self::TABLE ." as son
@@ -239,10 +239,10 @@ class Song
     // Retourne la liste des songs d'une set list dans l'ordre de la set list
     //Tous les morceaux sont retournés avec ou sans document lié
         $requete = "SELECT titre,
-                        (select lie.url  FROM ". Lien::TABLE ." as lie INNER JOIN ". SongLien_ass::TABLE ." as sla ON lie.ID = sla.idLien
+                        (select lie.url  FROM ". Lien::TABLE ." as lie INNER JOIN ". SongLien_ass::TABLE ." as sla ON lie.id = sla.idLien
                         WHERE sla.idSong = son.id and  lie.idTypeLien=?
                         and " . Lien::wherePrive(). ") as lienPDF
-                FROM ". self::TABLE ." as son INNER JOIN ". Detail::TABLE ." as det ON son.ID = det.idSong
+                FROM ". self::TABLE ." as son INNER JOIN ". Detail::TABLE ." as det ON son.id = det.idSong
                 WHERE det.idSetlist = ?
                 ORDER BY det.ordre;";
 
@@ -255,7 +255,7 @@ class Song
   
     public static function mdSongListeIDFromType(int $idTypeSong) {
      //Retourne les id liés à un type (concert, test...)
-        $requete = "select ID as idSong FROM " . self::TABLE . " WHERE idTypeSong=?";
+        $requete = "select id as idSong FROM " . self::TABLE . " WHERE idTypeSong=?";
         return Model::mdRequeteListerZoneUnique($requete,"idSong",[$idTypeSong]);
     }
     

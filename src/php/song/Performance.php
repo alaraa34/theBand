@@ -73,22 +73,22 @@ class Performance extends Mere{
     public function rechercheID() :void{
     //Recherche de l'Id du vote si il existe car pas connu forcément à la saisie des votes
         if ($this->id ===0){
-            $requete = "SELECT vot.ID
+            $requete = "SELECT vot.id
                     FROM ". Vote::TABLE ." as vot
                     WHERE idUser= ? AND idSong = ? ";
 
             $tableau = Model::mdRequeteLister($requete ,[$this->user->id, $this->song->id]);
-            if (count($tableau)> 0){$this->id = $tableau[0]['ID'];}
+            if (count($tableau)> 0){$this->id = $tableau[0]['id'];}
         }
     }
 
     private static function mdSongGetListeVotePerformance(array $typesSong ) {
     // Retourne la liste des morceaux sur les type song avec les votes liés
-        $requete = "SELECT son.ID as idSong, son.idTypeSong as idTypeSongSong,nom.valeurA AS typeSong,
+        $requete = "SELECT son.id as idSong, son.idTypeSong as idTypeSongSong,nom.valeurA AS typeSong,
                     titre as titreSong, interprete as interpreteSong, idUser,
-                    vot.ID as idPerformance,  vot.groupe as groupePerformance,vot.date as datePerformance
+                    vot.id as idPerformance,  vot.groupe as groupePerformance,vot.date as datePerformance
                 FROM ". Song::TABLE ." as son   LEFT JOIN ". Vote::TABLE ." as vot ON son.id= vot.idSong
-                            INNER JOIN ". Nomenclature::TABLE ." as nom ON son.idTypeSong = nom.ID
+                            INNER JOIN ". Nomenclature::TABLE ." as nom ON son.idTypeSong = nom.id
                 WHERE  son.idTypeSong ". Model::mdClauseIn($typesSong) . " AND (idUser=? or idUser is null)" .
                 " ORDER BY son.Titre;";
         return Model::mdRequeteLister($requete,[(User::connectUserGetInfo("id",0))]);
@@ -99,7 +99,7 @@ class Performance extends Mere{
         $requete = "SELECT titre , interprete, nom.valeurA AS typeSong,
                  avg(vot.groupe) as sommeGroupe
             FROM ". Song::TABLE ." as son   LEFT JOIN ". Vote::TABLE ." as vot ON son.id= vot.idSong
-                        INNER JOIN ". Nomenclature::TABLE ." as nom ON son.idTypeSong = nom.ID
+                        INNER JOIN ". Nomenclature::TABLE ." as nom ON son.idTypeSong = nom.id
             WHERE son.idTypeSong ". Model::mdClauseIn($typesSong) . "
             GROUP BY son.titre
             having  sum(vot.groupe)>0
@@ -111,7 +111,7 @@ class Performance extends Mere{
     // Retourne la liste des morceaux sur les type song avec les votes liés
         $requete = "SELECT titre , interprete, nom.valeurA AS typeSong, vot.perso
             FROM ". Song::TABLE ." as son   LEFT JOIN ". Vote::TABLE ." as vot ON son.id= vot.idSong
-                        INNER JOIN ". Nomenclature::TABLE ." as nom ON son.idTypeSong = nom.ID
+                        INNER JOIN ". Nomenclature::TABLE ." as nom ON son.idTypeSong = nom.id
             WHERE son.idTypeSong ". Model::mdClauseIn($typesSong) . "
                     AND idUser = " . User::connectUserGetInfo("id") . "
             ORDER BY vot.groupe;";

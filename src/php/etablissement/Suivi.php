@@ -92,7 +92,7 @@ class Suivi extends MereInstance{
     //Détail d'un suivi existant 
         $requete = "select ps.*, co.texte as texteCommentaire
                 FROM ". self::TABLE ." as ps LEFT JOIN ". Commentaire::TABLE ." as co ON co.id = ps.idCommentaire
-                WHERE ps.ID=?"  ;
+                WHERE ps.id=?"  ;
         return Model::mdRequeteListerUnique($requete,array($this->id));
     }
   

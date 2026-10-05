@@ -109,7 +109,7 @@ class Prospect extends Mere
     
     public static function majEtat(int $id,int $idStatut) :bool{
     //met à jour un code atat sans passer par la classe 
-        return Model::mdUpdate(Prospect::TABLE,["idStatut"=>$idStatut],"ID=".$id);
+        return Model::mdUpdate(Prospect::TABLE,["idStatut"=>$idStatut],"id=".$id);
     }
     
     public function cloturer():bool{
@@ -136,13 +136,13 @@ class Prospect extends Mere
     
     protected static function mdProspectListe(int $idEtat) :array{
     //Liste de prospect 
-        $requete = "SELECT ID as id from ". self::TABLE ." where idEtat = ?";
+        $requete = "SELECT id from ". self::TABLE ." where idEtat = ?";
         return Model::mdRequeteLister($requete,[$idEtat]);
     }
     
     public static function listeProspectEtablissement(int $idEtablissement):array {
     //liste des prospects d'un établissement
-        $requete = "SELECT ID FROM ". self::TABLE ." WHERE idEtablissement = ?;";
+        $requete = "SELECT id FROM ". self::TABLE ." WHERE idEtablissement = ?;";
         return Model::mdRequeteLister($requete, [$idEtablissement]);
     }
     

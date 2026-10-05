@@ -213,26 +213,26 @@ abstract class Evenement extends Mere
     }
     protected function mdEvenementDetail():array{
     //restition d'un évènement
-        $requete = "SELECT eve.ID as id, dateHeure,dateHeureFin,confirme,
+        $requete = "SELECT eve.id as id, dateHeure,dateHeureFin,confirme,
                         idEtablissement, eta.nom as nomEtablissement,
                         idSetlist, stl.nomListe as nomSetlist,
                         com.id as idCommentaire, texte as texteCommentaire,
                         coo.id as idCoordonneeEtablissement, adresse as adresseCoordonneeEtablissement,ville as villeCoordonneeEtablissement
-            FROM ". self::TABLE ." as eve INNER JOIN (". Etablissement::TABLE ." as eta LEFT JOIN ". Coordonnee::TABLE ." as coo ON eta.idCoordonnee = coo.ID) ON eve.idEtablissement = eta.ID
-                           INNER JOIN ". Setlist::TABLE ." as stl ON eve.idSetlist = stl.ID
-                           LEFT JOIN ". Commentaire::TABLE ." as com ON eve.idCommentaire = com.ID
-            WHERE eve.ID=?;";
+            FROM ". self::TABLE ." as eve INNER JOIN (". Etablissement::TABLE ." as eta LEFT JOIN ". Coordonnee::TABLE ." as coo ON eta.idCoordonnee = coo.id) ON eve.idEtablissement = eta.id
+                           INNER JOIN ". Setlist::TABLE ." as stl ON eve.idSetlist = stl.id
+                           LEFT JOIN ". Commentaire::TABLE ." as com ON eve.idCommentaire = com.id
+            WHERE eve.id=?;";
         //retour résultat
         return Model::mdRequeteListerUnique($requete ,[$this->id]);
     }
     protected function mdEvenementDetailSimple():array{
     //restition d'un évènement
-        $requete = "SELECT eve.ID as id, dateHeure,dateHeureFin,confirme,idEtablissement,
+        $requete = "SELECT eve.id as id, dateHeure,dateHeureFin,confirme,idEtablissement,
                         idSetlist, stl.nomListe as nomSetlist,
                         com.id as idCommentaire, com.texte as texteCommentaire
-            FROM ". self::TABLE ." as eve INNER JOIN ". Setlist::TABLE ." as stl ON eve.idSetlist = stl.ID
-                           LEFT JOIN ". Commentaire::TABLE ." as com ON eve.idCommentaire = com.ID
-            WHERE eve.ID=?;";
+            FROM ". self::TABLE ." as eve INNER JOIN ". Setlist::TABLE ." as stl ON eve.idSetlist = stl.id
+                           LEFT JOIN ". Commentaire::TABLE ." as com ON eve.idCommentaire = com.id
+            WHERE eve.id=?;";
         //retour résultat
         return Model::mdRequeteListerUnique($requete ,[$this->id]);
     }

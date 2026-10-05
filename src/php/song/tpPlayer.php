@@ -13,7 +13,7 @@
                 <div class="input-group mb-5">
                     <label class="input-group-text" for="typeMP3">(Code)Libellé du MP3 *</label>
                     <select required class="form-select" id="typeMP3" onchange="jsAffichagePlayer()">
-                        <?= shared\php\toolbox\Toolbox_liste::valeursChoixListe($typesSong,false,"ID","nomCompose",selected: $idTypeSong); ?>
+                        <?= shared\php\toolbox\Toolbox_liste::valeursChoixListe($typesSong,false,"id","nomCompose",selected: $idTypeSong); ?>
                     </select>
                 </div>
             </div>

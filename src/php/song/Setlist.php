@@ -122,8 +122,8 @@ class Setlist extends Mere
     private static function mdListeConcert(int $id) :array{
     //retourne la liste des set list existantes et éventuellement différente de celle donnée en paramètre
         $requete = "SELECT se.nomListe, se.id
-                    FROM ". self::TABLE . " as se  JOIN ". Evenement::TABLE . " as ev  ON se.ID = ev.idSetlist
-                    WHERE (select count(de.ID) from ". Detail::TABLE . " as de  where de.idSetlist = se.ID) > 0 
+                    FROM ". self::TABLE . " as se  JOIN ". Evenement::TABLE . " as ev  ON se.id = ev.idSetlist
+                    WHERE (select count(de.id) from ". Detail::TABLE . " as de  where de.idSetlist = se.id) > 0 
                         AND se.idNature=? AND se.id <> ?
                     ORDER BY dateheure DESC;";
         return Model::mdRequeteLister($requete,[Evenement_Concert::NATURE,$id]);
@@ -131,9 +131,9 @@ class Setlist extends Mere
     
     private function mdSongGetRepertoireSetlistPart0() {
     // Retourne la liste des songs du répertoire concert.non utilisés dans la set list
-            $requete = "SELECT so.ID as idSong, titre as titreSong, interprete as interpreteSong , 0 as partie,1 as ordre, false as enchainement 
+            $requete = "SELECT so.id as idSong, titre as titreSong, interprete as interpreteSong , 0 as partie,1 as ordre, false as enchainement 
             FROM ". Song::TABLE . " as so
-            WHERE idTypeSong = ? and so.ID not in(select de.idSong from 
+            WHERE idTypeSong = ? and so.id not in(select de.idSong from 
                 ". Detail::TABLE . " as de where de.idSetlist = ?)
             ORDER BY partie, ordre, titre";
 
@@ -143,10 +143,10 @@ class Setlist extends Mere
     private function mdSetListeDetails(int $idSetlist) {
     // Retourne la liste des songs du répertoire d'une set list
     // en paramètre on peut dem nder une autre set list que celle en cours dans le cas où il faut copier une set lmist
-        $requete = "SELECT de.ID as id,de.partie,de.ordre,de.enchainement,
+        $requete = "SELECT de.id as id,de.partie,de.ordre,de.enchainement,
                 idSong, titre as titreSong, Interprete as interpreteSong,TonaOrigine as tonaOrigineSong, TonaScene as tonaSceneSong,
                 tempo as tempoSong, idLeadChant as idUserSong
-        FROM ". Detail::TABLE . " as de INNER JOIN ". Song::TABLE . " as so  ON so.ID = de.idSong
+        FROM ". Detail::TABLE . " as de INNER JOIN ". Song::TABLE . " as so  ON so.id = de.idSong
         WHERE de.idSetlist=?
         ORDER BY de.partie, ordre;";
         return Model::mdRequeteLister($requete,[$idSetlist]);

@@ -65,7 +65,7 @@ class Repertoire extends Song
         } 
         else{
             //id renseigné
-            $retour = Model::mdUpdate(self::TABLE, TbClasse::classeValeurProprietes($this), "ID=" . $this->id);
+            $retour = Model::mdUpdate(self::TABLE, TbClasse::classeValeurProprietes($this), "id=" . $this->id);
         }
          //mise à jour des collections après car besoin de l'ID de la classe mère
         if($retour){$retour = TbClasse::classeUpdateCollection($this);}
@@ -130,7 +130,7 @@ class Repertoire extends Song
     //-----------------------------------------------------------------------------------------------
     private static function mdSongGetListe(array $typesSong) {
     // Retourne la liste des songs du répertoire en test ou concert. avec les liens mis en forme
-        $requete = "SELECT so.ID as id, no.valeurA as typeSong, titre, interprete,tonaOrigine,tonaScene,tempo, 
+        $requete = "SELECT so.id as id, no.valeurA as typeSong, titre, interprete,tonaOrigine,tonaScene,tempo, 
                         co.texte as texteCommentaire ,us.abrev as leadChant,idLeadChant, co.id as idCommentaire
                     FROM ". Song::TABLE . " as so INNER JOIN ". Nomenclature::TABLE . " as no ON so.idTypeSong = no.id 
                             LEFT JOIN ". Commentaire::TABLE . " as co ON so.idCommentaire = co.id
@@ -144,7 +144,7 @@ class Repertoire extends Song
     //Retourne les infos sur une song
         $requete= "SELECT titre,interprete,tonaOrigine,tonaScene,tempo,idTypeSong,idLeadChant as idUser, 
                     idCommentaire, co.texte as texteCommentaire 
-                FROM ". Song::TABLE . " as so LEFT JOIN ". Commentaire::TABLE . " as co ON so.idCommentaire = co.ID WHERE so.ID= ?";
+                FROM ". Song::TABLE . " as so LEFT JOIN ". Commentaire::TABLE . " as co ON so.idCommentaire = co.id WHERE so.id= ?";
         return Model::mdRequeteListerUnique($requete,[$this->id]);
     }
     

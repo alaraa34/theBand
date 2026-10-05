@@ -49,14 +49,14 @@ class Studio extends Etablissement
     private static function mdEtabListeGenerique() {
     //Liste de etab pour utilisation liste generique
     // selection studio true ou false
-        $requete = "SELECT pr.ID as id, pr.nom,
+        $requete = "SELECT pr.id as id, pr.nom,
                     pa.valeurA as type_etablissemt,
                     co.adresse,co.ville,
                     cm.texte as commentaire
                     FROM ". Etablissement::TABLE ." as pr
-                    INNER JOIN ". Nomenclature::TABLE ." as pa on pr.idTypeEtab = pa.ID
-                    LEFT JOIN ". Coordonnee::TABLE ." as co on pr.idCoordonnee = co.ID
-                    LEFT JOIN ". Commentaire::TABLE ." as cm on pr.idCommentaire = cm.ID
+                    INNER JOIN ". Nomenclature::TABLE ." as pa on pr.idTypeEtab = pa.id
+                    LEFT JOIN ". Coordonnee::TABLE ." as co on pr.idCoordonnee = co.id
+                    LEFT JOIN ". Commentaire::TABLE ." as cm on pr.idCommentaire = cm.id
                     WHERE pr.idTypeEtab=?
                     ORDER BY pr.nom;";
 

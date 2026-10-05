@@ -142,7 +142,7 @@ class Proposition extends Song
             //suppression des votes
             if($retour){$retour = Model::mdDelete(Vote::TABLE, ['idSong' =>$this->id]);}
             //Suppression table proposition
-            if($retour){$retour = Model::mdDelete(self::TABLE, ['ID' => $this->id]);}
+            if($retour){$retour = Model::mdDelete(self::TABLE, ['id' => $this->id]);}
             //suppression song et liens
             if($retour){$retour=parent::delete();}
         }
@@ -154,12 +154,12 @@ class Proposition extends Song
         //commentaire de la proposition
         $tableau = Model::mdRequeteListerUnique("select idCommentaire from " . self::TABLE . " where id=?",[$song->id]);
         if (count($tableau)> 0){
-            $retour = Model::mdDelete(Commentaire::TABLE, ['ID' =>$tableau['idCommentaire']]);
+            $retour = Model::mdDelete(Commentaire::TABLE, ['id' =>$tableau['idCommentaire']]);
         }
         //suppression des votes
         if($retour){$retour =Model::mdDelete(Vote::TABLE, ['idSong' =>$song->id]);}
         //Suppression table proposition
-        if($retour){$retour = Model::mdDelete(self::TABLE, ['ID' =>$song->id]);}     
+        if($retour){$retour = Model::mdDelete(self::TABLE, ['id' =>$song->id]);}     
         return $retour;
     }
     
@@ -345,7 +345,7 @@ class Proposition extends Song
     }
     public function mdPropositionMajStatut(int $nouveauStatut){
     // met à jour le statut d'une proposition
-        $retour = Model::mdUpdate(self::TABLE,["statut" => $nouveauStatut],"ID=" . $this->id);
+        $retour = Model::mdUpdate(self::TABLE,["statut" => $nouveauStatut],"id=" . $this->id);
         return $retour ;
     }
 }

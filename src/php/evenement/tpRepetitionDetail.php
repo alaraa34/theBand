@@ -96,7 +96,7 @@ ob_start();
                         <span class="h5">Titres disponibles</span> <small class="text-muted">(Ctrl + clic pour choix multiple)</small>
                         <!-- contenu fixe = tous les titres test + concert ; seule la sélection change -->
                         <select id="choixSong" onchange="jsRepetSynchroniser()" name="choixSong" class="form-select" size="15" multiple required>
-                           <?= TbListe::valeursChoixListe($songs,identifiant:"ID", selected:repetitionIdSongSelectionnes($repetition)); ?>
+                           <?= TbListe::valeursChoixListe($songs,identifiant:"id", selected:repetitionIdSongSelectionnes($repetition)); ?>
                          </select>
                     </div>
                     <div class="col-1"></div>
