@@ -4,6 +4,8 @@
 # --- Configuration et identifiants (jamais dans git)
 /ENVIRdev.txt
 /ENVIRprod.txt
+/MAILdev.txt
+/MAILprod.txt
 .env
 
 # --- NetBeans : réglages propres à ton poste

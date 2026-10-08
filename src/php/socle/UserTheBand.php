@@ -80,6 +80,20 @@ class UserTheBand extends User{
         return Model::mdDelete(self::TABLE, ['id' => $idUser]);
     }
 
+    public static function synchroniserAvecUser():bool{
+    //mise en cohérence de tb_user_theband avec tb_user :
+    // - suppression des lignes dont l'utilisateur n'existe plus
+    // - création des lignes manquantes (rôle Aucun, coefficient 1, pas de playlist perso)
+        $suppression = "DELETE ustb FROM " . self::TABLE . " as ustb
+                        LEFT JOIN " . User::TABLE . " as us ON us.id = ustb.id
+                        WHERE us.id IS NULL";
+        $creation = "INSERT INTO " . self::TABLE . " (id, role, coeff, idSetlist)
+                     SELECT us.id, 0, 1, 0 FROM " . User::TABLE . " as us
+                     LEFT JOIN " . self::TABLE . " as ustb ON ustb.id = us.id
+                     WHERE ustb.id IS NULL";
+        return Model::mdRequeteExecuter($suppression) && Model::mdRequeteExecuter($creation);
+    }
+
     public static function clauseSelect(){
         return "SELECT us.*, ustb.coeff,ustb.role, ustb.idSetlist FROM " . self::JOINTURE ;
     }

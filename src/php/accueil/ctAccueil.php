@@ -12,6 +12,7 @@ use shared\php\classes\personalisation\Parametre        as Parametre;
 use shared\php\modale\Toolbox_modal                     as TbModal;
 use shared\php\toolbox\Toolbox_liste                    as TbListe;
 use shared\php\bricks\Brick_table                       as BkTable;
+use shared\php\toolbox\Toolbox_mail                     as TbMail;
 use theBand\src\php\socle\UserTheBand                   as UserTB;
 use shared\php\classes\lien\TypeLienUsage_ass           as TypeLienUsage;
 use shared\php\classes\telechargement\Telechargement    as Telechargement;
@@ -145,6 +146,8 @@ function afficherListeUtilisateurs(string $message = "", bool $succes = true): v
     }
     $actions = [
         ['texte' => "Modifier l'utilisateur", 'logoClass' => 'fa-regular fa-pen-to-square', 'href' => 'accueil;editer;utilisateur'],
+        ['texte' => "Envoyer un nouveau mot de passe par mail", 'logoClass' => 'bi bi-envelope-arrow-up', 'modale' => 'accueil;envoyer;utilisateur',
+            'message' => "Envoyer à cet utilisateur un nouveau mot de passe par mail ? L'ancien ne fonctionnera plus."],
         ['texte' => "Supprimer l'utilisateur", 'logoClass' => 'bi bi-trash', 'modale' => 'accueil;supprimer;utilisateur',
             'message' => "Supprimer définitivement cet utilisateur ? Pour lui retirer seulement l'accès, décochez plutôt « Actif »."]
     ];
@@ -248,6 +251,31 @@ function ctUtilisateurMAJ(): void {
     afficherListeUtilisateurs($retour ? $message : "Erreur lors de l'enregistrement de l'utilisateur.", $retour);
 }
 
+function ctUtilisateurEnvoyer(): void {
+//génère un nouveau mot de passe et l'envoie par mail à l'utilisateur, en retour de la modale de confirmation
+//le mot de passe n'est remplacé que si le mail est bien parti
+    if (!accesAdministrateur()) {return;}
+    $utilisateur = new User(TbModal::modalGetIdFromModal());
+    $nom = htmlspecialchars($utilisateur->prenom . " " . $utilisateur->nom);
+    if ($utilisateur->pseudo === "") {
+        afficherListeUtilisateurs("Utilisateur introuvable.", false);
+        return;
+    }
+    if (!filter_var($utilisateur->mail, FILTER_VALIDATE_EMAIL)) {
+        afficherListeUtilisateurs("Pas d'adresse mail valide pour " . $nom . " : renseignez-la d'abord dans sa fiche.", false);
+        return;
+    }
+    $motDePasse = User::genererMotDePasse();
+    $texte = "A ta demande tes infos d'access User:" . $utilisateur->pseudo . "   PWD:" . $motDePasse;
+    if (!TbMail::envoyer($utilisateur->mail, "info connexion", $texte)) {
+        afficherListeUtilisateurs("Le mail n'a pas pu être envoyé à " . $nom . " (voir le log PHP). Son mot de passe n'a pas été changé.", false);
+        return;
+    }
+    $retour = User::passwordEnregistrer($utilisateur->id, $motDePasse);
+    afficherListeUtilisateurs($retour ? "Nouveau mot de passe envoyé à " . $nom . " (" . htmlspecialchars($utilisateur->mail) . ")."
+                                      : "Mail envoyé mais erreur lors de l'enregistrement du mot de passe de " . $nom . " : recommencez.", $retour);
+}
+
 function ctUtilisateurSupprimer(): void {
 //suppression d'un utilisateur, en retour de la modale de confirmation
     if (!accesAdministrateur()) {return;}
@@ -274,6 +302,7 @@ function ctMusicienLister(): void {
 function afficherListeMusiciens(string $message = "", bool $succes = true): void {
     $messageBarreMenu = "Musiciens : données du groupe";
     $script = Tbx::includeJS('utils');  //traitement des actions de la liste
+    UserTB::synchroniserAvecUser();     //une ligne tb_user_theband par utilisateur, ni plus ni moins
     $infos = UserTB::listePourAdministration();
     foreach ($infos as $index => $info) {
         $infos[$index]['roleTexte']  = UserTB::libelleRole((int)$info['role']);
