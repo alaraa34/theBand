@@ -146,8 +146,8 @@ function afficherListeUtilisateurs(string $message = "", bool $succes = true): v
     }
     $actions = [
         ['texte' => "Modifier l'utilisateur", 'logoClass' => 'fa-regular fa-pen-to-square', 'href' => 'accueil;editer;utilisateur'],
-        ['texte' => "Envoyer un nouveau mot de passe par mail", 'logoClass' => 'bi bi-envelope-arrow-up', 'modale' => 'accueil;envoyer;utilisateur',
-            'message' => "Envoyer à cet utilisateur un nouveau mot de passe par mail ? L'ancien ne fonctionnera plus."],
+        ['texte' => "Réinitialiser le mot de passe et l'envoyer par mail", 'logoClass' => 'bi bi-envelope-arrow-up', 'modale' => 'accueil;envoyer;utilisateur',
+            'message' => "Réinitialiser le mot de passe de cet utilisateur (prénom en minuscules + nombre de lettres) et le lui envoyer par mail ? L'ancien ne fonctionnera plus."],
         ['texte' => "Supprimer l'utilisateur", 'logoClass' => 'bi bi-trash', 'modale' => 'accueil;supprimer;utilisateur',
             'message' => "Supprimer définitivement cet utilisateur ? Pour lui retirer seulement l'accès, décochez plutôt « Actif »."]
     ];
@@ -252,7 +252,8 @@ function ctUtilisateurMAJ(): void {
 }
 
 function ctUtilisateurEnvoyer(): void {
-//génère un nouveau mot de passe et l'envoie par mail à l'utilisateur, en retour de la modale de confirmation
+//réinitialise le mot de passe à sa valeur par défaut (prénom en minuscules + nombre de lettres, ex. alain5)
+//et l'envoie par mail à l'utilisateur, en retour de la modale de confirmation
 //le mot de passe n'est remplacé que si le mail est bien parti
     if (!accesAdministrateur()) {return;}
     $utilisateur = new User(TbModal::modalGetIdFromModal());
@@ -265,10 +266,11 @@ function ctUtilisateurEnvoyer(): void {
         afficherListeUtilisateurs("Pas d'adresse mail valide pour " . $nom . " : renseignez-la d'abord dans sa fiche.", false);
         return;
     }
-    $motDePasse = User::genererMotDePasse();
+    $motDePasse = $utilisateur->motDePasseParDefaut();
     $texte = "A ta demande tes infos d'access User:" . $utilisateur->pseudo . "   PWD:" . $motDePasse;
     if (!TbMail::envoyer($utilisateur->mail, "info connexion", $texte)) {
-        afficherListeUtilisateurs("Le mail n'a pas pu être envoyé à " . $nom . " (voir le log PHP). Son mot de passe n'a pas été changé.", false);
+        afficherListeUtilisateurs("Le mail n'a pas pu être envoyé à " . $nom . ". Son mot de passe n'a pas été changé.<br>Motif : "
+            . htmlspecialchars(TbMail::$derniereErreur), false);
         return;
     }
     $retour = User::passwordEnregistrer($utilisateur->id, $motDePasse);
