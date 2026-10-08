@@ -19,9 +19,7 @@ use theBand\src\php\song\Song                      as Song;
 use theBand\src\php\song\Setlist                   as Setlist;
 use theBand\src\php\song\Detail                    as Detail;
 use theBand\src\php\song\Performance               as Performance;
-use theBand\src\php\song\Repertoire                as Repertoire;
 use shared\php\classes\socle\Commentaire           as Commentaire;
-use shared\php\toolbox\Toolbox_liste               as TbListe;
 use shared\php\toolbox\Toolbox_classe              as TbClasse;
 
 
@@ -407,6 +405,7 @@ function ctSetlistMAJ(){
      //Affichage
      require(TbAdressage::projetGetLayout(__NAMESPACE__));
 }
+
 function setlistMajDetail(int $partie , string $song, int $lastOrdre) {
 // Mets à jour une partie de set list
 // le tableau d'Idsong contient soit idsong(ex 33) soit idsont + E si enchainement(ex33E)

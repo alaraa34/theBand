@@ -151,7 +151,17 @@ class Setlist extends Mere
         ORDER BY de.partie, ordre;";
         return Model::mdRequeteLister($requete,[$idSetlist]);
     }
-  
+    
+    #[\Override]
+    public function mdInfosIdCollection(string $collection, string $cle = ""):array{
+    //surcharge de la méthode appelée par classeLoadFromId_Collections de tbClasse pour trier par partie et ordre
+    // les éléments de détail
+     
+        //Classe d'association externe, c'est l'identifiant de l'enregistrement qu'il faut trouver
+        $requete = "SELECT id FROM " . $collection::TABLE . " WHERE idSetlist=? ORDER BY partie, ordre ASC" ;
+        return Model::mdRequeteListerZoneUnique($requete,"id" ,[$this->id]);
+        
+    }
 }
 
 
