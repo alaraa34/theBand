@@ -378,7 +378,8 @@ function ctSetlistEditer($idEvt){
     $evt = new Evenement_Concert($idEvt);
     $messageBarreMenu = "Modification de Playlist";
     $evt->setlist->loadPartie0();
-    $script = Tbx::includeJS(['concert'],'theBand/src');
+    //touch-punch (shared) traduit le toucher de la tablette en souris pour jQuery UI : à charger avant concert
+    $script = Tbx::includeJS(['jquery.ui.touch-punch.min']) . Tbx::includeJS(['concert'],'theBand/src');
     $css = Tbx::includeCSS(['concert'],'theBand/src');
     //affichage sans actions
     if(Login::loginControl(__NAMESPACE__)){require('tpConcertBuildSetlist.php');}
@@ -425,4 +426,4 @@ function setlistMajDetail(int $partie , string $song, int $lastOrdre) {
     }
     
     return $detail;
-}
+}

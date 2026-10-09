@@ -98,12 +98,16 @@ function initialiserAffichageUnePartie($partie, Setlist $setlist){
 function dessinerUnTitre(Detail $detail){
 //constitue l'affichage d'un titre
 //contient d'Id de la song et une flèche verticale si enchainement
-    $myhtml = "<div id=\"song". $detail->song->id . "\" ondblclick=\"jsEnchainer('" . $detail->song->id . "')\" class=\"portlet\">";
-    $myhtml .= "<p hidden>" . $detail->song->id . "</p>";
-    $myhtml .= "<div class=\"portlet-header\"><strong>" . 
-                $detail->song->titre . "</strong><br>" . 
-                $detail->song->interprete.
-                "    <span id=\"arrow". $detail->song->id . "\"" ;
+//enchaînement : double-clic sur PC, bouton maillon sur tablette (le double-tap n'existe pas)
+    $id = $detail->song->id;
+    $myhtml = "<div id=\"song". $id . "\" ondblclick=\"jsEnchainer('" . $id . "')\" class=\"portlet\">";
+    $myhtml .= "<p hidden>" . $id . "</p>";
+    $myhtml .= "<div class=\"portlet-header\">";
+    $myhtml .= "<button type=\"button\" class=\"bouton-enchainer btn btn-link p-0\" title=\"Enchaîner avec le titre suivant\""
+             . " onclick=\"jsEnchainer('" . $id . "')\" ondblclick=\"event.stopPropagation()\"><i class=\"bi bi-link-45deg\"></i></button>";
+    $myhtml .= "<strong>" . htmlspecialchars((string)$detail->song->titre) . "</strong><br>" .
+                htmlspecialchars((string)$detail->song->interprete) .
+                "    <span id=\"arrow". $id . "\"" ;
     //indicateur d'enchainement
     if(!$detail->enchainement){$myhtml.= "style=\"display:none;\"";}
     $myhtml .= " class=\"". Detail::ICONE_ENCHAINEMENT . "\"></span></div>";

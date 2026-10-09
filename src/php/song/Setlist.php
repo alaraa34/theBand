@@ -63,13 +63,18 @@ class Setlist extends Mere
     }
    
     public function updateCollectionDetail() : bool{
-    //mise à jour dde la collection
-        //suppression des détails du MPD seulement si une liste existante pour la remplecer
-        $retour=true;
-        if (count($this->details) >0){$retour = $this->deleteDetails();}
-        //creation des details de la classe
-        if($retour){$retour= TbClasse::classeUpdateCollection($this);}
-        return $retour;
+    //mise à jour de la collection, en transaction : si l'écriture d'un titre échoue,
+    //la suppression est annulée et l'ancienne setlist reste intacte (détail de l'erreur dans le log PHP)
+        return Model::mdTransactionOk(function () : bool {
+            //suppression des détails du MPD seulement si une liste existante pour la remplacer
+            $retour = true;
+            if (count($this->details) > 0){$retour = $this->deleteDetails();}
+            //creation des details de la classe
+            if ($retour){$retour = TbClasse::classeUpdateCollection($this);}
+            //un false n'annule rien tout seul : exception pour déclencher le rollback
+            if (!$retour){throw new \RuntimeException("échec de l'écriture des détails de la setlist " . $this->id);}
+            return true;
+        }, "Setlist::updateCollectionDetail");
     }
     //------------------------------------------------------------------------------------------------
     //CHARGEMENT

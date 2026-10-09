@@ -73,3 +73,16 @@ INSERT INTO `tb_menu` (`indentation`, `domaine`, `controleur`, `typeLigne`, `lib
 DROP TABLE `tb_lien_type_usage_old`;
 DROP TABLE `tb_lien_type`;
 DELETE FROM `tb_nomenclature` WHERE groupe = 'SUJET';
+
+-- =====================================================================
+-- 09/10/2026 : setlists en InnoDB pour que l'enregistrement soit en transaction
+-- (MyISAM ignore les transactions : si l'écriture échouait, la setlist
+--  pouvait rester vide). Sans risque, les données sont conservées.
+-- Local d'abord, puis prod. Sauvegarde AVANT.
+-- =====================================================================
+ALTER TABLE `tb_setlist`        ENGINE=InnoDB;
+ALTER TABLE `tb_setlist_detail` ENGINE=InnoDB;
+
+-- contrôle : les deux lignes doivent afficher InnoDB
+SELECT TABLE_NAME, ENGINE FROM information_schema.TABLES
+WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME IN ('tb_setlist','tb_setlist_detail');

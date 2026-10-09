@@ -27,4 +27,16 @@
 }
 .portlet-content {
   padding: 0.1em;
+}/* tablette : le doigt sur l'en-tête déplace le titre au lieu de faire défiler la page */
+.portlet-header {
+  touch-action: none;
+  display: flow-root;      /* contient le bouton flottant */
+}
+/* bouton maillon : bascule l'enchaînement (utile sur tablette, sans double-clic) */
+.bouton-enchainer {
+  float: right;
+  font-size: 1.4em;
+  line-height: 1;
+  min-width: 32px;
+  min-height: 32px;
 }
