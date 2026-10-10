@@ -138,7 +138,7 @@ class Etablissement extends Mere
     public function chargerLiensParMouvements(array $mvtsLiens):void{
     //Mets à jour la collection des liens sur la base des mouvements
     //ne traite pas la mise à jour physique sauf pour la suppression
-        $this->liens = TbClasse::classeChargerCollectionParMouvements($this, $mvtsLiens, Lien::class);
+        $this->liens = Lien::chargerCollectionAvecUrl($this, $mvtsLiens);
     }
     public function chargerContactsParMouvements(array $mvtsContacts):void{
     //Mets à jour la collection des contacts sur la base des mouvements

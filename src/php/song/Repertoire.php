@@ -115,7 +115,7 @@ class Repertoire extends Song
     public function chargerLiensParMouvements(array $mvtsLiens):void{
     //Mets à jour la collection des liens sur la base des mouvements
     //ne traite pas la mise à jour physique sauf pour la suppression
-        $this->liens = TbClasse::classeChargerCollectionParMouvements($this,$mvtsLiens, "shared\php\classes\lien\Lien");
+        $this->liens = Lien::chargerCollectionAvecUrl($this, $mvtsLiens);
     }
     
     private function loadFromId():void{
