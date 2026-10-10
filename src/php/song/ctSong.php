@@ -5,6 +5,7 @@ namespace theBand\src\php\song;
  ******************************************************************************/
 use shared\php\classes\lien\Lien                       as Lien;
 use shared\php\classes\lien\TypeLien                   as TypeLien;
+use shared\php\classes\lien\Multipiste                 as Multipiste;
 use shared\php\classes\personalisation\Nomenclature    as Nomenclature;
 use theBand\src\php\socle\UserTheBand                  as UserTB;
 use shared\php\classes\socle\User                      as User;
@@ -342,4 +343,126 @@ function ctPlaylistMAJ(){
     $content = Tbx::messageColorer($retour,"Playlist mise à jour","Erreur lors de la mise à jour");
      //Affichage
      require(TbAdressage::projetGetLayout(__NAMESPACE__));
+}
+
+
+//==================================================================================================
+// LECTEUR MULTIPISTE : génération des pistes (page réservée aux administrateurs)
+// Le calcul est fait par l'agent Python agent_pistes.py sur un PC (voir shared/outils/multipistes)
+//==================================================================================================
+function ctGenererPistesLecteur() {
+//liste des titres concert et test avec l'état de génération des pistes de leurs MP3
+    if (!pistesAccesAdministrateur()) {return;}
+    $lignes = Repertoire::mdSongGetListeAvecLiens([Repertoire::TYPE_CONCERT, Repertoire::TYPE_TEST], Multipiste::TYPES_SOURCE);
+    $etats = Multipiste::etatsParLien(array_values(array_filter(array_column($lignes, 'idLien'))));
+
+    //regroupement par titre
+    $titres = [];
+    $enAttente = 0;
+    foreach ($lignes as $ligne) {
+        $idSong = (int)$ligne['idSong'];
+        $titres[$idSong] ??= ['id'=>$idSong, 'titre'=>$ligne['titre'], 'interprete'=>$ligne['interprete'], 'fichiers'=>''];
+        if (is_null($ligne['idLien'])) {continue;}
+        $etat = Multipiste::etatAffiche($etats[(int)$ligne['idLien']] ?? null, $ligne['url']);
+        if (in_array($etat, [Multipiste::A_TRAITER, Multipiste::EN_COURS], true)) {$enAttente++;}
+        $urlDemande = TbAdressage::getURLstatic("song", "pistesDemanderLien", (int)$ligne['idLien']);
+        $titres[$idSong]['fichiers'] .= Multipiste::iconeHtml(
+            ['url'=>$ligne['url'], 'nomAffiche'=>$ligne['nomAffiche']], $etat, $urlDemande);
+    }
+    foreach ($titres as $idSong => $titre) {
+        if ($titre['fichiers'] === '') {$titres[$idSong]['fichiers'] = '<span class="text-muted small">aucun MP3</span>';}
+    }
+
+    $infosColonnes[] = ['zone'=>BkTable::COLONNE_NUMERO];
+    $infosColonnes[] = ['zone'=>'titre','fonction'=>TbListe::FONCTION_VASN];
+    $infosColonnes[] = ['zone'=>'interprete','titre'=>'Interprète','fonction'=>TbListe::FONCTION_VASN];
+    $infosColonnes[] = ['zone'=>'fichiers','titre'=>'Fichiers MP3','align'=>'MC'];
+    $actions = [['texte'=>'Générer les pistes des fichiers non traités','logoClass'=>'bi bi-sliders2-vertical',
+                 'href'=>'song;demanderTitre;pistes']];
+
+    $content = '<p class="small mb-2">'
+             . '<i class="bi bi-volume-up-fill text-danger"></i> à générer &nbsp; '
+             . '<i class="bi bi-volume-up-fill text-warning"></i> en attente &nbsp; '
+             . '<i class="bi bi-hourglass-split text-warning"></i> en cours &nbsp; '
+             . '<i class="bi bi-volume-up-fill text-success"></i> pistes générées'
+             . ($enAttente > 0 ? ' &nbsp;—&nbsp; <b>' . $enAttente . '</b> fichier(s) en attente ou en cours, page rafraîchie toutes les 30 s' : '')
+             . '</p>'
+             . TbListe::constituerListe(array_values($titres), $infosColonnes, $actions);
+    $script = $enAttente > 0 ? '<script>setTimeout(() => window.location.reload(), 30000);</script>' : '';
+    $messageBarreMenu = "Génération des pistes du lecteur multipiste";
+    require(TbAdressage::projetGetLayout(__NAMESPACE__));
+}
+
+function ctPistesDemanderLien(int $idLien = 0) {
+//clic sur l'icône d'un MP3 : le met en file d'attente
+    if (!pistesAccesAdministrateur()) {return;}
+    Multipiste::demander($idLien, (int)User::connectUserGetInfo('id'));
+    header('Location: ' . TbAdressage::getURLstatic("song", "genererPistesLecteur"));
+}
+
+function ctPistesDemanderTitre(int $idSong = 0) {
+//action de la ligne : met en file d'attente les MP3 du titre jamais traités, en erreur ou modifiés depuis
+    if (!pistesAccesAdministrateur()) {return;}
+    $lignes = array_filter(Repertoire::mdSongGetListeAvecLiens([Repertoire::TYPE_CONCERT, Repertoire::TYPE_TEST], Multipiste::TYPES_SOURCE),
+                           fn($ligne) => (int)$ligne['idSong'] === $idSong && !is_null($ligne['idLien']));
+    $etats = Multipiste::etatsParLien(array_column($lignes, 'idLien'));
+    foreach ($lignes as $ligne) {
+        $etat = Multipiste::etatAffiche($etats[(int)$ligne['idLien']] ?? null, $ligne['url']);
+        if (in_array($etat, [0, Multipiste::ERREUR, Multipiste::A_REFAIRE], true)) {
+            Multipiste::demander((int)$ligne['idLien'], (int)User::connectUserGetInfo('id'));
+        }
+    }
+    header('Location: ' . TbAdressage::getURLstatic("song", "genererPistesLecteur"));
+}
+
+function pistesAccesAdministrateur(): bool {
+//true si un administrateur est connecté, sinon affiche la connexion ou un refus
+    if (!Login::loginControl(__NAMESPACE__)) {return false;}
+    if (User::estAdministrateur()) {return true;}
+    $content = Tbx::messageColorer(false, messageKO: "Page réservée à un administrateur.");
+    require(TbAdressage::projetGetLayout(__NAMESPACE__));
+    return false;
+}
+
+//--------------------------------------------------------------------------------------------------
+// Points d'entrée de l'agent (POST, réponse JSON, sans session ni layout)
+// Tous reçoivent cle (contenu de ENVIRagent.txt) et agent (nom du PC)
+//--------------------------------------------------------------------------------------------------
+function ctPistesAgentProchain() {
+//prochain MP3 à traiter : {"idLien":0} s'il n'y a rien
+    $agent = pistesAgentControler();
+    pistesAgentRepondre(Multipiste::agentProchain($agent));
+}
+
+function ctPistesAgentRecevoir() {
+//réception d'une piste : idLien, piste (vocals, drums...), fichier
+    $agent = pistesAgentControler();
+    $erreur = Multipiste::agentRecevoir(TbAdressage::getPost("I", "idLien"), $agent,
+                                        TbAdressage::getPost("S", "piste"), $_FILES['fichier'] ?? []);
+    pistesAgentRepondre(['ok'=>$erreur === "", 'message'=>$erreur], $erreur === "" ? 200 : 400);
+}
+
+function ctPistesAgentTerminer() {
+//fin de traitement : idLien, succes (1/0), message, et pour information modele et duree (secondes)
+    $agent = pistesAgentControler();
+    $infos = ['modele'=>TbAdressage::getPost("S", "modele"), 'dureeSecondes'=>TbAdressage::getPost("I", "duree")];
+    $erreur = Multipiste::agentTerminer(TbAdressage::getPost("I", "idLien"), $agent,
+                                        TbAdressage::getPost("I", "succes") === 1, TbAdressage::getPost("S", "message"), $infos);
+    pistesAgentRepondre(['ok'=>$erreur === "", 'message'=>$erreur], $erreur === "" ? 200 : 400);
+}
+
+function pistesAgentControler(): string {
+//vérifie la clé de l'agent et retourne son nom ; répond 403 et s'arrête sinon
+    $agent = substr((string)preg_replace('/[^A-Za-z0-9_-]/', '', TbAdressage::getPost("S", "agent")), 0, 40);
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST' || $agent === '' || !Multipiste::agentCleValide(TbAdressage::getPost("S", "cle"))) {
+        pistesAgentRepondre(['ok'=>false, 'message'=>"Accès refusé"], 403);
+    }
+    return $agent;
+}
+
+function pistesAgentRepondre(array $reponse, int $codeHttp = 200): never {
+    http_response_code($codeHttp);
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode($reponse, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    exit;
 }

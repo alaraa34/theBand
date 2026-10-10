@@ -4,6 +4,7 @@
 # --- Configuration et identifiants (jamais dans git)
 /ENVIRdev.txt
 /ENVIRprod.txt
+/ENVIRagent.txt
 /MAILdev.txt
 /MAILprod.txt
 .env

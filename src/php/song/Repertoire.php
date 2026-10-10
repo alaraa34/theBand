@@ -11,6 +11,8 @@ use shared\php\database\Model_utils                    as ModelU;
 use shared\php\classes\socle\User                      as User;
 use shared\php\classes\socle\Commentaire               as Commentaire;
 use shared\php\classes\lien\Lienhtml                   as Lienhtml;
+use shared\php\classes\lien\Lien                       as Lien;
+use shared\php\classes\lien\TypeLien                   as TypeLien;
 use shared\php\toolbox\Toolbox_classe                  as TbClasse;
 use shared\php\classes\personalisation\Nomenclature    as Nomenclature;
 use theBand\src\php\proposition\Proposition            as Proposition;
@@ -128,6 +130,20 @@ class Repertoire extends Song
     //------------------------------------------------------------------------------------------------
     //MODELE
     //-----------------------------------------------------------------------------------------------
+    public static function mdSongGetListeAvecLiens(array $typesSong, array $typesLien): array {
+    // Retourne les titres des types demandés avec leurs liens des types demandés (une ligne par lien,
+    // une ligne sans lien si le titre n'en a pas), triés par titre
+        $requete = "SELECT so.id as idSong, titre, interprete, lie.id as idLien, lie.url, lie.idTypeLien, lt.nomAffiche
+                    FROM ". Song::TABLE . " as so
+                        LEFT JOIN (". SongLien_ass::TABLE . " as sla
+                                   INNER JOIN ". Lien::TABLE . " as lie ON sla.idLien = lie.id AND lie.idTypeLien " . Model::mdClauseIn($typesLien) . "
+                                   INNER JOIN ". TypeLien::TABLE . " as lt ON lt.id = lie.idTypeLien)
+                              ON sla.idSong = so.id
+                    WHERE so.idTypeSong " . Model::mdClauseIn($typesSong) . "
+                    ORDER BY so.titre, so.id, lie.idTypeLien, lie.id;";
+        return Model::mdRequeteLister($requete);
+    }
+
     private static function mdSongGetListe(array $typesSong) {
     // Retourne la liste des songs du répertoire en test ou concert. avec les liens mis en forme
         $requete = "SELECT so.id as id, no.valeurA as typeSong, titre, interprete,tonaOrigine,tonaScene,tempo, 

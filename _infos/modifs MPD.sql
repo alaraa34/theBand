@@ -86,3 +86,42 @@ ALTER TABLE `tb_setlist_detail` ENGINE=InnoDB;
 -- contrôle : les deux lignes doivent afficher InnoDB
 SELECT TABLE_NAME, ENGINE FROM information_schema.TABLES
 WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME IN ('tb_setlist','tb_setlist_detail');
+
+-- =====================================================================
+-- 10/10/2026 : lecteur multipiste, génération des pistes (branche multipistes)
+-- Local d'abord, puis prod. Sauvegarde AVANT.
+-- =====================================================================
+
+-- ---------------------------------------------------------------------
+-- 1. État de génération des pistes, une ligne par lien MP3 / MP3TB traité
+--    statut : 1 à traiter, 2 en cours, 3 terminé, 4 erreur (constantes de Multipiste)
+-- ---------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `tb_multipiste` (
+  `idLien` int NOT NULL COMMENT 'Lien MP3 source (tb_lien.id)',
+  `statut` tinyint NOT NULL DEFAULT '1' COMMENT '1 à traiter, 2 en cours, 3 terminé, 4 erreur',
+  `dateDemande` datetime DEFAULT NULL,
+  `idDemandeur` int NOT NULL DEFAULT '0' COMMENT 'tb_user.id de qui a demandé la génération',
+  `dateDebut` datetime DEFAULT NULL COMMENT 'Prise en charge par un agent',
+  `dateFin` datetime DEFAULT NULL,
+  `agent` varchar(40) NOT NULL DEFAULT '' COMMENT 'Nom du PC qui fait ou a fait le traitement',
+  `tailleSource` int NOT NULL DEFAULT '0' COMMENT 'Taille du MP3 source lors de la génération (détecte un remplacement)',
+  `message` varchar(255) NOT NULL DEFAULT '' COMMENT 'Erreur éventuelle',
+  PRIMARY KEY (`idLien`),
+  KEY `i_statut` (`statut`,`dateDemande`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Génération des pistes du lecteur multipiste';
+
+-- ---------------------------------------------------------------------
+-- 2. Menu : Titres > Lecteur multipiste > Générer les pistes (administrateurs seulement)
+--    La colonne adminOnly doit exister dans tb_menu (utilisée par Menu.php)
+--    (changer les indentations si elles sont déjà prises)
+-- ---------------------------------------------------------------------
+INSERT INTO `tb_menu` (`indentation`, `domaine`, `controleur`, `typeLigne`, `libelle`, `action`, `production`, `adminOnly`) VALUES
+(110000, '', '', 'divider', 'Lecteur multipiste', '', 1, 1),
+(111000, 'song', '', 'action', 'Générer les pistes', 'genererPistesLecteur', 1, 1);
+
+-- ---------------------------------------------------------------------
+-- 3. Fichiers à créer à la main (local et LWS) :
+--    - theBand/ENVIRagent.txt : une ligne, la clé secrète partagée avec les agents
+--      (au moins 20 caractères, par exemple 40 caractères aléatoires)
+--    - dossier theBand/fichiers/multipistes/ (créé automatiquement sinon)
+-- ---------------------------------------------------------------------
