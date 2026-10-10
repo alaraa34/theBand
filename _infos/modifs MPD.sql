@@ -151,3 +151,17 @@ DELETE FROM tb_lien_type_usage WHERE idTypeLien = 54;
 SELECT idTypeLien, COUNT(*) AS nb FROM tb_lien WHERE idTypeLien IN (1, 18, 54) GROUP BY idTypeLien;
 SELECT sujet, GROUP_CONCAT(idTypeLien ORDER BY idTypeLien) AS types FROM tb_lien_type_usage
 WHERE idTypeLien IN (1, 18, 54) GROUP BY sujet;
+
+-- ---------------------------------------------------------------------
+-- 5. Suppression des types de lien obsolètes 6 (MP3autre), 31 (MP3 sans voix), 54 (MP3 détonné)
+--    A passer APRES la partie 4.
+-- ---------------------------------------------------------------------
+-- contrôle : doit renvoyer 0 ligne (à faire aussi sur la table des liens de training en prod : même base)
+SELECT id, idTypeLien, url FROM tb_lien WHERE idTypeLien IN (6, 31, 54);
+
+DELETE FROM tb_lien_type_usage WHERE idTypeLien IN (6, 31, 54);
+
+-- puis réimporter la référence (les 3 types en ont été retirés) :
+--   C:\wamp64\www\shared\php\classes\lien\sh_lien_type.sql
+-- contrôle : ne doit plus afficher 6, 31 ni 54
+SELECT id, nom FROM sh_lien_type ORDER BY id;
