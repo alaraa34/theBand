@@ -359,12 +359,16 @@ function ctGenererPistesLecteur() {
     //regroupement par titre
     $titres = [];
     $enAttente = 0;
+    $aTraiter = 0;
+    $agentsEnCours = [];
     foreach ($lignes as $ligne) {
         $idSong = (int)$ligne['idSong'];
         $titres[$idSong] ??= ['id'=>$idSong, 'titre'=>$ligne['titre'], 'interprete'=>$ligne['interprete'], 'fichiers'=>''];
         if (is_null($ligne['idLien'])) {continue;}
         $etat = Multipiste::etatAffiche($etats[(int)$ligne['idLien']] ?? null, $ligne['url']);
         if (in_array($etat, [Multipiste::A_TRAITER, Multipiste::EN_COURS], true)) {$enAttente++;}
+        if ($etat === Multipiste::A_TRAITER) {$aTraiter++;}
+        if ($etat === Multipiste::EN_COURS) {$agentsEnCours[] = $etats[(int)$ligne['idLien']]['agent'];}
         $urlDemande = TbAdressage::getURLstatic("song", "pistesDemanderLien", (int)$ligne['idLien']);
         $titres[$idSong]['fichiers'] .= Multipiste::iconeHtml(
             ['url'=>$ligne['url'], 'nomAffiche'=>$ligne['nomAffiche']], $etat, $urlDemande);
@@ -380,7 +384,8 @@ function ctGenererPistesLecteur() {
     $actions = [['texte'=>'Générer les pistes des fichiers non traités','logoClass'=>'bi bi-sliders2-vertical',
                  'href'=>'song;demanderTitre;pistes']];
 
-    $content = '<p class="small mb-2">'
+    $content = pistesBandeauAgents($aTraiter, array_unique($agentsEnCours))
+             . '<p class="small mb-2">'
              . '<i class="bi bi-volume-up-fill text-danger"></i> à générer &nbsp; '
              . '<i class="bi bi-volume-up-fill text-warning"></i> en attente &nbsp; '
              . '<i class="bi bi-hourglass-split text-warning"></i> en cours &nbsp; '
@@ -391,6 +396,25 @@ function ctGenererPistesLecteur() {
     $script = $enAttente > 0 ? '<script>setTimeout(() => window.location.reload(), 30000);</script>' : '';
     $messageBarreMenu = "Génération des pistes du lecteur multipiste";
     require(TbAdressage::projetGetLayout(__NAMESPACE__));
+}
+
+function pistesBandeauAgents(int $aTraiter, array $agentsEnCours): string {
+//bandeau d'état des agents : signale s'il faut lancer lancer_agent.bat sur un PC
+    $actifs = Multipiste::agentsActifs();
+    $noms = [];
+    foreach ($actifs as $nom => $secondes) {$noms[] = htmlspecialchars($nom) . ' (contact il y a ' . $secondes . ' s)';}
+    foreach ($agentsEnCours as $nom) {
+        if (!isset($actifs[$nom])) {$noms[] = htmlspecialchars($nom) . ' (traitement en cours)';}
+    }
+    if (count($noms) > 0) {
+        return '<div class="alert alert-success py-2 small"><i class="bi bi-pc-display"></i> Agent actif : ' . implode(', ', $noms) . '</div>';
+    }
+    if ($aTraiter > 0) {
+        return '<div class="alert alert-warning py-2 small"><i class="bi bi-exclamation-triangle"></i> <b>' . $aTraiter
+             . ' fichier(s) en attente et aucun agent actif</b> : lancer <code>lancer_agent.bat</code> sur un PC.</div>';
+    }
+    return '<div class="alert alert-secondary py-2 small"><i class="bi bi-pc-display"></i> Aucun agent actif'
+         . ' (à lancer avant de demander une génération).</div>';
 }
 
 function ctPistesDemanderLien(int $idLien = 0) {
