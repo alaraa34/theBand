@@ -378,21 +378,18 @@ function ctGenererPistesLecteur() {
     }
 
     $infosColonnes[] = ['zone'=>BkTable::COLONNE_NUMERO];
-    $infosColonnes[] = ['zone'=>'titre','fonction'=>TbListe::FONCTION_VASN];
-    $infosColonnes[] = ['zone'=>'interprete','titre'=>'Interprète','fonction'=>TbListe::FONCTION_VASN];
+    $infosColonnes[] = ['zone'=>'titre','valeur'=>['titre',' - ','interprete'],'fonction'=>TbListe::FONCTION_VASN];
     $infosColonnes[] = ['zone'=>'fichiers','titre'=>'Fichiers MP3','align'=>'MC'];
-    $actions = [['texte'=>'Générer les pistes des fichiers non traités','logoClass'=>'bi bi-sliders2-vertical',
-                 'href'=>'song;demanderTitre;pistes']];
 
     $content = pistesBandeauAgents($aTraiter, array_unique($agentsEnCours))
              . '<p class="small mb-2">'
-             . '<i class="bi bi-volume-up-fill text-danger"></i> à générer &nbsp; '
-             . '<i class="bi bi-volume-up-fill text-warning"></i> en attente &nbsp; '
-             . '<i class="bi bi-hourglass-split text-warning"></i> en cours &nbsp; '
-             . '<i class="bi bi-volume-up-fill text-success"></i> pistes générées'
+             . '<i class="fa-regular fa-file-audio text-danger"></i> à générer &nbsp; '
+             . '<i class="fa-regular fa-file-audio text-warning"></i> en attente &nbsp; '
+             . '<i class="fa-regular fa-file-audio text-warning"></i><i class="bi bi-hourglass-split small ms-1 text-warning"></i> en cours &nbsp; '
+             . '<i class="fa-regular fa-file-audio text-success"></i> pistes générées'
              . ($enAttente > 0 ? ' &nbsp;—&nbsp; <b>' . $enAttente . '</b> fichier(s) en attente ou en cours, page rafraîchie toutes les 30 s' : '')
              . '</p>'
-             . TbListe::constituerListe(array_values($titres), $infosColonnes, $actions);
+             . TbListe::constituerListe(array_values($titres), $infosColonnes);
     $script = $enAttente > 0 ? '<script>setTimeout(() => window.location.reload(), 30000);</script>' : '';
     $messageBarreMenu = "Génération des pistes du lecteur multipiste";
     require(TbAdressage::projetGetLayout(__NAMESPACE__));
@@ -421,21 +418,6 @@ function ctPistesDemanderLien(int $idLien = 0) {
 //clic sur l'icône d'un MP3 : le met en file d'attente
     if (!pistesAccesAdministrateur()) {return;}
     Multipiste::demander($idLien, (int)User::connectUserGetInfo('id'));
-    header('Location: ' . TbAdressage::getURLstatic("song", "genererPistesLecteur"));
-}
-
-function ctPistesDemanderTitre(int $idSong = 0) {
-//action de la ligne : met en file d'attente les MP3 du titre jamais traités, en erreur ou modifiés depuis
-    if (!pistesAccesAdministrateur()) {return;}
-    $lignes = array_filter(Repertoire::mdSongGetListeAvecLiens([Repertoire::TYPE_CONCERT, Repertoire::TYPE_TEST], Multipiste::TYPES_SOURCE),
-                           fn($ligne) => (int)$ligne['idSong'] === $idSong && !is_null($ligne['idLien']));
-    $etats = Multipiste::etatsParLien(array_column($lignes, 'idLien'));
-    foreach ($lignes as $ligne) {
-        $etat = Multipiste::etatAffiche($etats[(int)$ligne['idLien']] ?? null, $ligne['url']);
-        if (in_array($etat, [0, Multipiste::ERREUR, Multipiste::A_REFAIRE], true)) {
-            Multipiste::demander((int)$ligne['idLien'], (int)User::connectUserGetInfo('id'));
-        }
-    }
     header('Location: ' . TbAdressage::getURLstatic("song", "genererPistesLecteur"));
 }
 
