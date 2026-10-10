@@ -473,21 +473,21 @@ INSERT INTO `tb_lien_type_usage` (`id`, `idTypeLien`, `sujet`) VALUES
 (47, 11, 'ETABLISSEMENT'),
 (41, 1, 'PLAYER'),
 (44, 6, 'PLAYER'),
+(50, 18, 'PLAYER'),
 (45, 28, 'PLAYER'),
 (43, 31, 'PLAYER'),
-(42, 54, 'PLAYER'),
 (46, 4, 'PROPOSITION'),
 (34, 1, 'SONG'),
 (30, 2, 'SONG'),
 (40, 4, 'SONG'),
 (33, 5, 'SONG'),
 (37, 6, 'SONG'),
+(51, 18, 'SONG'),
 (31, 21, 'SONG'),
 (38, 28, 'SONG'),
 (39, 29, 'SONG'),
 (36, 31, 'SONG'),
-(32, 49, 'SONG'),
-(35, 54, 'SONG');
+(32, 49, 'SONG');
 
 --
 -- Données de référence de la table `tb_menu`
