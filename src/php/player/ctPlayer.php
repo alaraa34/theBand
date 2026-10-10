@@ -50,8 +50,8 @@ function ctPlayerPlayList(){
         }
         else{
             $idContexte = 4;
-            $songs = ctPlayerGetListeSongs($idContexte,TypeLien::MP3D ,$user->idSetlist); 
-            ctPlayerAfficherPlayerAvecBox($songs,TypeLien::MP3D ,$idContexte);
+            $songs = ctPlayerGetListeSongs($idContexte,TypeLien::MP3 ,$user->idSetlist); 
+            ctPlayerAfficherPlayerAvecBox($songs,TypeLien::MP3 ,$idContexte);
         }
     }
    
@@ -100,9 +100,9 @@ function ctPlayerListeSansBox($infos){
 
 function ctPlayerSongAffichageInitial(int $idContexte):void{
 //Constitution de la liste de player initiale pour ce contexte
-//Par défaur Mp3d
-    $songs = ctPlayerGetListeSongs($idContexte,TypeLien::MP3D ); 
-    ctPlayerAfficherPlayerAvecBox($songs,TypeLien::MP3D ,$idContexte);
+//Par défaut MP3 (tona concert)
+    $songs = ctPlayerGetListeSongs($idContexte,TypeLien::MP3 ); 
+    ctPlayerAfficherPlayerAvecBox($songs,TypeLien::MP3 ,$idContexte);
 }
 
 function ctLibelleLongContexte(int $idContexte,int $idSetlist= 0){
@@ -205,16 +205,16 @@ function ctPlayerProchainConcertGetSongs(int $idTypeSong){
 function ctPlayerUnConcert(int $idEvt){
 //player pour un concert particulier
     $evt= new Evenement_Concert($idEvt);
-    $songs = Song::mdSongGetListePlayerFromSetList($evt->setlist->id,TypeLien::MP3D); 
+    $songs = Song::mdSongGetListePlayerFromSetList($evt->setlist->id,TypeLien::MP3); 
     //appel avec 4 comme idcontexte
-    ctPlayerAfficherPlayerAvecBox($songs,TypeLien::MP3D ,4,$evt->setlist->id);
+    ctPlayerAfficherPlayerAvecBox($songs,TypeLien::MP3 ,4,$evt->setlist->id);
 }
 
 function ctPlayerUneRepetition(int $idEvt){
 //player pour un concert particulier
     $evt= new Evenement_Repetition($idEvt);
-    $songs = Song::mdSongGetListePlayerFromSetList($evt->setlist->id,TypeLien::MP3D); 
-    ctPlayerAfficherPlayerAvecBox($songs,TypeLien::MP3D ,4,$evt->setlist->id);
+    $songs = Song::mdSongGetListePlayerFromSetList($evt->setlist->id,TypeLien::MP3); 
+    ctPlayerAfficherPlayerAvecBox($songs,TypeLien::MP3 ,4,$evt->setlist->id);
 }
 
 function ctPlayerAfficherChoix(){

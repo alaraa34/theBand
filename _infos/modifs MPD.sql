@@ -125,3 +125,29 @@ INSERT INTO `tb_menu` (`indentation`, `domaine`, `controleur`, `typeLigne`, `lib
 --      (au moins 20 caractères, par exemple 40 caractères aléatoires)
 --    - dossier theBand/fichiers/multipistes/ (créé automatiquement sinon)
 -- ---------------------------------------------------------------------
+
+-- ---------------------------------------------------------------------
+-- 4. Reclassement des MP3 (10/10/2026)
+--    - les MP3 (1) actuels sont des enregistrements du groupe : ils deviennent MP3TB (18)
+--    - les MP3 détonnés (54, tona concert) deviennent les MP3 de référence (1)
+--    L'ORDRE EST IMPORTANT : 1 -> 18 d'abord, sinon les anciens 54 passeraient aussi en 18.
+--    Les fichiers ne bougent pas : les url (fichiers/mp3/..., fichiers/mp3d/...) restent valables.
+--    tb_lien est en MyISAM (pas de transaction) : sauvegarde de tb_lien et tb_lien_type_usage AVANT.
+-- ---------------------------------------------------------------------
+-- contrôle avant : noter les nombres
+SELECT idTypeLien, COUNT(*) AS nb FROM tb_lien WHERE idTypeLien IN (1, 18, 54) GROUP BY idTypeLien;
+
+UPDATE tb_lien SET idTypeLien = 18 WHERE idTypeLien = 1;
+UPDATE tb_lien SET idTypeLien = 1  WHERE idTypeLien = 54;
+
+-- usages par sujet : MP3TB reprend les sujets de l'ancien MP3, MP3 ceux de l'ancien MP3 détonné
+INSERT IGNORE INTO tb_lien_type_usage (idTypeLien, sujet) SELECT 18, sujet FROM tb_lien_type_usage WHERE idTypeLien = 1;
+DELETE FROM tb_lien_type_usage WHERE idTypeLien = 1
+   AND sujet NOT IN (SELECT sujet FROM (SELECT sujet FROM tb_lien_type_usage WHERE idTypeLien = 54) AS ancien54);
+INSERT IGNORE INTO tb_lien_type_usage (idTypeLien, sujet) SELECT 1, sujet FROM tb_lien_type_usage WHERE idTypeLien = 54;
+DELETE FROM tb_lien_type_usage WHERE idTypeLien = 54;
+
+-- contrôle après : l'ancien nombre de 1 doit être en 18, l'ancien nombre de 54 en 1, plus aucun 54
+SELECT idTypeLien, COUNT(*) AS nb FROM tb_lien WHERE idTypeLien IN (1, 18, 54) GROUP BY idTypeLien;
+SELECT sujet, GROUP_CONCAT(idTypeLien ORDER BY idTypeLien) AS types FROM tb_lien_type_usage
+WHERE idTypeLien IN (1, 18, 54) GROUP BY sujet;
