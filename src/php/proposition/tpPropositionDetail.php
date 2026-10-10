@@ -16,6 +16,7 @@ ob_start();
         <div class="container">
             <!--Identifiants proposition et song -->  
             <input type="hidden"  name="id" id="id" value="<?= $proposition->id ?>"/>
+            <input type="hidden"  name="referer"  value="<?= TbAdressage::getReferer($proposition->id) ?>" />
             <!-- Titre et interprète -->  
             <div class="row">
                 <!-- Titre --> 

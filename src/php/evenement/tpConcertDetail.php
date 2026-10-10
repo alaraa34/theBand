@@ -17,6 +17,7 @@
 <form method="post" id="editorForm" action="<?= TbAdressage::getURLstatic('evenement','concertMAJ')?>">
     <!--Identifiants concert -->  
     <input type="hidden"  name="idConcert" id="idConcert" value="<?= $concert->id?>" />
+    <input type="hidden"  name="referer"  value="<?= TbAdressage::getReferer($concert->id) ?>" />
     <input type="hidden"  name="idSetlist" id="idSetlist" value="<?= $concert->setlist->id?>" />
     <!-- date/lieu  -->
     <fieldset class="border col-12">

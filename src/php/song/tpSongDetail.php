@@ -12,6 +12,7 @@ ob_start(); ?>
     <section class="py-5">
         <div class="container">
             <input type="hidden"  name="idSong" id="idSong" value="<?= $song->id ?>" />
+            <input type="hidden"  name="referer"  value="<?= TbAdressage::getReferer($song->id) ?>" />
             <!-- Titre et interprète -->  
             <div class="row">
                 <!-- Type de titre --> 

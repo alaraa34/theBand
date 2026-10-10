@@ -21,6 +21,7 @@ ob_start();
         <div class="container">
             <!--Identifiants etab -->  
             <input type="hidden"  name="idEtab" id="idEtab" value="<?= $etab->id ?>" />
+            <input type="hidden"  name="referer"  value="<?= TbAdressage::getReferer($etab->id) ?>" />
             <!-- Nom et coordonnées -->  
             <div class="row">
                 <!-- Type de titre --> 

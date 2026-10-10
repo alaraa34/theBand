@@ -19,6 +19,7 @@ ob_start();
         <div class="container">
             <!--Identifiants répétition et liste des titres sélectionnés-->  
             <input type="hidden"  name="idRep" id="idRep" value="<?= $repetition->id ?>" />
+            <input type="hidden"  name="referer"  value="<?= TbAdressage::getReferer($repetition->id) ?>" />
             <input type="hidden"  name="idSetlist" id="idSetlist" value="<?= $repetition->setlist->id ?>" />
             <input type="hidden"  name="idSongsSelected" id="idSongsSelected" 
                    value="<?= implode("-",repetitionIdSongSelectionnes($repetition))?>" />

@@ -14,6 +14,7 @@ ob_start(); ?>
     <section class="py-5">
         <div class="container">
             <input type="hidden" name="idUtilisateur" value="<?= $musicien->id ?>" />
+            <input type="hidden"  name="referer"  value="<?= TbAdressage::getReferer($musicien->id) ?>" />
             <!-- Rappel de l'utilisateur (non modifiable ici) -->
             <div class="row mb-3">
                 <div class="col-auto">
