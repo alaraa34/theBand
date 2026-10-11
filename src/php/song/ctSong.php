@@ -373,7 +373,7 @@ function pistesAfficherListe(bool $aTransposerSeulement) {
     $agentsEnCours = [];
     foreach ($lignes as $ligne) {
         $idSong = (int)$ligne['idSong'];
-        $titres[$idSong] ??= ['id'=>$idSong, 'titre'=>$ligne['titre'], 'interprete'=>$ligne['interprete'], 'fichiers'=>''];
+        $titres[$idSong] ??= ['id'=>$idSong, 'titre'=>$ligne['titre'], 'interprete'=>$ligne['interprete'], 'mp3'=>'', 'mp3tb'=>''];
         if (is_null($ligne['idLien'])) {continue;}
         $tona = Repertoire::tonaAttendue((int)$ligne['idTypeLien'], $ligne['tonaScene']);
         $etat = Multipiste::etatAffiche($etats[(int)$ligne['idLien']] ?? null, $ligne['url'], $tona);
@@ -382,13 +382,15 @@ function pistesAfficherListe(bool $aTransposerSeulement) {
         if ($etat === Multipiste::A_TRAITER) {$aTraiter++;}
         if ($etat === Multipiste::EN_COURS) {$agentsEnCours[] = $etats[(int)$ligne['idLien']]['agent'];}
         $urlDemande = TbAdressage::getURLstatic("song", "pistesDemanderLien", (int)$ligne['idLien']);
-        $titres[$idSong]['fichiers'] .= Multipiste::iconeHtml(
+        $colonne = (int)$ligne['idTypeLien'] === TypeLien::MP3TB ? 'mp3tb' : 'mp3';
+        $titres[$idSong][$colonne] .= Multipiste::iconeHtml(
             ['url'=>$ligne['url'], 'nomAffiche'=>$ligne['nomAffiche']], $etat, $urlDemande);
     }
     foreach ($titres as $idSong => $titre) {
-        if ($titre['fichiers'] !== '') {continue;}
-        if ($aTransposerSeulement) {unset($titres[$idSong]);}
-        else {$titres[$idSong]['fichiers'] = '<span class="text-muted small">aucun MP3</span>';}
+        if ($aTransposerSeulement && $titre['mp3'] === '' && $titre['mp3tb'] === '') {unset($titres[$idSong]); continue;}
+        foreach (['mp3', 'mp3tb'] as $colonne) {
+            if ($titre[$colonne] === '') {$titres[$idSong][$colonne] = '<span class="text-muted">—</span>';}
+        }
     }
     //choix de la liste : tous les titres ou seulement ceux à transposer
     $urlTous = TbAdressage::getURLstatic("song", "genererPistesLecteur");
@@ -400,7 +402,9 @@ function pistesAfficherListe(bool $aTransposerSeulement) {
 
     $infosColonnes[] = ['zone'=>BkTable::COLONNE_NUMERO];
     $infosColonnes[] = ['zone'=>'titre','valeur'=>['titre',' - ','interprete'],'fonction'=>TbListe::FONCTION_VASN];
-    $infosColonnes[] = ['zone'=>'fichiers','titre'=>'Fichiers MP3','align'=>'MC'];
+    $infosColonnes[] = ['zone'=>'mp3','titre'=>'MP3<br>original','align'=>'MC'];
+    //les MP3 du groupe ne sont jamais transposés : colonne inutile dans la liste des titres à transposer
+    if (!$aTransposerSeulement) {$infosColonnes[] = ['zone'=>'mp3tb','titre'=>'MP3<br>groupe','align'=>'MC'];}
 
     $content = pistesBandeauAgents($aTraiter, array_unique($agentsEnCours))
              . $filtre
