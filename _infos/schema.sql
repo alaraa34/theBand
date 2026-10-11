@@ -219,6 +219,8 @@ DROP TABLE IF EXISTS `tb_multipiste`;
 CREATE TABLE IF NOT EXISTS `tb_multipiste` (
   `idLien` int NOT NULL COMMENT 'Lien MP3 source (tb_lien.id)',
   `statut` tinyint NOT NULL DEFAULT '1' COMMENT '1 à traiter, 2 en cours, 3 terminé, 4 erreur',
+  `tona` tinyint NOT NULL DEFAULT '0' COMMENT 'Transposition demandée / générée en demi-tons (dossier t0, t+2, t-1...)',
+  `complet` tinyint(1) NOT NULL DEFAULT '1' COMMENT '1 : séparation + transposition ; 0 : transposition seule (pistes t0 réutilisées)',
   `dateDemande` datetime DEFAULT NULL,
   `idDemandeur` int NOT NULL DEFAULT '0' COMMENT 'tb_user.id de qui a demandé la génération',
   `dateDebut` datetime DEFAULT NULL COMMENT 'Prise en charge par un agent',

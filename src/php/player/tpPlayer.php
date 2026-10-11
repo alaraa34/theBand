@@ -7,7 +7,6 @@ namespace theBand\src\php\player;
  * @author Alara
  *******************************************************************************/
 
-use shared\php\toolbox\Toolbox_liste        as TbListe;
 use shared\php\toolbox\Toolbox_adressage    as TbAdressage;
 use metronome\php\Metronome                 as Metronome;
 
@@ -23,14 +22,16 @@ ob_start(); ?>
                 <input type="hidden"  id="idSetlist" name="idSetlist" value="<?= $idSetlist;?>" /> 
                 <strong>Contexte : <?= $contexte;?></strong><br><?php if(isset($libelleContexte)){echo($libelleContexte);}?>
             </div>
-            <!-- Type de MP3 à jouer --> 
+            <!-- MP3 à jouer : original (tona de scène appliquée) ou enregistrement du groupe -->
             <div class="col-6">
-                <div class="input-group mb-3">
-                    <label class="input-group-text" for="typeMP3">(Code)Libellé du MP3 *</label>
-                    <select required class="form-select" id="typeMP3" onchange="jsAffichagePlayer()">
-                        <?= TbListe::valeursChoixListe($typesSong,false,"id","nomCompose",selected: $idTypeSong); ?>
-                    </select>
-                </div>
+                <span class="me-3"><strong>MP3 :</strong></span>
+                <?php foreach ($typesMP3 as $idType => $libelleType) { ?>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="typeMP3" id="typeMP3_<?= $idType ?>" value="<?= $idType ?>"
+                               <?= $idType === $idTypeLien ? 'checked' : '' ?> onchange="jsAffichagePlayer()">
+                        <label class="form-check-label" for="typeMP3_<?= $idType ?>"><?= $libelleType ?></label>
+                    </div>
+                <?php } ?>
             </div>
             <div class="col-3">
                 <?= Metronome::afficherVolume()?>

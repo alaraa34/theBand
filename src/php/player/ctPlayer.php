@@ -12,6 +12,7 @@ use shared\php\toolbox\Toolbox_liste                  as TbListeGenerique;
 use shared\php\classes\socle\Login                    as Login;
 use shared\php\bricks\Brick_table                     as BkTable;
 use shared\php\classes\lien\TypeLien                  as TypeLien;
+use shared\php\classes\lien\Multipiste                as Multipiste;
 use shared\php\toolbox\Toolbox                        as Tbx;
 use shared\php\toolbox\Toolbox_adressage              as TbAdressage;
 use theBand\src\php\evenement\Evenement_Concert       as Evenement_Concert;
@@ -51,49 +52,50 @@ function ctPlayerPlayList(){
         else{
             $idContexte = 4;
             $songs = ctPlayerGetListeSongs($idContexte,TypeLien::MP3 ,$user->idSetlist); 
-            ctPlayerAfficherPlayerAvecBox($songs,TypeLien::MP3 ,$idContexte);
+            ctPlayerAfficherPlayerAvecBox($songs,TypeLien::MP3 ,$idContexte, $user->idSetlist);
         }
     }
    
 }
 
-function ctPlayerAfficherPlayerAvecBox(array $infos, int $idTypeSong, int $idContexte, int $idSetlist=0){
-//Liste des morceaux avec le player et les combos de choix
-//Paramètres $info = liste des chansons, $messageBarreMenu = message à afficher, $typeSong le type de mp3 choisi, $contexte le nom du player (test, concert ...)
-    //traitement
+function ctPlayerAfficherPlayerAvecBox(array $infos, int $idTypeLien, int $idContexte, int $idSetlist=0){
+//Liste des morceaux du contexte avec un lecteur multipiste par titre, et le choix Original / Groupe
+//Paramètres $infos = liste des titres, $idTypeLien = type de MP3 joué (MP3 ou MP3TB), $idContexte = périmètre (concert, répétition, test...)
     $contexte=CONTEXTE[$idContexte];
     $libelleContexte = ctLibelleLongContexte($idContexte,$idSetlist);
-    if (count($infos)==0){
-       $messageBarreMenu = "";
-       $players  = Tbx::messageColorer(false,"","Aucun mp3 de ce type n'a été trouvé pour ce contexte");
-    }
-    else{
-        $messageBarreMenu = "Cliquer sur le player pour jouer le mp3";
-        //Paramétrage liste générique
-        $players = ctPlayerListeSansBox($infos);
-    }
-    
-    $typesSong = TypeLien::listePourUnSujet(Song::SUJET_LIEN_PLAYER, zoneSelect: " CONCAT( '(', nomAffiche,') ', nomlong ) as nomCompose "); //Liste des MP3 autorisés pour les players
-  
+    $messageBarreMenu = count($infos)==0 ? "" : "Écoute des titres";
+    $players = ctPlayerListeSansBox($infos, $idTypeLien);
+    //choix du MP3 : original (tona de scène appliquée) ou enregistrement du groupe
+    $typesMP3 = [TypeLien::MP3 => 'Original', TypeLien::MP3TB => 'Groupe'];
     $url = TbAdressage::getURLstatic("player", "playerAfficherChoix");
-    //scripts à rajouter
-    $script = Tbx::includeJS(array('ajax','player','utils')) . Metronome::includeJS();
-    
+    //scripts et styles à rajouter
+    $script = Tbx::includeJS(array('ajax','player','utils','multipiste')) . Metronome::includeJS();
+    $css = Tbx::includeCSS('multipiste');
+
     require('tpPlayer.php'); 
 }
 
-function ctPlayerListeSansBox($infos){
-//eaffiche juste laliste des titres sans les deux combo box de chhois
-    //titre = titre à mettre , si rien c'est le nom de la zone 
-    //fonction à appliquer
+function ctPlayerListeSansBox(array $infos, int $idTypeLien): string {
+//liste des titres avec leur lecteur multipiste (sans les choix du haut de page)
+//tous les titres sont affichés ; lecteur rouge « pas de mp3 enregistré » si le titre n'a pas de MP3 du type choisi
+    if (count($infos)==0){
+        return Tbx::messageColorer(false,"","Aucun titre pour ce contexte");
+    }
+    $etats = Multipiste::etatsParLien(array_column($infos, 'idLien'));
+    foreach ($infos as $index => $info) {
+        //transposition : tona de scène pour un MP3 original, 0 pour un enregistrement du groupe
+        $tona = Repertoire::tonaAttendue($idTypeLien, $info['tonaScene']);
+        $idLien = (int)$info['idLien'];
+        $source = Multipiste::sourceLecteur($idLien, (string)$info['lienMP3'], $etats[$idLien] ?? null, $tona);
+        $infos[$index]['lecteur'] = Multipiste::lecteurHtml($source);
+    }
     $infosColonnes[] = ['zone'=> BkTable::COLONNE_NUMERO,'align'=>'MC'];
     $infosColonnes[] = ['zone'=>'titre','align'=>'M'];
     $infosColonnes[] = ['zone'=> 'tonaOrigine','titre'=>'Tona<br>origine','fonction'=> TbListeGenerique::FONCTION_VASN,'align'=>'MC'];
     $infosColonnes[] = ['zone'=> 'tonaScene','titre'=>'Tona<br>Scène<br>(1/2 Ton)','fonction'=> TbListeGenerique::FONCTION_VASN,'align'=>'MC'];
     $infosColonnes[] = ['zone'=> 'tempo','fonction'=> TbListeGenerique::FONCTION_VASN,'parametres'=>['$valeur',0,false,true],'align'=>'MC'];
-    $infosColonnes[] = ['zone'=> 'leadChant','titre'=>'Lead<br>chant','fonction'=>TbListeGenerique::FONCTION_VASN,'align'=>'MC'];
     $infosColonnes[] = ['zone'=> 'tempo','titre'=>'Clic<br>batterie','fonction'=> 'metronome\php\Metronome::render','parametres'=>array('$info[\'tempo\']','$info[\'numero\']'),'align'=>'MC'];
-    $infosColonnes[] = ['zone'=> 'lienMP3','titre'=>'player','fonction'=>'shared\php\toolbox\Toolbox_html::htmlAfficherLecteurAudio','parametres'=>array('$info[\'lienMP3\']'),'align'=>'MC'];
+    $infosColonnes[] = ['zone'=> 'lecteur','titre'=>'Lecteur','align'=>'M'];
     
     return TbListeGenerique::constituerListe($infos, $infosColonnes);
 }
@@ -145,7 +147,7 @@ function ctPlayerGetListeSongs(int $idContexte,int $idTypeLien,int $idSetlist= 0
     switch ($idContexte){
         case 2:
             //Player en test
-            $songs = Song::mdSongGetListePlayer(array(Song::TYPE_TEST),$idTypeLien); //liste des Songs en test et ayant du typemp3 demandé comme lien
+            $songs = Song::mdSongGetListeLecteur(array(Song::TYPE_TEST),$idTypeLien); //titres en test, avec ou sans MP3 du type demandé
             break;
         case 0:
             //Prochain concert
@@ -157,11 +159,11 @@ function ctPlayerGetListeSongs(int $idContexte,int $idTypeLien,int $idSetlist= 0
             break;
         case 3:
             //Concert et test
-            $songs = Song::mdSongGetListePlayer(array(Song::TYPE_CONCERT,Song::TYPE_TEST),$idTypeLien);
+            $songs = Song::mdSongGetListeLecteur(array(Song::TYPE_CONCERT,Song::TYPE_TEST),$idTypeLien);
             break;
         case 4:
             //une set liste particulière
-            $songs = Song::mdSongGetListePlayerFromSetList($idSetlist,$idTypeLien);
+            $songs = Song::mdSongGetListeLecteurFromSetList($idSetlist,$idTypeLien);
             break;
         default :
             die ("ctPlayerGetListeSongs : idcontexte non reconnu " . $idContexte);
@@ -180,7 +182,7 @@ function ctPlayerProchainRepetGetSongs(int $idTypeSong){
     else{
         //affichage playlist à joueer
         $evt= new Evenement_Repetition($idevt);
-        $songs = Song::mdSongGetListePlayerFromSetList($evt->setlist->id,$idTypeSong); 
+        $songs = Song::mdSongGetListeLecteurFromSetList($evt->setlist->id,$idTypeSong); 
     }
     return $songs;
 }
@@ -197,7 +199,7 @@ function ctPlayerProchainConcertGetSongs(int $idTypeSong){
     else{
         //affichage playlist à joueer
         $evt= new Evenement_Concert($idevt);
-        $songs = Song::mdSongGetListePlayerFromSetList($evt->setlist->id,$idTypeSong); 
+        $songs = Song::mdSongGetListeLecteurFromSetList($evt->setlist->id,$idTypeSong); 
     }
     return $songs;
 }
@@ -205,7 +207,7 @@ function ctPlayerProchainConcertGetSongs(int $idTypeSong){
 function ctPlayerUnConcert(int $idEvt){
 //player pour un concert particulier
     $evt= new Evenement_Concert($idEvt);
-    $songs = Song::mdSongGetListePlayerFromSetList($evt->setlist->id,TypeLien::MP3); 
+    $songs = Song::mdSongGetListeLecteurFromSetList($evt->setlist->id,TypeLien::MP3); 
     //appel avec 4 comme idcontexte
     ctPlayerAfficherPlayerAvecBox($songs,TypeLien::MP3 ,4,$evt->setlist->id);
 }
@@ -213,20 +215,15 @@ function ctPlayerUnConcert(int $idEvt){
 function ctPlayerUneRepetition(int $idEvt){
 //player pour un concert particulier
     $evt= new Evenement_Repetition($idEvt);
-    $songs = Song::mdSongGetListePlayerFromSetList($evt->setlist->id,TypeLien::MP3); 
+    $songs = Song::mdSongGetListeLecteurFromSetList($evt->setlist->id,TypeLien::MP3); 
     ctPlayerAfficherPlayerAvecBox($songs,TypeLien::MP3 ,4,$evt->setlist->id);
 }
 
 function ctPlayerAfficherChoix(){
-//Met à jour la liste des players après un choix effectué à l'écran sur le type de mp3
-    $songs = ctPlayerGetListeSongs(TbAdressage::getpost("I","idContexte"),TbAdressage::getpost("I","typeMP3"),TbAdressage::getpost("I","idSetlist"));
-    //renvoi à l'affichage
-    if (count($songs)==0){
-        $reponse = Tbx::messageColorer(false,"","Aucun player n'est disponible pour ce contexte et ce type de MP3");
-    }
-    else{
-        $reponse =ctPlayerListeSansBox($songs);
-    }
+//Met à jour la liste des lecteurs après le choix Original / Groupe
+    $typeMP3 = TbAdressage::getpost("I","typeMP3") === TypeLien::MP3TB ? TypeLien::MP3TB : TypeLien::MP3;
+    $songs = ctPlayerGetListeSongs(TbAdressage::getpost("I","idContexte"),$typeMP3,TbAdressage::getpost("I","idSetlist"));
+    $reponse = ctPlayerListeSansBox($songs, $typeMP3);
     echo json_encode($reponse, JSON_FORCE_OBJECT);
     die();
 }

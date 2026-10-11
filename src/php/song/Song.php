@@ -198,17 +198,29 @@ class Song
         return Model::mdRequeteListerUnique($requete,array($this->id));
     }
     
-    public static function mdSongGetListePlayer(array $typesSong, int $idTypeLien ) {
-    // Retourne la requete
-    $requete = "SELECT son.id, nom.valeurA AS typeSong, titre, interprete,tonaOrigine,tonaScene,tempo,abrev as leadChant, lie.url as lienMP3
-            FROM ". self::TABLE ." as son INNER JOIN ". Nomenclature::TABLE ." as nom ON son.idTypeSong = nom.id
-            LEFT JOIN ". User::TABLE ." as usr ON son.idLeadChant = usr.id
-            LEFT JOIN (". SongLien_ass::TABLE ." as sla  JOIN ". Lien::TABLE ." as lie ON sla.idLien=lie.id) ON son.id = sla.idSong
-            WHERE  lie.idTypeLien= ?  AND son.idTypeSong ". Model::mdClauseIn($typesSong) .
-            " ORDER BY son.idTypeSong,son.Titre;";
-    return Model::mdRequeteLister($requete,[$idTypeLien]);
+    private static function sqlLecteur(): string {
+    // colonnes communes des listes de lecteurs : un titre par ligne, avec son premier MP3 du type demandé (s'il existe)
+    // le paramètre ? est le type de lien
+        return "SELECT son.id, titre, interprete, tonaOrigine, tonaScene, tempo, lie.id as idLien, lie.url as lienMP3
+                FROM ". self::TABLE ." as son
+                LEFT JOIN ". Lien::TABLE ." as lie ON lie.id =
+                    (SELECT MIN(lien.id) FROM ". SongLien_ass::TABLE ." as sla INNER JOIN ". Lien::TABLE ." as lien ON lien.id = sla.idLien
+                     WHERE sla.idSong = son.id AND lien.idTypeLien = ? AND (" . Lien::wherePrive() . ")) ";
     }
-    
+
+    public static function mdSongGetListeLecteur(array $typesSong, int $idTypeLien): array {
+    // tous les titres des types demandés (avec ou sans MP3 du type demandé), triés par type puis titre
+        $requete = self::sqlLecteur() . " WHERE son.idTypeSong " . Model::mdClauseIn($typesSong) . " ORDER BY son.idTypeSong, son.titre;";
+        return Model::mdRequeteLister($requete, [$idTypeLien]);
+    }
+
+    public static function mdSongGetListeLecteurFromSetList(int $idSetList, int $idTypeLien): array {
+    // tous les titres d'une setlist dans l'ordre de la setlist (avec ou sans MP3 du type demandé)
+        $requete = self::sqlLecteur() . " INNER JOIN ". Detail::TABLE ." as det ON son.id = det.idSong
+                    WHERE det.idSetlist = ? ORDER BY det.ordre;";
+        return Model::mdRequeteLister($requete, [$idTypeLien, $idSetList]);
+    }
+
     public static function mdSongGetListePlayerFromSetList(int $idSetList, int $idTypeLien) {
     // Retourne la liste des songs d'une set list dans l'ordre de la set list
     //Paramètre la set list et le type de mp3 à jouer

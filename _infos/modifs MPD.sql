@@ -165,3 +165,19 @@ DELETE FROM tb_lien_type_usage WHERE idTypeLien IN (6, 31, 54);
 --   C:\wamp64\www\shared\php\classes\lien\sh_lien_type.sql
 -- contrôle : ne doit plus afficher 6, 31 ni 54
 SELECT id, nom FROM sh_lien_type ORDER BY id;
+
+-- =====================================================================
+-- 11/10/2026 : lecteur multipiste, transposition des pistes (tona de scène)
+-- =====================================================================
+ALTER TABLE `tb_multipiste`
+  ADD `tona` tinyint NOT NULL DEFAULT '0' COMMENT 'Transposition demandée / générée en demi-tons (dossier t0, t+2, t-1...)' AFTER `statut`,
+  ADD `complet` tinyint(1) NOT NULL DEFAULT '1' COMMENT '1 : séparation + transposition ; 0 : transposition seule (pistes t0 réutilisées)' AFTER `tona`;
+
+-- ---------------------------------------------------------------------
+-- Types de lien : réimporter C:\wamp64\www\shared\php\classes\lien\sh_lien_type.sql
+-- (MP3TB (18) avait disparu du fichier de référence lors du retrait de 6, 31 et 54 ;
+--  MP3 (1) a retrouvé le libellé « mp3 original »)
+-- contrôle : 1 MP3 et 18 MP3TB doivent être présents, aucun lien sans type
+-- ---------------------------------------------------------------------
+SELECT id, nom, nomLong FROM sh_lien_type WHERE id IN (1, 18);
+SELECT l.id, l.idTypeLien, l.url FROM tb_lien l LEFT JOIN sh_lien_type t ON t.id = l.idTypeLien WHERE t.id IS NULL;

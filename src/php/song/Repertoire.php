@@ -130,10 +130,27 @@ class Repertoire extends Song
     //------------------------------------------------------------------------------------------------
     //MODELE
     //-----------------------------------------------------------------------------------------------
+    public static function tonaAttendue(int $idTypeLien, ?string $tonaScene): int {
+    //transposition en demi-tons à appliquer aux pistes d'un MP3 : tona de scène pour un MP3 original, 0 pour un MP3 du groupe
+        return $idTypeLien === TypeLien::MP3 ? (int)trim((string)$tonaScene) : 0;
+    }
+
+    public static function mdLienMP3(int $idLien): array {
+    //url et transposition attendue d'un lien MP3 (via le titre auquel il est rattaché)
+        $requete = "SELECT lie.url, lie.idTypeLien, so.tonaScene
+                    FROM ". Lien::TABLE . " as lie
+                        LEFT JOIN ". SongLien_ass::TABLE . " as sla ON sla.idLien = lie.id
+                        LEFT JOIN ". Song::TABLE . " as so ON so.id = sla.idSong
+                    WHERE lie.id = ? LIMIT 1;";
+        $ligne = Model::mdRequeteListerUnique($requete, [$idLien]);
+        if (count($ligne) === 0) {return ['url'=>'', 'tona'=>0];}
+        return ['url'=>(string)$ligne['url'], 'tona'=>self::tonaAttendue((int)$ligne['idTypeLien'], $ligne['tonaScene'])];
+    }
+
     public static function mdSongGetListeAvecLiens(array $typesSong, array $typesLien): array {
     // Retourne les titres des types demandés avec leurs liens des types demandés (une ligne par lien,
     // une ligne sans lien si le titre n'en a pas), triés par titre
-        $requete = "SELECT so.id as idSong, titre, interprete, lie.id as idLien, lie.url, lie.idTypeLien, lt.nomAffiche
+        $requete = "SELECT so.id as idSong, titre, interprete, tonaScene, lie.id as idLien, lie.url, lie.idTypeLien, lt.nomAffiche
                     FROM ". Song::TABLE . " as so
                         LEFT JOIN (". SongLien_ass::TABLE . " as sla
                                    INNER JOIN ". Lien::TABLE . " as lie ON sla.idLien = lie.id AND lie.idTypeLien " . Model::mdClauseIn($typesLien) . "

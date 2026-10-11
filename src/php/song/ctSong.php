@@ -365,7 +365,8 @@ function ctGenererPistesLecteur() {
         $idSong = (int)$ligne['idSong'];
         $titres[$idSong] ??= ['id'=>$idSong, 'titre'=>$ligne['titre'], 'interprete'=>$ligne['interprete'], 'fichiers'=>''];
         if (is_null($ligne['idLien'])) {continue;}
-        $etat = Multipiste::etatAffiche($etats[(int)$ligne['idLien']] ?? null, $ligne['url']);
+        $etat = Multipiste::etatAffiche($etats[(int)$ligne['idLien']] ?? null, $ligne['url'],
+                                        Repertoire::tonaAttendue((int)$ligne['idTypeLien'], $ligne['tonaScene']));
         if (in_array($etat, [Multipiste::A_TRAITER, Multipiste::EN_COURS], true)) {$enAttente++;}
         if ($etat === Multipiste::A_TRAITER) {$aTraiter++;}
         if ($etat === Multipiste::EN_COURS) {$agentsEnCours[] = $etats[(int)$ligne['idLien']]['agent'];}
@@ -383,7 +384,7 @@ function ctGenererPistesLecteur() {
 
     $content = pistesBandeauAgents($aTraiter, array_unique($agentsEnCours))
              . '<p class="small mb-2">'
-             . '<i class="fa-regular fa-file-audio text-danger"></i> à générer &nbsp; '
+             . '<i class="fa-regular fa-file-audio text-danger"></i> à générer (ou tona de scène modifiée) &nbsp; '
              . '<i class="fa-regular fa-file-audio text-warning"></i> en attente &nbsp; '
              . '<i class="fa-regular fa-file-audio text-warning"></i><i class="bi bi-hourglass-split small ms-1 text-warning"></i> en cours &nbsp; '
              . '<i class="fa-regular fa-file-audio text-success"></i> pistes générées'
@@ -415,9 +416,12 @@ function pistesBandeauAgents(int $aTraiter, array $agentsEnCours): string {
 }
 
 function ctPistesDemanderLien(int $idLien = 0) {
-//clic sur l'icône d'un MP3 : le met en file d'attente
+//clic sur l'icône d'un MP3 : le met en file d'attente, avec la transposition de la tona de scène (MP3 original)
+//si seule la tona de scène a changé, seule la transposition est refaite (les pistes d'origine sont réutilisées)
     if (!pistesAccesAdministrateur()) {return;}
-    Multipiste::demander($idLien, (int)User::connectUserGetInfo('id'));
+    $lien = Repertoire::mdLienMP3($idLien);
+    $etat = Multipiste::etatAffiche(Multipiste::etatsParLien([$idLien])[$idLien] ?? null, $lien['url'], $lien['tona']);
+    Multipiste::demander($idLien, (int)User::connectUserGetInfo('id'), $lien['tona'], $etat !== Multipiste::A_TRANSPOSER);
     header('Location: ' . TbAdressage::getURLstatic("song", "genererPistesLecteur"));
 }
 
@@ -441,10 +445,11 @@ function ctPistesAgentProchain() {
 }
 
 function ctPistesAgentRecevoir() {
-//réception d'une piste : idLien, piste (vocals, drums...), fichier
+//réception d'une piste : idLien, piste (vocals, drums...), tona (0 = pistes d'origine), fichier
     $agent = pistesAgentControler();
     $erreur = Multipiste::agentRecevoir(TbAdressage::getPost("I", "idLien"), $agent,
-                                        TbAdressage::getPost("S", "piste"), $_FILES['fichier'] ?? []);
+                                        TbAdressage::getPost("S", "piste"), $_FILES['fichier'] ?? [],
+                                        TbAdressage::getPost("I", "tona"));
     pistesAgentRepondre(['ok'=>$erreur === "", 'message'=>$erreur], $erreur === "" ? 200 : 400);
 }
 
