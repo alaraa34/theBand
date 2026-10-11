@@ -352,6 +352,16 @@ function ctPlaylistMAJ(){
 //==================================================================================================
 function ctGenererPistesLecteur() {
 //liste des titres concert et test avec l'état de génération des pistes de leurs MP3
+    pistesAfficherListe(false);
+}
+
+function ctGenererPistesATransposer() {
+//même liste limitée aux titres à transposer : MP3 original avec une tona de scène différente de 0
+//dont les pistes ne sont pas encore générées dans cette tonalité
+    pistesAfficherListe(true);
+}
+
+function pistesAfficherListe(bool $aTransposerSeulement) {
     if (!pistesAccesAdministrateur()) {return;}
     $lignes = Repertoire::mdSongGetListeAvecLiens([Repertoire::TYPE_CONCERT, Repertoire::TYPE_TEST], Multipiste::TYPES_SOURCE);
     $etats = Multipiste::etatsParLien(array_values(array_filter(array_column($lignes, 'idLien'))));
@@ -365,8 +375,9 @@ function ctGenererPistesLecteur() {
         $idSong = (int)$ligne['idSong'];
         $titres[$idSong] ??= ['id'=>$idSong, 'titre'=>$ligne['titre'], 'interprete'=>$ligne['interprete'], 'fichiers'=>''];
         if (is_null($ligne['idLien'])) {continue;}
-        $etat = Multipiste::etatAffiche($etats[(int)$ligne['idLien']] ?? null, $ligne['url'],
-                                        Repertoire::tonaAttendue((int)$ligne['idTypeLien'], $ligne['tonaScene']));
+        $tona = Repertoire::tonaAttendue((int)$ligne['idTypeLien'], $ligne['tonaScene']);
+        $etat = Multipiste::etatAffiche($etats[(int)$ligne['idLien']] ?? null, $ligne['url'], $tona);
+        if ($aTransposerSeulement && ($tona === 0 || $etat === Multipiste::TERMINE)) {continue;}
         if (in_array($etat, [Multipiste::A_TRAITER, Multipiste::EN_COURS], true)) {$enAttente++;}
         if ($etat === Multipiste::A_TRAITER) {$aTraiter++;}
         if ($etat === Multipiste::EN_COURS) {$agentsEnCours[] = $etats[(int)$ligne['idLien']]['agent'];}
@@ -375,14 +386,24 @@ function ctGenererPistesLecteur() {
             ['url'=>$ligne['url'], 'nomAffiche'=>$ligne['nomAffiche']], $etat, $urlDemande);
     }
     foreach ($titres as $idSong => $titre) {
-        if ($titre['fichiers'] === '') {$titres[$idSong]['fichiers'] = '<span class="text-muted small">aucun MP3</span>';}
+        if ($titre['fichiers'] !== '') {continue;}
+        if ($aTransposerSeulement) {unset($titres[$idSong]);}
+        else {$titres[$idSong]['fichiers'] = '<span class="text-muted small">aucun MP3</span>';}
     }
+    //choix de la liste : tous les titres ou seulement ceux à transposer
+    $urlTous = TbAdressage::getURLstatic("song", "genererPistesLecteur");
+    $urlTransposer = TbAdressage::getURLstatic("song", "genererPistesATransposer");
+    $filtre = '<div class="btn-group btn-group-sm mb-2" role="group">'
+            . '<a href="' . $urlTous . '" class="btn btn-outline-primary' . ($aTransposerSeulement ? '' : ' active') . '">Tous les titres</a>'
+            . '<a href="' . $urlTransposer . '" class="btn btn-outline-primary' . ($aTransposerSeulement ? ' active' : '') . '">'
+            . 'Titres à transposer (tona de scène ≠ 0)</a></div>';
 
     $infosColonnes[] = ['zone'=>BkTable::COLONNE_NUMERO];
     $infosColonnes[] = ['zone'=>'titre','valeur'=>['titre',' - ','interprete'],'fonction'=>TbListe::FONCTION_VASN];
     $infosColonnes[] = ['zone'=>'fichiers','titre'=>'Fichiers MP3','align'=>'MC'];
 
     $content = pistesBandeauAgents($aTraiter, array_unique($agentsEnCours))
+             . $filtre
              . '<p class="small mb-2">'
              . '<i class="fa-regular fa-file-audio text-danger"></i> à générer (ou tona de scène modifiée) &nbsp; '
              . '<i class="fa-regular fa-file-audio text-warning"></i> en attente &nbsp; '
@@ -390,9 +411,11 @@ function ctGenererPistesLecteur() {
              . '<i class="fa-regular fa-file-audio text-success"></i> pistes générées'
              . ($enAttente > 0 ? ' &nbsp;—&nbsp; <b>' . $enAttente . '</b> fichier(s) en attente ou en cours, page rafraîchie toutes les 30 s' : '')
              . '</p>'
-             . TbListe::constituerListe(array_values($titres), $infosColonnes);
+             . (count($titres) === 0 && $aTransposerSeulement
+                ? Tbx::messageColorer(true, "Tous les titres avec une tona de scène ont leurs pistes dans la bonne tonalité")
+                : TbListe::constituerListe(array_values($titres), $infosColonnes));
     $script = $enAttente > 0 ? '<script>setTimeout(() => window.location.reload(), 30000);</script>' : '';
-    $messageBarreMenu = "Génération des pistes du lecteur multipiste";
+    $messageBarreMenu = $aTransposerSeulement ? "Pistes à transposer" : "Génération des pistes du lecteur multipiste";
     require(TbAdressage::projetGetLayout(__NAMESPACE__));
 }
 
@@ -422,7 +445,10 @@ function ctPistesDemanderLien(int $idLien = 0) {
     $lien = Repertoire::mdLienMP3($idLien);
     $etat = Multipiste::etatAffiche(Multipiste::etatsParLien([$idLien])[$idLien] ?? null, $lien['url'], $lien['tona']);
     Multipiste::demander($idLien, (int)User::connectUserGetInfo('id'), $lien['tona'], $etat !== Multipiste::A_TRANSPOSER);
-    header('Location: ' . TbAdressage::getURLstatic("song", "genererPistesLecteur"));
+    //retour sur la liste d'où vient le clic (tous les titres ou titres à transposer)
+    $fonction = str_contains((string)filter_input(INPUT_SERVER, 'HTTP_REFERER'), 'genererPistesATransposer')
+              ? "genererPistesATransposer" : "genererPistesLecteur";
+    header('Location: ' . TbAdressage::getURLstatic("song", $fonction));
 }
 
 function pistesAccesAdministrateur(): bool {
