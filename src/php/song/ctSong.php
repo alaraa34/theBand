@@ -472,7 +472,7 @@ function pistesAccesAdministrateur(): bool {
 function ctPistesAgentProchain() {
 //prochain MP3 à traiter : {"idLien":0} s'il n'y a rien
     $agent = pistesAgentControler();
-    pistesAgentRepondre(Multipiste::agentProchain($agent));
+    pistesAgentRepondre(Multipiste::agentProchain($agent, max(1, TbAdressage::getPost("I", "version"))));
 }
 
 function ctPistesAgentRecevoir() {
