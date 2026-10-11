@@ -384,7 +384,8 @@ function pistesAfficherListe(bool $aTransposerSeulement) {
         $urlDemande = TbAdressage::getURLstatic("song", "pistesDemanderLien", (int)$ligne['idLien']);
         $colonne = (int)$ligne['idTypeLien'] === TypeLien::MP3TB ? 'mp3tb' : 'mp3';
         $titres[$idSong][$colonne] .= Multipiste::iconeHtml(
-            ['url'=>$ligne['url'], 'nomAffiche'=>$ligne['nomAffiche']], $etat, $urlDemande);
+            ['url'=>$ligne['url'], 'nomAffiche'=>$ligne['nomAffiche'],
+             'message'=>(string)($etats[(int)$ligne['idLien']]['message'] ?? '')], $etat, $urlDemande);
     }
     foreach ($titres as $idSong => $titre) {
         if ($aTransposerSeulement && $titre['mp3'] === '' && $titre['mp3tb'] === '') {unset($titres[$idSong]); continue;}
