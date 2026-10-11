@@ -24,6 +24,8 @@ use theBand\src\php\socle\UserTheBand                 as User;
 
 
 define("CONTEXTE",["Concert","Répétition","Test","Concert et Test","Setlist"]);
+//choix du MP3 joué par les players (boutons radio) : original (type MP3) ou enregistrement du groupe (type MP3TB)
+define("TYPES_MP3_PLAYER",[TypeLien::MP3 => 'Original', TypeLien::MP3TB => 'Groupe']);
 
 //------------------------------------------------------------------------------
 //LISTE POUR TRAVAILLER LES MORCEAUX 
@@ -66,7 +68,7 @@ function ctPlayerAfficherPlayerAvecBox(array $infos, int $idTypeLien, int $idCon
     $messageBarreMenu = count($infos)==0 ? "" : "Écoute des titres";
     $players = ctPlayerListeSansBox($infos, $idTypeLien);
     //choix du MP3 : original (tona de scène appliquée) ou enregistrement du groupe
-    $typesMP3 = [TypeLien::MP3 => 'Original', TypeLien::MP3TB => 'Groupe'];
+    $typesMP3 = TYPES_MP3_PLAYER;
     $url = TbAdressage::getURLstatic("player", "playerAfficherChoix");
     //scripts et styles à rajouter
     $script = Tbx::includeJS(array('ajax','player','utils','multipiste')) . Metronome::includeJS();
@@ -77,7 +79,8 @@ function ctPlayerAfficherPlayerAvecBox(array $infos, int $idTypeLien, int $idCon
 
 function ctPlayerListeSansBox(array $infos, int $idTypeLien): string {
 //liste des titres avec leur lecteur multipiste (sans les choix du haut de page)
-//tous les titres sont affichés ; lecteur rouge « pas de mp3 enregistré » si le titre n'a pas de MP3 du type choisi
+//tous les titres sont affichés, 3 cas par titre pour le type de MP3 choisi :
+//  pas de MP3 : lecteur rouge « Pas de mp3 de type ... pour ce titre » ; MP3 sans pistes générées : le MP3 ; pistes générées : lecteur multipiste
     if (count($infos)==0){
         return Tbx::messageColorer(false,"","Aucun titre pour ce contexte");
     }
@@ -87,7 +90,7 @@ function ctPlayerListeSansBox(array $infos, int $idTypeLien): string {
         $tona = Repertoire::tonaAttendue($idTypeLien, $info['tonaScene']);
         $idLien = (int)$info['idLien'];
         $source = Multipiste::sourceLecteur($idLien, (string)$info['lienMP3'], $etats[$idLien] ?? null, $tona);
-        $infos[$index]['lecteur'] = Multipiste::lecteurHtml($source);
+        $infos[$index]['lecteur'] = Multipiste::lecteurHtml($source, mb_strtolower(TYPES_MP3_PLAYER[$idTypeLien] ?? ''));
     }
     $infosColonnes[] = ['zone'=> BkTable::COLONNE_NUMERO,'align'=>'MC'];
     $infosColonnes[] = ['zone'=>'titre','align'=>'M'];
