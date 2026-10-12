@@ -64,7 +64,16 @@ function ctSongMAJ() {
     //retourne les liens avec leurs actions   pour les actions liens renseignés
     //Zones associatives 
     $song->chargerLiensParMouvements(TbAdressage::getValeurPostTableau(Lien::ZONES_MOUVEMENTS));
-   
+
+    //un seul MP3 original et un seul MP3 joué par titre
+    $doublon = $song->typeMP3EnDouble();
+    if ($doublon !== '') {
+        $content = Tbx::messageColorer(false, "", "Titre " . $song->titre . " non enregistré : un titre ne peut avoir qu'un seul lien "
+                 . $doublon . ". Supprimer l'ancien lien avant d'en ajouter un nouveau.");
+        require(TbAdressage::projetGetLayout(__NAMESPACE__));
+        return;
+    }
+
     //réception des fichiers
     $retour = TbUpload::uploadReceptionLien(); //ds Toolbox_upload, import des fichiers 
     
@@ -382,7 +391,7 @@ function pistesAfficherListe(bool $aTransposerSeulement) {
         if ($etat === Multipiste::A_TRAITER) {$aTraiter++;}
         if ($etat === Multipiste::EN_COURS) {$agentsEnCours[] = $etats[(int)$ligne['idLien']]['agent'];}
         $urlDemande = TbAdressage::getURLstatic("song", "pistesDemanderLien", (int)$ligne['idLien']);
-        $colonne = (int)$ligne['idTypeLien'] === TypeLien::MP3TB ? 'mp3tb' : 'mp3';
+        $colonne = (int)$ligne['idTypeLien'] === TypeLien::MP3JOU ? 'mp3tb' : 'mp3';
         $titres[$idSong][$colonne] .= Multipiste::iconeHtml(
             ['url'=>$ligne['url'], 'nomAffiche'=>$ligne['nomAffiche'],
              'message'=>(string)($etats[(int)$ligne['idLien']]['message'] ?? '')], $etat, $urlDemande);

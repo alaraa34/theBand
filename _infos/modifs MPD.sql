@@ -181,3 +181,21 @@ ALTER TABLE `tb_multipiste`
 -- ---------------------------------------------------------------------
 SELECT id, nom, nomLong FROM sh_lien_type WHERE id IN (1, 18);
 SELECT l.id, l.idTypeLien, l.url FROM tb_lien l LEFT JOIN sh_lien_type t ON t.id = l.idTypeLien WHERE t.id IS NULL;
+
+-- =====================================================================
+-- 12/10/2026 : types MP3 renommés (sh_lien_type) : 1 MP3ORI (dossier mp3ori), 18 MP3jou (dossier mp3jou),
+-- nouveau 19 MP3 « mp3 autre » (dossier mp3, fichiers jamais transformés)
+-- 1. réimporter C:\wamp64\www\shared\php\classes\lien\sh_lien_type.sql
+-- 2. renommer les dossiers (local et LWS) : fichiers/mp3 -> fichiers/mp3ori ; fichiers/mp3tb -> fichiers/mp3jou
+-- 3. mettre à jour les url des liens (le chemin du fichier est stocké dans tb_lien.url)
+-- =====================================================================
+-- contrôle avant : dossier utilisé par type (les anciens MP3 détonnés peuvent encore être dans mp3d)
+SELECT idTypeLien, SUBSTRING_INDEX(SUBSTRING_INDEX(url, 'fichiers/', -1), '/', 1) AS dossier, COUNT(*) AS nb
+FROM tb_lien WHERE idTypeLien IN (1, 18, 19) GROUP BY idTypeLien, dossier;
+
+UPDATE tb_lien SET url = REPLACE(url, 'fichiers/mp3/',   'fichiers/mp3ori/') WHERE idTypeLien = 1;
+UPDATE tb_lien SET url = REPLACE(url, 'fichiers/mp3tb/', 'fichiers/mp3jou/') WHERE idTypeLien = 18;
+
+-- contrôle après : relancer la première requête ; puis vérifier qu'aucun titre n'a deux MP3 du même type
+SELECT sla.idSong, lie.idTypeLien, COUNT(*) AS nb FROM tb_song_lien sla INNER JOIN tb_lien lie ON lie.id = sla.idLien
+WHERE lie.idTypeLien IN (1, 18) GROUP BY sla.idSong, lie.idTypeLien HAVING COUNT(*) > 1;

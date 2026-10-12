@@ -130,9 +130,35 @@ class Repertoire extends Song
     //------------------------------------------------------------------------------------------------
     //MODELE
     //-----------------------------------------------------------------------------------------------
+    public function typeMP3EnDouble(): string {
+    //après chargement des liens (les suppressions demandées sont déjà faites) : nom du type de MP3 qui serait
+    //présent plus d'une fois sur le titre (MP3 original, MP3 joué), "" si tout va bien
+        $nombres = $this->id > 0 ? self::mdNombreLiensParType($this->id, TypeLien::TYPES_MP3_UNIQUES) : [];
+        foreach ($this->liens as $lien) {
+            $type = (int)$lien->typeLien->id;
+            if ($lien->id === 0 && in_array($type, TypeLien::TYPES_MP3_UNIQUES, true)) {
+                $nombres[$type] = ($nombres[$type] ?? 0) + 1;
+            }
+        }
+        foreach ($nombres as $type => $nombre) {
+            if ($nombre > 1) {return (new TypeLien($type))->nomLong ?: (new TypeLien($type))->nom;}
+        }
+        return '';
+    }
+
+    private static function mdNombreLiensParType(int $idSong, array $types): array {
+    //nombre de liens du titre par type (tous les liens, privés compris)
+        $requete = "SELECT lie.idTypeLien, COUNT(*) as nombre FROM ". SongLien_ass::TABLE . " as sla
+                    INNER JOIN ". Lien::TABLE . " as lie ON lie.id = sla.idLien
+                    WHERE sla.idSong = ? AND lie.idTypeLien " . Model::mdClauseIn($types) . " GROUP BY lie.idTypeLien;";
+        $retour = [];
+        foreach (Model::mdRequeteLister($requete, [$idSong]) as $ligne) {$retour[(int)$ligne['idTypeLien']] = (int)$ligne['nombre'];}
+        return $retour;
+    }
+
     public static function tonaAttendue(int $idTypeLien, ?string $tonaScene): int {
-    //transposition en demi-tons à appliquer aux pistes d'un MP3 : tona de scène pour un MP3 original, 0 pour un MP3 du groupe
-        return $idTypeLien === TypeLien::MP3 ? (int)trim((string)$tonaScene) : 0;
+    //transposition en demi-tons à appliquer aux pistes d'un MP3 : tona de scène pour un MP3 original (MP3ORI), 0 pour un MP3 joué (MP3JOU)
+        return $idTypeLien === TypeLien::MP3ORI ? (int)trim((string)$tonaScene) : 0;
     }
 
     public static function mdLienMP3(int $idLien): array {

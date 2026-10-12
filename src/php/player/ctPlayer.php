@@ -24,8 +24,8 @@ use theBand\src\php\socle\UserTheBand                 as User;
 
 
 define("CONTEXTE",["Concert","Répétition","Test","Concert et Test","Setlist"]);
-//choix du MP3 joué par les players (boutons radio) : original (type MP3) ou enregistrement du groupe (type MP3TB)
-define("TYPES_MP3_PLAYER",[TypeLien::MP3 => 'Original', TypeLien::MP3TB => 'Groupe']);
+//choix du MP3 joué par les players (boutons radio) : original (type MP3ORI) ou joué par le groupe (type MP3JOU)
+define("TYPES_MP3_PLAYER",[TypeLien::MP3ORI => 'Original', TypeLien::MP3JOU => 'Groupe']);
 
 //------------------------------------------------------------------------------
 //LISTE POUR TRAVAILLER LES MORCEAUX 
@@ -53,8 +53,8 @@ function ctPlayerPlayList(){
         }
         else{
             $idContexte = 4;
-            $songs = ctPlayerGetListeSongs($idContexte,TypeLien::MP3 ,$user->idSetlist); 
-            ctPlayerAfficherPlayerAvecBox($songs,TypeLien::MP3 ,$idContexte, $user->idSetlist);
+            $songs = ctPlayerGetListeSongs($idContexte,TypeLien::MP3ORI ,$user->idSetlist); 
+            ctPlayerAfficherPlayerAvecBox($songs,TypeLien::MP3ORI ,$idContexte, $user->idSetlist);
         }
     }
    
@@ -62,7 +62,7 @@ function ctPlayerPlayList(){
 
 function ctPlayerAfficherPlayerAvecBox(array $infos, int $idTypeLien, int $idContexte, int $idSetlist=0){
 //Liste des morceaux du contexte avec un lecteur multipiste par titre, et le choix Original / Groupe
-//Paramètres $infos = liste des titres, $idTypeLien = type de MP3 joué (MP3 ou MP3TB), $idContexte = périmètre (concert, répétition, test...)
+//Paramètres $infos = liste des titres, $idTypeLien = type de MP3 joué (MP3ORI ou MP3JOU), $idContexte = périmètre (concert, répétition, test...)
     $contexte=CONTEXTE[$idContexte];
     $libelleContexte = ctLibelleLongContexte($idContexte,$idSetlist);
     $messageBarreMenu = count($infos)==0 ? "" : "Écoute des titres";
@@ -106,8 +106,8 @@ function ctPlayerListeSansBox(array $infos, int $idTypeLien): string {
 function ctPlayerSongAffichageInitial(int $idContexte):void{
 //Constitution de la liste de player initiale pour ce contexte
 //Par défaut MP3 (tona concert)
-    $songs = ctPlayerGetListeSongs($idContexte,TypeLien::MP3 ); 
-    ctPlayerAfficherPlayerAvecBox($songs,TypeLien::MP3 ,$idContexte);
+    $songs = ctPlayerGetListeSongs($idContexte,TypeLien::MP3ORI ); 
+    ctPlayerAfficherPlayerAvecBox($songs,TypeLien::MP3ORI ,$idContexte);
 }
 
 function ctLibelleLongContexte(int $idContexte,int $idSetlist= 0){
@@ -210,21 +210,21 @@ function ctPlayerProchainConcertGetSongs(int $idTypeSong){
 function ctPlayerUnConcert(int $idEvt){
 //player pour un concert particulier
     $evt= new Evenement_Concert($idEvt);
-    $songs = Song::mdSongGetListeLecteurFromSetList($evt->setlist->id,TypeLien::MP3); 
+    $songs = Song::mdSongGetListeLecteurFromSetList($evt->setlist->id,TypeLien::MP3ORI); 
     //appel avec 4 comme idcontexte
-    ctPlayerAfficherPlayerAvecBox($songs,TypeLien::MP3 ,4,$evt->setlist->id);
+    ctPlayerAfficherPlayerAvecBox($songs,TypeLien::MP3ORI ,4,$evt->setlist->id);
 }
 
 function ctPlayerUneRepetition(int $idEvt){
 //player pour un concert particulier
     $evt= new Evenement_Repetition($idEvt);
-    $songs = Song::mdSongGetListeLecteurFromSetList($evt->setlist->id,TypeLien::MP3); 
-    ctPlayerAfficherPlayerAvecBox($songs,TypeLien::MP3 ,4,$evt->setlist->id);
+    $songs = Song::mdSongGetListeLecteurFromSetList($evt->setlist->id,TypeLien::MP3ORI); 
+    ctPlayerAfficherPlayerAvecBox($songs,TypeLien::MP3ORI ,4,$evt->setlist->id);
 }
 
 function ctPlayerAfficherChoix(){
 //Met à jour la liste des lecteurs après le choix Original / Groupe
-    $typeMP3 = TbAdressage::getpost("I","typeMP3") === TypeLien::MP3TB ? TypeLien::MP3TB : TypeLien::MP3;
+    $typeMP3 = TbAdressage::getpost("I","typeMP3") === TypeLien::MP3JOU ? TypeLien::MP3JOU : TypeLien::MP3ORI;
     $songs = ctPlayerGetListeSongs(TbAdressage::getpost("I","idContexte"),$typeMP3,TbAdressage::getpost("I","idSetlist"));
     $reponse = ctPlayerListeSansBox($songs, $typeMP3);
     echo json_encode($reponse, JSON_FORCE_OBJECT);
