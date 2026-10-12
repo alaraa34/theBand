@@ -6,6 +6,7 @@ namespace theBand\src\php\song;
 use shared\php\classes\lien\Lien                       as Lien;
 use shared\php\classes\lien\TypeLien                   as TypeLien;
 use shared\php\classes\lien\Multipiste                 as Multipiste;
+use shared\php\classes\lien\MultipisteControle         as MultipisteControle;
 use shared\php\classes\personalisation\Nomenclature    as Nomenclature;
 use theBand\src\php\socle\UserTheBand                  as UserTB;
 use shared\php\classes\socle\User                      as User;
@@ -371,98 +372,22 @@ function ctGenererPistesATransposer() {
 }
 
 function pistesAfficherListe(bool $aTransposerSeulement) {
+//page commune (shared MultipisteControle) avec les titres concert et test de theBand
     if (!pistesAccesAdministrateur()) {return;}
     $lignes = Repertoire::mdSongGetListeAvecLiens([Repertoire::TYPE_CONCERT, Repertoire::TYPE_TEST], Multipiste::TYPES_SOURCE);
-    $etats = Multipiste::etatsParLien(array_values(array_filter(array_column($lignes, 'idLien'))));
-
-    //regroupement par titre
-    $titres = [];
-    $enAttente = 0;
-    $aTraiter = 0;
-    $agentsEnCours = [];
-    foreach ($lignes as $ligne) {
-        $idSong = (int)$ligne['idSong'];
-        $titres[$idSong] ??= ['id'=>$idSong, 'titre'=>$ligne['titre'], 'interprete'=>$ligne['interprete'], 'mp3'=>'', 'mp3tb'=>''];
-        if (is_null($ligne['idLien'])) {continue;}
-        $tona = Repertoire::tonaAttendue((int)$ligne['idTypeLien'], $ligne['tonaScene']);
-        $etat = Multipiste::etatAffiche($etats[(int)$ligne['idLien']] ?? null, $ligne['url'], $tona);
-        if ($aTransposerSeulement && ($tona === 0 || $etat === Multipiste::TERMINE)) {continue;}
-        if (in_array($etat, [Multipiste::A_TRAITER, Multipiste::EN_COURS], true)) {$enAttente++;}
-        if ($etat === Multipiste::A_TRAITER) {$aTraiter++;}
-        if ($etat === Multipiste::EN_COURS) {$agentsEnCours[] = $etats[(int)$ligne['idLien']]['agent'];}
-        $urlDemande = TbAdressage::getURLstatic("song", "pistesDemanderLien", (int)$ligne['idLien']);
-        $colonne = (int)$ligne['idTypeLien'] === TypeLien::MP3JOU ? 'mp3tb' : 'mp3';
-        $titres[$idSong][$colonne] .= Multipiste::iconeHtml(
-            ['url'=>$ligne['url'], 'nomAffiche'=>$ligne['nomAffiche'],
-             'message'=>(string)($etats[(int)$ligne['idLien']]['message'] ?? '')], $etat, $urlDemande);
+    foreach ($lignes as $index => $ligne) {
+        $lignes[$index]['tona'] = Repertoire::tonaAttendue((int)$ligne['idTypeLien'], $ligne['tonaScene']);
     }
-    foreach ($titres as $idSong => $titre) {
-        if ($aTransposerSeulement && $titre['mp3'] === '' && $titre['mp3tb'] === '') {unset($titres[$idSong]); continue;}
-        foreach (['mp3', 'mp3tb'] as $colonne) {
-            if ($titre[$colonne] === '') {$titres[$idSong][$colonne] = '<span class="text-muted">—</span>';}
-        }
-    }
-    //choix de la liste : tous les titres ou seulement ceux à transposer
-    $urlTous = TbAdressage::getURLstatic("song", "genererPistesLecteur");
-    $urlTransposer = TbAdressage::getURLstatic("song", "genererPistesATransposer");
-    $filtre = '<div class="btn-group btn-group-sm mb-2" role="group">'
-            . '<a href="' . $urlTous . '" class="btn btn-outline-primary' . ($aTransposerSeulement ? '' : ' active') . '">Tous les titres</a>'
-            . '<a href="' . $urlTransposer . '" class="btn btn-outline-primary' . ($aTransposerSeulement ? ' active' : '') . '">'
-            . 'Titres à transposer (tona de scène ≠ 0)</a></div>';
-
-    $infosColonnes[] = ['zone'=>BkTable::COLONNE_NUMERO];
-    $infosColonnes[] = ['zone'=>'titre','valeur'=>['titre',' - ','interprete'],'fonction'=>TbListe::FONCTION_VASN];
-    $infosColonnes[] = ['zone'=>'mp3','titre'=>'MP3<br>original','align'=>'MC'];
-    //les MP3 du groupe ne sont jamais transposés : colonne inutile dans la liste des titres à transposer
-    if (!$aTransposerSeulement) {$infosColonnes[] = ['zone'=>'mp3tb','titre'=>'MP3<br>groupe','align'=>'MC'];}
-
-    $content = pistesBandeauAgents($aTraiter, array_unique($agentsEnCours))
-             . $filtre
-             . '<p class="small mb-2">'
-             . '<i class="fa-regular fa-file-audio text-danger"></i> à générer (ou tona de scène modifiée) &nbsp; '
-             . '<i class="fa-regular fa-file-audio text-warning"></i> en attente &nbsp; '
-             . '<i class="fa-regular fa-file-audio text-warning"></i><i class="bi bi-hourglass-split small ms-1 text-warning"></i> en cours &nbsp; '
-             . '<i class="fa-regular fa-file-audio text-success"></i> pistes générées'
-             . ($enAttente > 0 ? ' &nbsp;—&nbsp; <b>' . $enAttente . '</b> fichier(s) en attente ou en cours, page rafraîchie toutes les 30 s' : '')
-             . '</p>'
-             . (count($titres) === 0 && $aTransposerSeulement
-                ? Tbx::messageColorer(true, "Tous les titres avec une tona de scène ont leurs pistes dans la bonne tonalité")
-                : TbListe::constituerListe(array_values($titres), $infosColonnes));
-    $script = $enAttente > 0 ? '<script>setTimeout(() => window.location.reload(), 30000);</script>' : '';
-    $messageBarreMenu = $aTransposerSeulement ? "Pistes à transposer" : "Génération des pistes du lecteur multipiste";
+    ['content'=>$content, 'script'=>$script, 'messageBarreMenu'=>$messageBarreMenu] =
+        MultipisteControle::pageGeneration($lignes, $aTransposerSeulement, ['correction'=>'tona de scène', 'jou'=>'groupe']);
     require(TbAdressage::projetGetLayout(__NAMESPACE__));
 }
 
-function pistesBandeauAgents(int $aTraiter, array $agentsEnCours): string {
-//bandeau d'état des agents : signale s'il faut lancer lancer_agent.bat sur un PC
-    $actifs = Multipiste::agentsActifs();
-    $noms = [];
-    foreach ($actifs as $nom => $secondes) {$noms[] = htmlspecialchars($nom) . ' (contact il y a ' . $secondes . ' s)';}
-    foreach ($agentsEnCours as $nom) {
-        if (!isset($actifs[$nom])) {$noms[] = htmlspecialchars($nom) . ' (traitement en cours)';}
-    }
-    if (count($noms) > 0) {
-        return '<div class="alert alert-success py-2 small"><i class="bi bi-pc-display"></i> Agent actif : ' . implode(', ', $noms) . '</div>';
-    }
-    if ($aTraiter > 0) {
-        return '<div class="alert alert-warning py-2 small"><i class="bi bi-exclamation-triangle"></i> <b>' . $aTraiter
-             . ' fichier(s) en attente et aucun agent actif</b> : lancer <code>lancer_agent.bat</code> sur un PC.</div>';
-    }
-    return '<div class="alert alert-secondary py-2 small"><i class="bi bi-pc-display"></i> Aucun agent actif'
-         . ' (à lancer avant de demander une génération).</div>';
-}
-
 function ctPistesDemanderLien(int $idLien = 0) {
-//clic sur l'icône d'un MP3 : le met en file d'attente, avec la transposition de la tona de scène (MP3 original)
-//si seule la tona de scène a changé, seule la transposition est refaite (les pistes d'origine sont réutilisées)
+//clic sur l'icône d'un MP3 : file d'attente avec la transposition de la tona de scène (MP3 original)
     if (!pistesAccesAdministrateur()) {return;}
     $lien = Repertoire::mdLienMP3($idLien);
-    $etat = Multipiste::etatAffiche(Multipiste::etatsParLien([$idLien])[$idLien] ?? null, $lien['url'], $lien['tona']);
-    Multipiste::demander($idLien, (int)User::connectUserGetInfo('id'), $lien['tona'], $etat !== Multipiste::A_TRANSPOSER);
-    //retour sur la liste d'où vient le clic (tous les titres ou titres à transposer)
-    $fonction = str_contains((string)filter_input(INPUT_SERVER, 'HTTP_REFERER'), 'genererPistesATransposer')
-              ? "genererPistesATransposer" : "genererPistesLecteur";
-    header('Location: ' . TbAdressage::getURLstatic("song", $fonction));
+    MultipisteControle::demanderLien($idLien, $lien['url'], $lien['tona'], (int)User::connectUserGetInfo('id'));
 }
 
 function pistesAccesAdministrateur(): bool {
@@ -479,41 +404,13 @@ function pistesAccesAdministrateur(): bool {
 // Tous reçoivent cle (contenu de ENVIRagent.txt) et agent (nom du PC)
 //--------------------------------------------------------------------------------------------------
 function ctPistesAgentProchain() {
-//prochain MP3 à traiter : {"idLien":0} s'il n'y a rien
-    $agent = pistesAgentControler();
-    pistesAgentRepondre(Multipiste::agentProchain($agent, max(1, TbAdressage::getPost("I", "version"))));
+    MultipisteControle::agentProchain();
 }
 
 function ctPistesAgentRecevoir() {
-//réception d'une piste : idLien, piste (vocals, drums...), tona (0 = pistes d'origine), fichier
-    $agent = pistesAgentControler();
-    $erreur = Multipiste::agentRecevoir(TbAdressage::getPost("I", "idLien"), $agent,
-                                        TbAdressage::getPost("S", "piste"), $_FILES['fichier'] ?? [],
-                                        TbAdressage::getPost("I", "tona"));
-    pistesAgentRepondre(['ok'=>$erreur === "", 'message'=>$erreur], $erreur === "" ? 200 : 400);
+    MultipisteControle::agentRecevoir();
 }
 
 function ctPistesAgentTerminer() {
-//fin de traitement : idLien, succes (1/0), message, et pour information modele et duree (secondes)
-    $agent = pistesAgentControler();
-    $infos = ['modele'=>TbAdressage::getPost("S", "modele"), 'dureeSecondes'=>TbAdressage::getPost("I", "duree")];
-    $erreur = Multipiste::agentTerminer(TbAdressage::getPost("I", "idLien"), $agent,
-                                        TbAdressage::getPost("I", "succes") === 1, TbAdressage::getPost("S", "message"), $infos);
-    pistesAgentRepondre(['ok'=>$erreur === "", 'message'=>$erreur], $erreur === "" ? 200 : 400);
-}
-
-function pistesAgentControler(): string {
-//vérifie la clé de l'agent et retourne son nom ; répond 403 et s'arrête sinon
-    $agent = substr((string)preg_replace('/[^A-Za-z0-9_-]/', '', TbAdressage::getPost("S", "agent")), 0, 40);
-    if ($_SERVER['REQUEST_METHOD'] !== 'POST' || $agent === '' || !Multipiste::agentCleValide(TbAdressage::getPost("S", "cle"))) {
-        pistesAgentRepondre(['ok'=>false, 'message'=>"Accès refusé"], 403);
-    }
-    return $agent;
-}
-
-function pistesAgentRepondre(array $reponse, int $codeHttp = 200): never {
-    http_response_code($codeHttp);
-    header('Content-Type: application/json; charset=utf-8');
-    echo json_encode($reponse, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-    exit;
+    MultipisteControle::agentTerminer();
 }
