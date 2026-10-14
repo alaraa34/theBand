@@ -31,7 +31,10 @@ function ctSongEditer(int $identifiant = 0) {
     $users = UserTB::listeMusiciens();
     //defaut on crée une instance concert (çà ne change rien)
     $song = new Repertoire($identifiant);
-    $script =  Tbx::includeJS(['lien','liste','utils']);
+    $script =  Tbx::includeJS(['lien','liste','utils','confirmationTona']);
+    //titre existant : confirmation si la tona de scène change (pistes transposées et mp3 joué supprimés)
+    $confirmationTona = MultipisteControle::confirmationTonaHtml($song->id, (string)$song->tonaScene,
+        "La tonalité scène a été modifiée. Les enregistrements multipistes transposés et le mp3 joué seront supprimés. Continuer ?");
     if ($song->id===0){
     //Saisie d'un nouveau titre avec contrlonnexion e de 
         $typesSong = Song::listeTypeSong();
@@ -56,7 +59,11 @@ function ctSongMAJ() {
     $song->titre = TbAdressage::getPost("S","titre");
     $song->interprete = TbAdressage::getPost("S","interprete");
     $song->tonaOrigine = TbAdressage::getPost("S","tonaOrigine");
-    $song->tonaScene = TbAdressage::getPost("S","tonaScene");
+    //tona de scène : un changement sur un titre existant n'est pris que s'il a été confirmé (oui)
+    $ancienneTona = $song->id > 0 ? Repertoire::mdTonaScene($song->id) : "";
+    $decisionTona = $song->id > 0 ? MultipisteControle::tonaSceneAEnregistrer($ancienneTona, TbAdressage::getPost("S","tonaScene"))
+                                  : ['tona'=>TbAdressage::getPost("S","tonaScene"), 'modifiee'=>false, 'refusee'=>false];
+    $song->tonaScene = $decisionTona['tona'];
     $song->tempo = TbAdressage::getPost("I","tempo");
     $song->leadChant->id = TbAdressage::getPost("I","idLeadChant");
     $song->commentaire->id = TbAdressage::getPost("I","idCommentaire");
@@ -80,7 +87,14 @@ function ctSongMAJ() {
     
     //mise à jour de la base
     $retour = $song->update();
-    $content = Tbx::messageColorer($retour,"Titre " . $song->titre . " traité avec succès");  
+    //tona de scène modifiée : pistes transposées du MP3 original et MP3 joué supprimés
+    $bilanTona = ['originaux'=>0, 'joues'=>0];
+    if ($retour && $decisionTona['modifiee']) {
+        $bilanTona = Multipiste::tonaSceneModifiee(Repertoire::mdLiensMP3DuTitre($song->id),
+                                                   Repertoire::tonaAttendue(TypeLien::MP3ORI, $song->tonaScene), SongLien_ass::TABLE);
+    }
+    $content = Tbx::messageColorer($retour,"Titre " . $song->titre . " traité avec succès"
+                                   . MultipisteControle::messageTonaScene($decisionTona, $bilanTona));
     unset($song);
     require(TbAdressage::projetGetLayout(__NAMESPACE__));
 }    

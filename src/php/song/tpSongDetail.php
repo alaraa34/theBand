@@ -13,6 +13,7 @@ ob_start(); ?>
         <div class="container">
             <input type="hidden"  name="idSong" id="idSong" value="<?= $song->id ?>" />
             <input type="hidden"  name="referer"  value="<?= TbAdressage::getReferer($song->id) ?>" />
+            <?= $confirmationTona['champ'] ?>
             <!-- Titre et interprète -->  
             <div class="row">
                 <!-- Type de titre --> 
@@ -52,7 +53,7 @@ ob_start(); ?>
                 <div class = "col-3">
                     <div class="input-group mb-3">
                           <label class="input-group-text" for="inputGroupSelect03">Ecart tona (1/2 tons)</label>
-                          <select name="tonaScene" class="form-select" id="inputGroupSelect03">
+                          <select name="tonaScene" class="form-select" id="inputGroupSelect03"<?= $confirmationTona['attributs'] ?>>
                             <?= TbListe::valeursChoixListe($correctionsTona,true, selected:$song->tonaScene); ?>
                           </select>
                     </div>

@@ -161,6 +161,20 @@ class Repertoire extends Song
         return $idTypeLien === TypeLien::MP3ORI ? (int)trim((string)$tonaScene) : 0;
     }
 
+    public static function mdTonaScene(int $idSong): string {
+    //tona de scène enregistrée d'un titre (avant modification)
+        $ligne = Model::mdRequeteListerUnique("SELECT tonaScene FROM " . Song::TABLE . " WHERE id=?", [$idSong]);
+        return (string)($ligne['tonaScene'] ?? '');
+    }
+
+    public static function mdLiensMP3DuTitre(int $idSong): array {
+    //liens MP3 original et joué d'un titre (id, idTypeLien)
+        $requete = "SELECT lie.id, lie.idTypeLien FROM ". SongLien_ass::TABLE . " as sla
+                        INNER JOIN ". Lien::TABLE . " as lie ON lie.id = sla.idLien
+                    WHERE sla.idSong = ? AND lie.idTypeLien " . Model::mdClauseIn(TypeLien::TYPES_MP3_UNIQUES) . ";";
+        return Model::mdRequeteLister($requete, [$idSong]);
+    }
+
     public static function mdLienMP3(int $idLien): array {
     //url et transposition attendue d'un lien MP3 (via le titre auquel il est rattaché)
         $requete = "SELECT lie.url, lie.idTypeLien, so.tonaScene
