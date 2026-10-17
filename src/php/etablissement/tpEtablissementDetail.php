@@ -16,7 +16,7 @@ ob_start();
 ?>
 
 <br><br<br>
-<form method="post" enctype="multipart/form-data" action="index.php?action=etabMAJ">
+<form method="post" enctype="multipart/form-data" action="<?= TbAdressage::getURLstatic('etablissement','etablissementMAJ') ?>">
     <section class="py-5">
         <div class="container">
             <!--Identifiants etab -->  

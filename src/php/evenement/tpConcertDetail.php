@@ -14,7 +14,7 @@
     ob_start(); 
 ?>
 <br>
-<form method="post" id="editorForm" action="<?= TbAdressage::getURLstatic('evenement','concertMAJ')?>">
+<form method="post" id="editorForm" action="<?= TbAdressage::getURLstatic('evenement','concertMAJ',0,'concert')?>">
     <!--Identifiants concert -->  
     <input type="hidden"  name="idConcert" id="idConcert" value="<?= $concert->id?>" />
     <input type="hidden"  name="referer"  value="<?= TbAdressage::getReferer($concert->id) ?>" />

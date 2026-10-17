@@ -14,7 +14,7 @@ use theBand\src\php\song\Song               as Song;
 ob_start();
 
 ?>
-<form method="post" id="repetitionPostForm" action="<?= TbAdressage::getURLstatic('evenement','repetitionMAJ')?>">
+<form method="post" id="repetitionPostForm" action="<?= TbAdressage::getURLstatic('evenement','repetitionMAJ',0,'repetition')?>">
     
         <div class="container">
             <!--Identifiants répétition et liste des titres sélectionnés-->  
@@ -84,7 +84,7 @@ ob_start();
                             </label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <button type="button" onclick="jsRepetSelectionAuto('<?= TbAdressage::urlControleur("evenement","repetitionSelectSongAuto");?>')" class="btn btn-success btn-sm">Sélectionner</button>
+                            <button type="button" onclick="jsRepetSelectionAuto('<?= TbAdressage::urlControleur("evenement","repetitionSelectSongAuto",[],"repetition");?>')" class="btn btn-success btn-sm">Sélectionner</button>
                         </div>
                     </div>
                 </div>

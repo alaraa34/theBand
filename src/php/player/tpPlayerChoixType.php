@@ -2,7 +2,7 @@
 declare(strict_types=1);
 namespace theBand\src\php\player;
 /*******************************************************************************
- * Controleur des l'affichage des players MP3 et document
+ * Choix du type de document pour le player de documents
  *
  * @author Alara
  *******************************************************************************/
@@ -15,7 +15,7 @@ use shared\php\toolbox\Toolbox_liste        as TbListe;
 ob_start(); ?> 
 <br><br<br>
  
-    <form method="post" action="index.php?action=playerDocAffichage">  
+    <form method="post" action="<?= TbAdressage::getURLstatic('player','playerDocAffichage',0,'playerDoc') ?>">  
         <br><br>
         <input type="hidden" name="idSetlist" value="<?=$idSetlist?>" />
         <fieldset class="border rounded-5">

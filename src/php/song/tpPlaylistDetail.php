@@ -13,7 +13,7 @@ use theBand\src\php\song\Song               as Song;
 ob_start();
 
 ?>
-<form method="post" id="playlistPostForm" action="<?= TbAdressage::getURLstatic('song','playlistMAJ')?>">
+<form method="post" id="playlistPostForm" action="<?= TbAdressage::getURLstatic('song','playlistMAJ',0,'playlist')?>">
     <section class="py-5">
         <div class="container">
             <!--Identifiants répétition et liste des titres sélectionnés-->  

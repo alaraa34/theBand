@@ -1,8 +1,9 @@
 <?php 
 declare(strict_types=1);
 namespace theBand\src\php\player;
+use shared\php\classes\lien\LecteurPdf    as LecteurPdf;
 /*******************************************************************************
- * Controleur des l'affichage des players MP3 et document
+ * Player de documents PDF (plein écran, sans layout)
  *
  * @author Alara
  *******************************************************************************/
@@ -12,7 +13,7 @@ namespace theBand\src\php\player;
 
 <html lang="fr">  
 <head>  
-    <title><?= mdGetNomGroupe()?></title>  
+    <title>Documents</title>  
     <meta charset="utf-8">  
     <meta name="viewport" content="width=device-width, initial-scale=1"> 
     <!-- chargement des feuilles de style -->
@@ -22,6 +23,8 @@ namespace theBand\src\php\player;
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css"/>
+    <!-- lecteur PDF à défilement (PDF.js) -->
+    <?= LecteurPdf::includes() ?>
 </head>  
 <body class="bg-dark bg-gradient">  
     <div class="container">
@@ -42,10 +45,10 @@ namespace theBand\src\php\player;
             </div>
             
             <!-- affichage PDF ou message -->
-            <div class="col-10 embed-responsive embed-responsive-1by1 align-self-stretch">
-                <div class="alert alert-danger text-center" role="alert" id="message" <?= displayInitial($songs[0])?> ><?= messageInitial($songs[0])?></div> 
-                <iframe id="lecteur" class="d-md-flex embed-responsive-item" src="<?=$songs[0]['lienPDF'] ?>" <?= displayDocInitial($songs[0])?>
-                        width="100%" height="100%" allowfullscreen > </iframe>
+            <div class="col-10 align-self-stretch" style="height: 100vh;">
+                <div class="alert alert-danger text-center" role="alert" id="message" <?= displayInitial($songs[0])?> ><?= messageInitial($songs[0])?></div>
+                <!-- défilement automatique : lecture/pause, vitesse -/+, plein écran ; rechargé par jsPlayerAfficherIndice -->
+                <?= LecteurPdf::composant((string)($songs[0]['lienPDF'] ?? ''), id: 'lecteur', attributs: displayDocInitial($songs[0]), urlAudio: (string)($songs[0]['lienMP3'] ?? '')) ?>
             </div>
             
             <!--<!-- Boutons suivant et fermeture -->
@@ -54,20 +57,18 @@ namespace theBand\src\php\player;
                         <i class="bi bi-arrow-right-circle"></i>
                 </button>
                 <br>
-                <span class="text-white" id="titreSuivant"><?= valeurAffichableSiNull($songs[1]['titre'])?></span>
+                <span class="text-white" id="titreSuivant"><?= htmlspecialchars((string)($songs[1]['titre'] ?? '')) ?></span>
                 <br><br>
                 <button type="text" class="btn btn-success btn-sm" data-toggle="tooltip" data-placement="top" title="Revenir à la page d'accueil">
                     <a href=<?=$urlControleur?>><i class="bi bi-x-circle"></i></a>
                 </button>
-            </div?
+            </div>
         </div>
     </div>
    <!-- chargement des scripts -->		
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
-    <script type="text/javascript" src="src/js/player.js"></script>
-    <script type="text/javascript" src="src/js/global.js"></script>
-    <script type="text/javascript" src="src/js/ajax.js"></script>
+    <?= $script ?>
 </body>
 </html>
 <?php 

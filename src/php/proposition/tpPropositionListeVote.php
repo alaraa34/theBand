@@ -10,7 +10,7 @@
     use shared\php\toolbox\Toolbox_adressage    as TbAdressage;
   
     ob_start(); 
-    echo('<form method="post" action="' . TbAdressage::getURLstatic("proposition","propositionMajVotes") . '">');
+    echo('<form method="post" action="' . TbAdressage::getURLstatic("proposition","propositionMajVotes",0,"vote") . '">');
     $matable = new BkTable(tableClass:'table table-hover table-sm');
     //pas de numérotation sur première et dernière ligne
     $matable->addHeaders(["Vote","#;1","Titre","Interprète","Lien","Vote<br>Préférence","Vote<br>Maitrise"],rang:1);

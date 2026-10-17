@@ -234,13 +234,21 @@ class Song
         return Model::mdRequeteLister($requete,[$idTypeLien,$idSetList]);
     }
     
+    private static function sqlLienAudio(): string {
+    // MP3 de référence d'un titre pour le player de documents : MP3 joué par le groupe, sinon MP3 original
+    // (sa durée fixe le temps de défilement du PDF)
+        $mp3 = fn(int $type) => "(SELECT MIN(lie.url) FROM ". Lien::TABLE ." as lie INNER JOIN ". SongLien_ass::TABLE ." as sla ON lie.id = sla.idLien
+                                  WHERE sla.idSong = son.id AND lie.idTypeLien = " . $type . " AND " . Lien::wherePrive() . ")";
+        return "COALESCE(" . $mp3(TypeLien::MP3JOU) . ", " . $mp3(TypeLien::MP3ORI) . ")";
+    }
+
     public static function mdSongGetListePlayerDocument(array $typesSong,int $idTypeLien) {
     // Retourne la liste des songs test et concert.
     //Tous les morceaux sont retournés avec ou sans document lié
         $requete = "SELECT titre,
                         (select lie.url  FROM ". Lien::TABLE ." as lie INNER JOIN ". SongLien_ass::TABLE ." as sla ON lie.id = sla.idLien
                         WHERE sla.idSong = son.id and  lie.idTypeLien=?
-                        and " . Lien::wherePrive(). ") as lienPDF
+                        and " . Lien::wherePrive(). ") as lienPDF, " . self::sqlLienAudio() . " as lienMP3
                 FROM ". self::TABLE ." as son
                 WHERE son.idTypeSong ". Model::mdClauseIn($typesSong) .
                 " ORDER BY son.Titre;";
@@ -253,7 +261,7 @@ class Song
         $requete = "SELECT titre,
                         (select lie.url  FROM ". Lien::TABLE ." as lie INNER JOIN ". SongLien_ass::TABLE ." as sla ON lie.id = sla.idLien
                         WHERE sla.idSong = son.id and  lie.idTypeLien=?
-                        and " . Lien::wherePrive(). ") as lienPDF
+                        and " . Lien::wherePrive(). ") as lienPDF, " . self::sqlLienAudio() . " as lienMP3
                 FROM ". self::TABLE ." as son INNER JOIN ". Detail::TABLE ." as det ON son.id = det.idSong
                 WHERE det.idSetlist = ?
                 ORDER BY det.ordre;";

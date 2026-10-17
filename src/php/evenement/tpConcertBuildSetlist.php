@@ -62,7 +62,7 @@ ob_start(); ?>
     </div>
 </div>
 <div class="scrumboard row ">
-    <form enctype="multipart/form-data"  method="post" action="<?= TbAdressage::getURLstatic('evenement','setlistMAJ')?>">
+    <form enctype="multipart/form-data"  method="post" action="<?= TbAdressage::getURLstatic('evenement','setlistMAJ',0,'setlist')?>">
         <input type="hidden"  name="idSetlist" value="<?= $evt->setlist->id?>" />
         <input type="hidden"  name="listePartie1" id="listePartie1" value="" />
         <input type="hidden"  name="listePartie2" id="listePartie2" value="" />

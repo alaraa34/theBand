@@ -9,7 +9,7 @@ use shared\php\toolbox\Toolbox_date         as TbDate;
 use shared\php\toolbox\Toolbox_adressage    as TbAdressage;
 
 ob_start(); 
-echo('<form method="post" action="' . TbAdressage::getURLstatic("song","repertoireMajVotes") . '">');
+echo('<form method="post" action="' . TbAdressage::getURLstatic("song","repertoireMajVotes",0,"performance") . '">');
 
 $matable = new BkTable(tableClass:'table table-hover table-sm');
 //pas de numérotation sur première et dernière ligne

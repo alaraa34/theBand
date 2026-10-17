@@ -2,11 +2,8 @@
 declare(strict_types=1);
 namespace theBand\src\php\player;
 /*******************************************************************************
- * Controleur des l'affichage des players MP3 et document
- *
- * @author Alara
+ * Controleur du player MP3 (lecteur multipiste) : domaine player, ctr=playerMp3
  *******************************************************************************/
-
 use metronome\php\Metronome                           as Metronome;
 use shared\php\toolbox\Toolbox_liste                  as TbListeGenerique;
 use shared\php\classes\socle\Login                    as Login;
@@ -21,7 +18,6 @@ use theBand\src\php\song\Repertoire                   as Repertoire;
 use theBand\src\php\song\Setlist                      as Setlist;
 use theBand\src\php\song\Song                         as Song;
 use theBand\src\php\socle\UserTheBand                 as User;
-
 
 define("CONTEXTE",["Concert","Répétition","Test","Concert et Test","Setlist"]);
 //choix du MP3 joué par les players (boutons radio) : original (type MP3ORI) ou joué par le groupe (type MP3JOU)
@@ -48,7 +44,8 @@ function ctPlayerPlayList(){
         //si pas de playlist constitué, message
         $user = new User(User::connectUserGetInfo('id'));
         if ($user->idSetlist===0){
-            //envoi constitution play liste
+            //envoi constitution play liste (controleur playlist du domaine song)
+            require_once __DIR__ . '/../song/ctPlaylist.php';
             \theBand\src\php\song\ctPlaylistEditer();
         }
         else{
@@ -69,7 +66,7 @@ function ctPlayerAfficherPlayerAvecBox(array $infos, int $idTypeLien, int $idCon
     $players = ctPlayerListeSansBox($infos, $idTypeLien);
     //choix du MP3 : original (tona de scène appliquée) ou enregistrement du groupe
     $typesMP3 = TYPES_MP3_PLAYER;
-    $url = TbAdressage::getURLstatic("player", "playerAfficherChoix");
+    $url = TbAdressage::getURLstatic("player", "playerAfficherChoix", 0, "playerMp3");
     //scripts et styles à rajouter
     $script = Tbx::includeJS(array('ajax','player','utils','multipiste')) . Metronome::includeJS();
     $css = Tbx::includeCSS('multipiste');
@@ -230,97 +227,3 @@ function ctPlayerAfficherChoix(){
     echo json_encode($reponse, JSON_FORCE_OBJECT);
     die();
 }
-
-//************************************************************************************
-//PLAYER DOCUMENT
-//***********************************************************************************
-function ctPlayerDocProchainConcert(){
-//affiche un document PDF dans l'ordre de la set list de concert
-    playerDocProchainEvt( Evenement_Concert::getIdSetListProchainEvt());
-}
-function ctplayerDocProchaineRepet(){
-//affiche un document PDF dans l'ordre de la set list de répet
-    playerDocProchainEvt( Evenement_Repetition::getIdSetListProchainEvt());
-}
-
-function playerDocProchainEvt(int $idSetList){
-//affiche un document PDF dans l'ordre de la set list de concert
-    $idSetList = Evenement_Concert::getIdSetListProchainEvt();
-    if($idSetList==0) {   
-        //message si pas de concert 
-        $content = Tbx::messageColorer(false, "", "Pas de concert programmé");
-        require(TbAdressage::projetGetLayout(__NAMESPACE__));
-    }
-    else{
-        //affichage setlist du concert
-        ctPlayerDocAffichage ($idSetList);
-    }
-}
-
-function ctPlayerDocTestConcert(){
-    ctPlayerDocAffichage ();
-}
-function ctPlayerDocAffichage(int $idSetList=0){
-//affiche un document PDF dans pour les morceaux de test et de concert
-    $idTypeLien = TbAdressage::getPost("I", "typePDF");
-    if ($idTypeLien==0){
-        //pour faire le choix du type de docuùments
-        //$idsetlist est rajouté dans laa fenêtre
-        $extensions = TypeLien::mdTypesLiensListePDF(Repertoire::SUJET_LIEN);//liste des documents PDF pour le sujet SONG
-        require('src/templates/Song/playerChoixType.php');
-    }
-    else{
-        //pour afficher la liste 
-        $urlControleur = urlServeur() . "index.php?action=accueil";//pour bouton accueil
-        //récupération idsetlist dans la fenêtre
-        if (TbAdressage::getPost("I","idSetlist")===0){
-            //playlists Test et idSetlistconcert
-            $songs = Song::mdSongGetListePlayerDocument(array(Song::TYPE_CONCERT,Song::TYPE_TEST),$idTypeLien);
-        }
-        else{
-            //plylist du prochain concert
-            $songs = Song::mdSongGetListePlayerSetlistDocument($idSetList,$idTypeLien); //listes des Songs $
-        }
-        require('src/templates/Song/playerDoc.php');
-    }
-
-}
-//************************************************************************************
-//PLAYER PAD
-//***********************************************************************************
-function ctPlayerPadTestConcert(){
-//Affiche un player avec les pads des tests et concert
-    $infos = Song::mdSongGetListePlayerPad();
-    ctListePads($infos,"Pads des titres  Test et Concert");
-}
-
-function ctPlayerPadProchainConcert(){
-    $idevt = Evenement_Concert::getIdProchain();
-    //affichage 
-    if ($idevt==0){
-        $content = Tbx::messageColorer(false, "", "Pas de concert programmé");
-        require(TbAdressage::projetGetLayout(__NAMESPACE__));
-    }
-    else{
-        //affichage playlist à joueer
-        $evt= new Evenement_Concert($idevt);
-        $songs = Song::mdSongGetListePlayerFromSetList($evt->setlist->id,TypeLien::PAD); 
-        ctListePads($songs,"Pads du prochain concert");
-    }
-    
-}
-
-function ctListePads(array $infos, string $messageBarreMenu){
-//affiche juste laliste des titres sans les deux combo box de chhois
-    $script = Tbx::includeJS(array('player','utils'));
-    //zone = nom de la zone dans infos,
-    //titre = titre à mettre , si rien c'est le nom de la zone 
-    //fonction à appliquer
-    $infosColonnes[] = ['zone'=>'numero','titre'=>'N°','align'=>'center'];
-    $infosColonnes[] = ['zone'=>'titre'];
-    $infosColonnes[] = ['zone'=>'description'];
-    $infosColonnes[] = ['zone'=> 'lienMP3','titre'=>'player','fonction'=>'shared\php\toolbox\Toolbox_html::htmlAfficherLecteurAudio','parametres'=>array('$info[\'lienMP3\']'),'align'=>'center'];
-
-    $content = TbListeGenerique::constituerListe($infos, $infosColonnes);
-    require(TbAdressage::projetGetLayout(__NAMESPACE__));
-}    
