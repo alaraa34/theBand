@@ -7,6 +7,7 @@ namespace theBand\src\php\player;
  ******************************************************************************/
 use shared\php\classes\lien\Lienhtml        as Lienhtml;
 use metronome\php\Metronome                 as Metronome;
+use shared\php\toolbox\Toolbox_tonalite     as TbTonalite;
 ob_start();
 $song = $this->song;
 $sequences = $this->sequencesHtml();
@@ -32,8 +33,9 @@ $sequences = $this->sequencesHtml();
                 <div class="input-group mb-2">
                     <span class="input-group-text">Tona origine</span>
                     <input disabled type="text" class="form-control text-center" value="<?= htmlspecialchars($song->tonaOrigine) ?>"/>
-                    <span class="input-group-text" title="Écart en demi-tons appliqué au MP3 original">Tona scène</span>
-                    <input disabled type="text" class="form-control text-center" value="<?= htmlspecialchars($song->tonaScene) ?>"/>
+                    <span class="input-group-text" title="Écart en demi-tons appliqué au MP3 original, et tonalité jouée">Tona scène</span>
+                    <input disabled type="text" class="form-control text-center"
+                           value="<?= htmlspecialchars(TbTonalite::libelleScene($song->tonaOrigine, $song->tonaScene)) ?>"/>
                     <?php if (($song->leadChant->prenom ?? '') !== ''): ?>
                         <span class="input-group-text">Lead</span>
                         <input disabled type="text" class="form-control text-center" value="<?= htmlspecialchars($song->leadChant->prenom) ?>"/>
