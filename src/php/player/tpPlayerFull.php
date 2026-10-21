@@ -17,7 +17,7 @@ ob_start();
                     <div class="input-group entete-colonne">
                         <label class="input-group-text" for="idContexte">Titres</label>
                         <select name="idContexte" class="form-select" id="idContexte"
-                                onchange="Get_Form_zone('<?= $urlListe ?>', 'liste-choix-song', 'idContexte');">
+                                onchange="jsPlayerFullListe(this, '<?= $urlListe ?>');">
                             <?= TbListe::valeursChoixListe($contextes, false, selected: $idContexte); ?>
                         </select>
                     </div>

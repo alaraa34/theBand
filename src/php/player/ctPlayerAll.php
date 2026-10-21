@@ -12,13 +12,15 @@ use shared\php\classes\lien\Sequence            as Sequence;
 use shared\php\toolbox\Toolbox                  as Tbx;
 use shared\php\toolbox\Toolbox_adressage        as TbAdressage;
 use theBand\src\php\socle\UserTheBand           as User;
+use theBand\src\php\song\Song                   as Song;
 
 //contextes et listes de titres : repris du player MP3
 require_once __DIR__ . '/ctPlayerMp3.php';
 
-//contextes proposés dans le combo (numéros de ctPlayerGetListeSongs)
-const PLAYER_FULL_CONTEXTES = [0=>"Prochain concert", 1=>"Prochaine répétition", 2=>"Titres en test",
-                               3=>"Titres concert et test", 4=>"Ma playlist"];
+//contextes proposés dans le combo, dans l'ordre d'affichage (numéros de ctPlayerGetListeSongs, sauf 5)
+const PLAYER_FULL_CONCERT = 5;   //titres concert seuls : propre au player complet
+const PLAYER_FULL_CONTEXTES = [0=>"Prochain concert", 1=>"Prochaine répétition", PLAYER_FULL_CONCERT=>"Titres concert",
+                               2=>"Titres en test", 3=>"Titres concert et test", 4=>"Ma playlist"];
 const PLAYER_FULL_CONTEXTE_DEFAUT = 0;
 
 function ctPlayerFull(): void {
@@ -77,10 +79,12 @@ function playerFullTitres(int $idContexte): array {
 //titres du contexte, dans l'ordre de la setlist pour un concert, une répétition ou la playlist
     $idPlaylist = $idContexte === 4 ? playerFullIdPlaylist() : 0;
     if ($idContexte === 4 && $idPlaylist === 0) {return [];}
+    if ($idContexte === PLAYER_FULL_CONCERT) {return Song::mdSongGetListeLecteur([Song::TYPE_CONCERT], TypeLien::MP3ORI);}
     return ctPlayerGetListeSongs($idContexte, TypeLien::MP3ORI, $idPlaylist);
 }
 
 function playerFullLibelle(int $idContexte): string {
 //nom de la setlist du contexte (prochain concert, prochaine répétition, playlist)
+    if ($idContexte === PLAYER_FULL_CONCERT) {return "";}
     return (string)ctLibelleLongContexte($idContexte, $idContexte === 4 ? playerFullIdPlaylist() : 0);
 }
