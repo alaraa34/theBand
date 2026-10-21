@@ -199,3 +199,13 @@ UPDATE tb_lien SET url = REPLACE(url, 'fichiers/mp3tb/', 'fichiers/mp3jou/') WHE
 -- contrôle après : relancer la première requête ; puis vérifier qu'aucun titre n'a deux MP3 du même type
 SELECT sla.idSong, lie.idTypeLien, COUNT(*) AS nb FROM tb_song_lien sla INNER JOIN tb_lien lie ON lie.id = sla.idLien
 WHERE lie.idTypeLien IN (1, 18) GROUP BY sla.idSong, lie.idTypeLien HAVING COUNT(*) > 1;
+
+-- =====================================================================
+-- 21/10/2026 : player complet (domaine player, ctr playerAll, fct playerFull)
+-- liste des titres à gauche (prochain concert, prochaine répétition, test, concert et test, ma playlist),
+-- détail du titre cliqué à droite (description, métronome, audios multipistes, séquences, vidéos)
+-- Menu : Players > Player complet (changer l'indentation si elle est déjà prise ;
+-- si la colonne action a été renommée fonction dans tb_menu, remplacer `action` par `fonction`)
+-- =====================================================================
+INSERT INTO `tb_menu` (`indentation`, `domaine`, `controleur`, `typeLigne`, `libelle`, `action`, `production`, `adminOnly`) VALUES
+(400200, 'player', 'playerAll', 'action', 'Player complet', 'playerFull', 1, 0);

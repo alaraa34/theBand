@@ -1,0 +1,42 @@
+/* Player complet (player/ctPlayerAll) : mêmes pavés que le répertoire de training */
+.player-full .list-container-choix {
+    background-color: white;
+    border: 2px solid #dee2e6;
+    border-radius: 8px;
+    padding: 15px;
+    height: 600px;
+    overflow-y: auto;
+}
+.player-full .list-item {
+    padding: 10px 15px;
+    margin-bottom: 8px;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-left: 4px solid #198754;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.player-full .list-item:hover { background-color: #e9ecef; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+.player-full .list-item.actif { background-color: #d1e7dd; border-color: #198754; }
+.player-full .item-id { font-weight: bold; color: #6c757d; margin-right: 10px; }
+.player-full .item-libelle { color: #212529; }
+/* la barre au-dessus de la liste et le titre du détail ont la même hauteur : les deux pavés sont alignés */
+.player-full .entete-colonne, .player-full .list-headerS {
+    min-height: 48px;
+    margin-bottom: 8px;
+    font-weight: bold;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+}
+/* liens du titre : icônes centrées */
+.player-full .zone-liens { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: .25rem; padding: .25rem; }
+.player-full .zone-liens a { display: inline-flex; align-items: center; }
+.player-full .zone-liens h6 { margin: 0; line-height: 1; }
+/* smartphone : la liste et le détail l'un sous l'autre, liste moins haute */
+@media (max-width: 767.98px) {
+    .player-full .col-md-5 .list-container-choix { height: 260px; }
+    .player-full .col-md-7 { margin-top: 1rem; }
+    .player-full #detail-song { height: auto; }
+}
