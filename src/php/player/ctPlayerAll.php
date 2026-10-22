@@ -24,10 +24,13 @@ const PLAYER_FULL_CONTEXTES = [0=>"Prochain concert", 1=>"Prochaine répétition
 const PLAYER_FULL_CONTEXTE_DEFAUT = 0;
 
 function ctPlayerFull(): void {
-//page du player complet, ouverte sur le prochain concert et son premier titre
-    $contextes = playerFullContextes();
-    $idContexte = PLAYER_FULL_CONTEXTE_DEFAUT;
-    $titres = playerFullTitres($idContexte);
+//page du player complet : seules les sources qui ont des titres sont proposées ;
+//ouverture sur la première d'entre elles (le prochain concert s'il y en a un) et son premier titre
+    $titresParContexte = playerFullTitresParContexte();
+    $contextes = [];
+    foreach ($titresParContexte as $id => $titresContexte) {$contextes[] = ['identifiant'=>$id, 'zone'=>PLAYER_FULL_CONTEXTES[$id]];}
+    $idContexte = array_key_first($titresParContexte) ?? PLAYER_FULL_CONTEXTE_DEFAUT;
+    $titres = $titresParContexte[$idContexte] ?? [];
     $liste = PlayerTitre::listeHtml($titres);
     $libelleContexte = playerFullLibelle($idContexte);
     $detail = count($titres) === 0 ? "" : (new PlayerTitre((int)$titres[0]['id']))->render();
@@ -60,14 +63,15 @@ function ctPlayerAllChargerDetail(): void {
 //------------------------------------------------------------------------------
 //OUTILS
 //------------------------------------------------------------------------------
-function playerFullContextes(): array {
-//choix du combo ; « Ma playlist » seulement pour un utilisateur connecté qui en a une
-    $choix = [];
-    foreach (PLAYER_FULL_CONTEXTES as $id => $libelle) {
-        if ($id === 4 && playerFullIdPlaylist() === 0) {continue;}
-        $choix[] = ['identifiant'=>$id, 'zone'=>$libelle];
+function playerFullTitresParContexte(): array {
+//titres de chaque source du combo, dans l'ordre d'affichage, en ne gardant que les sources qui ont des titres
+//(« Ma playlist » seulement pour un utilisateur connecté qui en a une)
+    $resultat = [];
+    foreach (array_keys(PLAYER_FULL_CONTEXTES) as $id) {
+        $titres = playerFullTitres($id);
+        if (count($titres) > 0) {$resultat[$id] = $titres;}
     }
-    return $choix;
+    return $resultat;
 }
 
 function playerFullIdPlaylist(): int {
